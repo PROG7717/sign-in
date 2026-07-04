@@ -32,7 +32,7 @@ Browser ──► Next.js (proxy: next-intl routing + Supabase session refresh)
 ### Folder structure
 
 ```
-portfolio/
+.  (repo root — Vercel/Netlify auto-detect the Next.js app here)
 ├── supabase/migrations/        # Schema + RLS + storage policies (already applied)
 ├── public/covers/              # Generative SVG artwork for the seeded projects
 └── src/
@@ -82,6 +82,23 @@ Override via `.env.local` (see `.env.example`) to point at another project.
 
 **Admin dashboard**: `/en/admin` — sign in with the Supabase account
 `ibr5ab2i@gmail.com` (already granted admin rights in `portfolio_admins`).
+
+### Deploying to Vercel
+
+The Next.js app sits at the **repository root**, so no special configuration
+is needed:
+
+1. Import the GitHub repo in Vercel and leave **Root Directory empty**
+   (if you previously set it to `portfolio`, clear that setting — the app
+   was moved to the root).
+2. Make sure Vercel builds a branch that actually contains this app —
+   either merge this branch into your default branch, or set
+   *Settings → Environments → Production → Branch* to the working branch.
+3. Framework preset: **Next.js** (auto-detected). No env vars required.
+
+The root URL `/` is redirected to `/en` (or `/ar` based on the visitor's
+`Accept-Language`) by `src/proxy.ts` — Next.js middleware that Vercel runs
+at the edge automatically.
 
 ## 4 · Content & i18n notes
 
