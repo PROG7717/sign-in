@@ -1,0 +1,233 @@
+{
+  "meta": {
+    "title": "Creative Developer & Designer — Portfolio",
+    "description": "Award-level digital experiences: immersive 3D websites, product design and engineering that clients love."
+  },
+  "nav": {
+    "home": "Home",
+    "work": "Work",
+    "reviews": "Reviews",
+    "letsTalk": "Let's talk"
+  },
+  "hero": {
+    "badge": "Available for new projects",
+    "titleTop": "Crafting digital",
+    "titleGradient": "experiences",
+    "titleBottom": "beyond imagination",
+    "subtitle": "I design and engineer immersive websites, products and brands — blending 3D, motion and obsessive attention to detail into work your customers will remember.",
+    "ctaWork": "Explore my work",
+    "ctaContact": "Start a project",
+    "scroll": "Scroll to explore",
+    "stats": {
+      "projects": "Projects delivered",
+      "years": "Years of craft",
+      "clients": "Happy clients",
+      "rating": "Average rating"
+    }
+  },
+  "marquee": {
+    "items": "Three.js • React • Next.js • WebGL • Motion Design • UI/UX • Branding • Supabase • TypeScript • Creative Direction"
+  },
+  "services": {
+    "title": "What I do",
+    "subtitle": "Full-stack craft, from the first sketch to the last deploy.",
+    "items": {
+      "immersive": {
+        "title": "Immersive 3D web",
+        "body": "Real-time WebGL scenes, product configurators and story-driven scroll experiences that stay silky at 60fps."
+      },
+      "product": {
+        "title": "Product design & engineering",
+        "body": "Design systems, dashboards and mobile apps built with accessibility, performance and conversion in mind."
+      },
+      "brand": {
+        "title": "Brand & art direction",
+        "body": "Identities, motion languages and campaign sites that make a brand impossible to confuse with anyone else."
+      }
+    }
+  },
+  "featured": {
+    "eyebrow": "Selected work",
+    "title": "Projects that moved the needle",
+    "viewAll": "View all projects",
+    "viewCase": "View case study"
+  },
+  "reviewsSection": {
+    "eyebrow": "Client love",
+    "title": "Trusted by people who ship",
+    "basedOn": "Based on {count, plural, one {# review} other {# reviews}}",
+    "viewAll": "Read all reviews",
+    "leaveReview": "Leave a review"
+  },
+  "cta": {
+    "title": "Have an idea worth building?",
+    "subtitle": "Tell me about your project — I answer every message within 24 hours.",
+    "button": "Get in touch"
+  },
+  "work": {
+    "eyebrow": "Portfolio",
+    "title": "Selected work",
+    "subtitle": "A curated collection of projects across web, mobile and brand.",
+    "empty": "No projects in this category yet — check back soon.",
+    "filters": {
+      "all": "All"
+    }
+  },
+  "categories": {
+    "web": "Web",
+    "mobile": "Mobile",
+    "branding": "Branding"
+  },
+  "project": {
+    "back": "All work",
+    "year": "Year",
+    "category": "Category",
+    "stack": "Stack",
+    "visit": "Visit live site",
+    "gallery": "Gallery",
+    "clientWords": "What the client said",
+    "nextProject": "Next project",
+    "notFound": "Project not found"
+  },
+  "reviews": {
+    "eyebrow": "Reviews",
+    "title": "What clients say",
+    "subtitle": "Real words from real projects. Every review is verified and moderated.",
+    "summary": {
+      "average": "Average rating",
+      "total": "{count, plural, one {# review} other {# reviews}}",
+      "stars": "{count} stars"
+    },
+    "generalWork": "Overall collaboration",
+    "empty": "No reviews yet — be the first to share your experience.",
+    "form": {
+      "title": "Share your experience",
+      "subtitle": "Worked with me? Your feedback keeps this studio honest.",
+      "name": "Your name",
+      "namePlaceholder": "Jane Cooper",
+      "role": "Role & company (optional)",
+      "rolePlaceholder": "CEO, Acme Inc.",
+      "project": "Which project?",
+      "generalOption": "Overall collaboration",
+      "rating": "Your rating",
+      "comment": "Your review",
+      "commentPlaceholder": "What was it like working together?",
+      "submit": "Submit review",
+      "submitting": "Submitting…",
+      "success": "Thank you! Your review was submitted and will appear after moderation.",
+      "error": "Something went wrong — please try again."
+    }
+  },
+  "footer": {
+    "tagline": "Building digital experiences beyond imagination.",
+    "rights": "All rights reserved.",
+    "adminLogin": "Admin"
+  },
+  "admin": {
+    "login": {
+      "title": "Admin access",
+      "subtitle": "Sign in to manage projects, reviews and theme.",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "invalid": "Invalid email or password.",
+      "notAdmin": "This account does not have admin access.",
+      "backToSite": "Back to site"
+    },
+    "nav": {
+      "overview": "Overview",
+      "projects": "Projects",
+      "reviews": "Reviews",
+      "settings": "Theme & settings",
+      "viewSite": "View site",
+      "signOut": "Sign out"
+    },
+    "overview": {
+      "title": "Dashboard",
+      "subtitle": "Everything that needs your attention, at a glance.",
+      "totalProjects": "Projects",
+      "publishedProjects": "Published",
+      "pendingReviews": "Pending reviews",
+      "averageRating": "Average rating",
+      "recentReviews": "Latest reviews",
+      "moderate": "Moderate",
+      "quickActions": "Quick actions",
+      "newProject": "New project",
+      "editTheme": "Edit theme"
+    },
+    "projects": {
+      "title": "Projects",
+      "subtitle": "Create, edit and organise your portfolio.",
+      "new": "New project",
+      "edit": "Edit",
+      "delete": "Delete",
+      "confirmDelete": "Delete this project permanently? Its reviews will be removed too.",
+      "empty": "No projects yet. Create your first one.",
+      "featured": "Featured",
+      "published": "Published",
+      "draft": "Draft",
+      "form": {
+        "createTitle": "New project",
+        "editTitle": "Edit project",
+        "titleEn": "Title (English)",
+        "titleAr": "Title (Arabic)",
+        "slug": "Slug (URL)",
+        "taglineEn": "Tagline (English)",
+        "taglineAr": "Tagline (Arabic)",
+        "descriptionEn": "Description (English)",
+        "descriptionAr": "Description (Arabic)",
+        "category": "Category",
+        "tags": "Tags (comma separated)",
+        "year": "Year",
+        "liveUrl": "Live URL (optional)",
+        "cover": "Cover image",
+        "gallery": "Gallery images",
+        "upload": "Upload image",
+        "uploading": "Uploading…",
+        "remove": "Remove",
+        "featured": "Show in featured section",
+        "published": "Published (visible on site)",
+        "save": "Save project",
+        "saving": "Saving…",
+        "saved": "Project saved.",
+        "error": "Could not save the project. Check the fields and try again."
+      }
+    },
+    "reviews": {
+      "title": "Review moderation",
+      "subtitle": "Approve, hide or delete client reviews.",
+      "tabs": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "hidden": "Hidden",
+        "all": "All"
+      },
+      "approve": "Approve",
+      "hide": "Hide",
+      "delete": "Delete",
+      "confirmDelete": "Delete this review permanently?",
+      "empty": "Nothing here.",
+      "forProject": "On project",
+      "general": "Overall work"
+    },
+    "settings": {
+      "title": "Theme & settings",
+      "subtitle": "Changes apply live across the whole website — no redeploy needed.",
+      "colors": "Brand colors",
+      "primary": "Primary",
+      "secondary": "Secondary",
+      "accent": "Accent",
+      "siteName": "Site name",
+      "siteNameEn": "Site name (English)",
+      "siteNameAr": "Site name (Arabic)",
+      "preview": "Live preview",
+      "previewHint": "The colors above are already applied to this page as a preview. Save to publish them to every visitor.",
+      "reset": "Reset to defaults",
+      "save": "Save & publish",
+      "saving": "Publishing…",
+      "saved": "Theme published. Every open tab updates in real time.",
+      "error": "Could not save settings."
+    }
+  }
+}
