@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>معرض الأعمال — Portfolio</title>
+<meta name="description" content="تجارب رقمية غامرة: مواقع ثلاثية الأبعاد، تصميم منتجات، وهوية بصرية." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --primary: #8b5cf6;
+    --secondary: #22d3ee;
+    --accent: #fb7185;
+    --bg: #06070c;
+    --surface: #0d0f18;
+    --fg: #f3f4f8;
+    --muted: #9aa1b8;
+    --line: rgba(255, 255, 255, 0.08);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: "Space Grotesk", "IBM Plex Sans Arabic", system-ui, sans-serif;
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+  html[lang="ar"] body { font-family: "IBM Plex Sans Arabic", "Space Grotesk", system-ui, sans-serif; }
+  ::selection { background: var(--primary); color: #fff; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; cursor: pointer; }
+  img { max-width: 100%; display: block; }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+  .glass {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .text-gradient {
+    background: linear-gradient(92deg, var(--primary), var(--secondary) 55%, var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .btn {
+    display: inline-block;
+    padding: 14px 30px;
+    border-radius: 999px;
+    font-weight: 600;
+    border: none;
+    color: #fff;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    box-shadow: 0 0 40px -10px var(--primary);
+    transition: transform .25s;
+  }
+  .btn:hover { transform: scale(1.05); }
+  .btn-ghost {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line);
+    box-shadow: none;
+    color: var(--fg);
+  }
+  .btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
+
+  /* ---------- Navbar ---------- */
+  header {
+    position: fixed; inset-inline: 0; top: 0; z-index: 50;
+    padding: 16px 0;
+    transition: background .3s, backdrop-filter .3s;
+  }
+  header.scrolled { background: rgba(6,7,12,.72); backdrop-filter: blur(16px); border-bottom: 1px solid var(--line); }
+  .nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; }
+  .brand-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    box-shadow: 0 0 24px var(--primary);
+  }
+  .nav-links { display: flex; gap: 4px; }
+  .nav-links a {
+    padding: 8px 16px; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--muted);
+    transition: color .2s, background .2s;
+  }
+  .nav-links a:hover { color: var(--fg); background: rgba(255,255,255,.06); }
+  .lang-btn {
+    padding: 8px 16px; border-radius: 999px; font-size: 14px; font-weight: 600;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--line); color: var(--fg);
+  }
+  .lang-btn:hover { border-color: var(--primary); color: var(--primary); }
+  @media (max-width: 640px) { .nav-links { display: none; } }
+
+  /* ---------- Hero ---------- */
+  .hero { position: relative; min-height: 100svh; display: flex; align-items: center; overflow: hidden; }
+  #hero-canvas { position: absolute; inset: 0; z-index: 0; }
+  #hero-canvas canvas { display: block; }
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 0; opacity: .5;
+    background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse at center, black, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black, transparent 75%);
+  }
+  .hero-content { position: relative; z-index: 1; padding: 130px 0 90px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 8px 16px; border-radius: 999px; font-size: 14px; color: var(--muted); margin-bottom: 26px;
+  }
+  .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--secondary); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 var(--secondary); } 50% { box-shadow: 0 0 0 7px transparent; } }
+  h1 { font-size: clamp(2.6rem, 7vw, 5.2rem); line-height: 1.08; font-weight: 700; letter-spacing: -.02em; max-width: 850px; }
+  .hero-sub { margin-top: 24px; max-width: 560px; font-size: 1.15rem; color: var(--muted); }
+  .hero-ctas { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 14px; }
+  .stats { margin-top: 60px; display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 26px; max-width: 640px; }
+  .stat b { font-size: 2rem; font-weight: 700; }
+  .stat span { display: block; font-size: .85rem; color: var(--muted); margin-top: 2px; }
+
+  /* ---------- Sections ---------- */
+  section { padding: 90px 0; }
+  .eyebrow {
+    display: flex; align-items: center; gap: 12px; color: var(--primary);
+    font-size: .85rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; margin-bottom: 12px;
+  }
+  .eyebrow::before { content: ""; width: 32px; height: 1px; background: var(--primary); }
+  h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; letter-spacing: -.02em; margin-bottom: 14px; }
+  .section-sub { color: var(--muted); max-width: 560px; margin-bottom: 40px; }
+
+  /* ---------- Work grid ---------- */
+  .filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 36px; }
+  .filter {
+    padding: 10px 20px; border-radius: 999px; font-size: 14px; font-weight: 600;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--line); color: var(--muted);
+  }
+  .filter.active { background: linear-gradient(90deg, var(--primary), var(--secondary)); color: #fff; border-color: transparent; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+  .card {
+    position: relative; border-radius: 22px; overflow: hidden; border: 1px solid var(--line);
+    background: var(--surface); cursor: pointer; transition: transform .35s, border-color .35s;
+  }
+  .card:hover { transform: translateY(-6px); border-color: color-mix(in oklab, var(--primary) 55%, transparent); }
+  .card .cover { aspect-ratio: 4/3; overflow: hidden; }
+  .card .cover img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s; }
+  .card:hover .cover img { transform: scale(1.06); }
+  .card .info { position: absolute; inset-inline: 0; bottom: 0; padding: 20px; background: linear-gradient(to top, rgba(6,7,12,.95), transparent); }
+  .chip {
+    display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 600;
+    color: var(--secondary); background: color-mix(in oklab, var(--secondary) 12%, transparent);
+    border: 1px solid color-mix(in oklab, var(--secondary) 35%, transparent); margin-bottom: 8px;
+  }
+  .card h3 { font-size: 1.3rem; }
+  .card p { font-size: .9rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* ---------- Reviews ---------- */
+  .reviews-layout { display: grid; grid-template-columns: 360px 1fr; gap: 28px; align-items: start; }
+  @media (max-width: 900px) { .reviews-layout { grid-template-columns: 1fr; } }
+  .summary { border-radius: 22px; padding: 26px; }
+  .summary .avg { font-size: 3.4rem; font-weight: 700; }
+  .bar-row { display: flex; align-items: center; gap: 10px; font-size: .85rem; color: var(--muted); margin-top: 8px; }
+  .bar { flex: 1; height: 7px; border-radius: 999px; background: rgba(255,255,255,.08); overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--primary), var(--secondary)); }
+  .review-card { border-radius: 22px; padding: 22px; margin-bottom: 18px; }
+  .review-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+  .stars { color: var(--accent); letter-spacing: 2px; font-size: 15px; }
+  .stars .off { color: rgba(255,255,255,.18); }
+  .review-card blockquote { color: rgba(243,244,248,.9); }
+  .author { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+  .avatar {
+    width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
+    font-weight: 700; color: #fff; background: linear-gradient(45deg, var(--primary), var(--secondary)); flex: none;
+  }
+  .author b { display: block; font-size: .95rem; }
+  .author span { font-size: .8rem; color: var(--muted); }
+
+  /* ---------- Form ---------- */
+  form.review-form { border-radius: 22px; padding: 26px; margin-top: 22px; }
+  form.review-form h3 { margin-bottom: 4px; }
+  form.review-form .hint { font-size: .9rem; color: var(--muted); margin-bottom: 18px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: .9rem; font-weight: 500; margin-bottom: 6px; }
+  .field input, .field select, .field textarea {
+    width: 100%; padding: 12px 14px; border-radius: 12px; color: var(--fg);
+    background: var(--surface); border: 1px solid var(--line); outline: none; font: inherit;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--primary); }
+  .star-input { display: flex; gap: 6px; direction: ltr; }
+  .star-input button { background: none; border: none; font-size: 26px; color: rgba(255,255,255,.18); transition: transform .15s, color .15s; }
+  .star-input button.on { color: var(--accent); transform: scale(1.1); }
+  .form-msg { margin-top: 10px; font-size: .9rem; font-weight: 500; display: none; }
+  .form-msg.ok { color: var(--secondary); display: block; }
+  .form-msg.err { color: var(--accent); display: block; }
+
+  /* ---------- Contact / footer ---------- */
+  .cta { text-align: center; }
+  .cta h2 { font-size: clamp(2rem, 5vw, 3.4rem); }
+  footer { border-top: 1px solid var(--line); padding: 40px 0; }
+  .footer-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between; color: var(--muted); font-size: .9rem; }
+
+  /* ---------- Project modal ---------- */
+  .modal {
+    position: fixed; inset: 0; z-index: 100; display: none; overflow-y: auto;
+    background: rgba(6,7,12,.94); backdrop-filter: blur(14px);
+  }
+  .modal.open { display: block; }
+  .modal-inner { max-width: 900px; margin: 60px auto; padding: 0 20px 80px; }
+  .modal-close {
+    position: fixed; top: 20px; inset-inline-end: 20px; z-index: 101;
+    width: 46px; height: 46px; border-radius: 50%; font-size: 18px; color: var(--fg);
+    background: rgba(255,255,255,.06); border: 1px solid var(--line);
+  }
+  .modal-cover { border-radius: 22px; overflow: hidden; border: 1px solid var(--line); margin-bottom: 26px; }
+  .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 18px; border-radius: 18px; padding: 20px; margin: 22px 0; }
+  .meta-grid dt { font-size: .75rem; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .meta-grid dd { font-weight: 600; }
+  .modal-desc p { margin-bottom: 16px; color: rgba(243,244,248,.86); }
+  .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 20px; }
+  .gallery img { border-radius: 14px; border: 1px solid var(--line); aspect-ratio: 4/3; object-fit: cover; width: 100%; }
+  .loading { text-align: center; color: var(--muted); padding: 40px 0; }
+</style>
+</head>
+<body>
+
+<header id="header">
+  <div class="container nav">
+    <a href="#" class="brand"><span class="brand-dot"></span><span id="site-name">…</span></a>
+    <nav class="nav-links">
+      <a href="#work" data-i18n="nav_work"></a>
+      <a href="#reviews" data-i18n="nav_reviews"></a>
+      <a href="#contact" data-i18n="nav_contact"></a>
+    </nav>
+    <button class="lang-btn" id="lang-toggle">EN</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div id="hero-canvas"></div>
+  <div class="container hero-content">
+    <span class="badge glass"><span class="pulse"></span><span data-i18n="badge"></span></span>
+    <h1><span data-i18n="title1"></span> <span class="text-gradient" data-i18n="title2"></span> <span data-i18n="title3"></span></h1>
+    <p class="hero-sub" data-i18n="subtitle"></p>
+    <div class="hero-ctas">
+      <a href="#work" class="btn" data-i18n="cta_work"></a>
+      <a href="#contact" class="btn btn-ghost" data-i18n="cta_contact"></a>
+    </div>
+    <div class="stats">
+      <div class="stat"><b class="text-gradient">40+</b><span data-i18n="stat_projects"></span></div>
+      <div class="stat"><b class="text-gradient">8+</b><span data-i18n="stat_years"></span></div>
+      <div class="stat"><b class="text-gradient">30+</b><span data-i18n="stat_clients"></span></div>
+      <div class="stat"><b class="text-gradient" id="stat-rating">5★</b><span data-i18n="stat_rating"></span></div>
+    </div>
+  </div>
+</section>
+
+<section id="work">
+  <div class="container">
+    <p class="eyebrow" data-i18n="work_eyebrow"></p>
+    <h2 data-i18n="work_title"></h2>
+    <p class="section-sub" data-i18n="work_sub"></p>
+    <div class="filters" id="filters"></div>
+    <div class="grid" id="work-grid"><p class="loading" data-i18n="loading"></p></div>
+  </div>
+</section>
+
+<section id="reviews">
+  <div class="container">
+    <p class="eyebrow" data-i18n="reviews_eyebrow"></p>
+    <h2 data-i18n="reviews_title"></h2>
+    <p class="section-sub" data-i18n="reviews_sub"></p>
+    <div class="reviews-layout">
+      <div>
+        <div class="summary glass" id="summary"></div>
+        <form class="review-form glass" id="review-form">
+          <h3 data-i18n="form_title"></h3>
+          <p class="hint" data-i18n="form_hint"></p>
+          <div class="field"><label data-i18n="form_name"></label><input name="author_name" required minlength="2" maxlength="80" /></div>
+          <div class="field"><label data-i18n="form_role"></label><input name="author_role" maxlength="120" /></div>
+          <div class="field"><label data-i18n="form_project"></label><select name="project_id" id="project-select"></select></div>
+          <div class="field"><label data-i18n="form_rating"></label><div class="star-input" id="star-input"></div></div>
+          <div class="field"><label data-i18n="form_comment"></label><textarea name="comment" rows="4" required minlength="3" maxlength="2000"></textarea></div>
+          <button type="submit" class="btn" data-i18n="form_submit"></button>
+          <p class="form-msg" id="form-msg"></p>
+        </form>
+      </div>
+      <div id="reviews-wall"><p class="loading" data-i18n="loading"></p></div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="cta">
+  <div class="container">
+    <h2 class="text-gradient" data-i18n="cta_title"></h2>
+    <p class="section-sub" style="margin-inline:auto" data-i18n="cta_sub"></p>
+    <a class="btn" href="mailto:ibr5ab2i@gmail.com" data-i18n="cta_btn"></a>
+  </div>
+</section>
+
+<footer>
+  <div class="container footer-row">
+    <span>© <span id="year"></span> <span id="site-name-footer"></span></span>
+    <span data-i18n="footer_tag"></span>
+  </div>
+</footer>
+
+<div class="modal" id="modal">
+  <button class="modal-close" id="modal-close">✕</button>
+  <div class="modal-inner" id="modal-inner"></div>
+</div>
+
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js" } }
+</script>
+<script type="module">
+/* =============================================================
+   Static single-file portfolio — data comes live from Supabase
+   (anon key is public by design; access is enforced by RLS).
+============================================================= */
+const SUPABASE_URL = "https://sgrouzjfpdwoxknkoqaq.supabase.co";
+const ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNncm91empmcGR3b3hrbmtvcWFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDEyNDIsImV4cCI6MjA5NTQ3NzI0Mn0.rMwC5r144d1jFy33xVMlrCY_Jw7fuW3k4_Gb1qEEmGI";
+
+async function db(path) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    headers: { apikey: ANON, Authorization: `Bearer ${ANON}` },
+  });
+  if (!res.ok) throw new Error(`Supabase ${res.status}`);
+  return res.json();
+}
+
+/* ---------------- i18n ---------------- */
+const T = {
+  ar: {
+    nav_work: "الأعمال", nav_reviews: "التقييمات", nav_contact: "تواصل",
+    badge: "متاح لمشاريع جديدة",
+    title1: "نصنع تجارب", title2: "رقمية", title3: "تفوق الخيال",
+    subtitle: "أصمّم وأبني مواقع ومنتجات وعلامات تجارية غامرة — أمزج التقنيات ثلاثية الأبعاد والحركة مع اهتمام مهووس بالتفاصيل.",
+    cta_work: "استكشف أعمالي", cta_contact: "ابدأ مشروعك",
+    stat_projects: "مشروع مُنجز", stat_years: "سنوات خبرة", stat_clients: "عميل سعيد", stat_rating: "متوسط التقييم",
+    work_eyebrow: "معرض الأعمال", work_title: "أعمال مختارة", work_sub: "مجموعة منتقاة من المشاريع في الويب والجوال والهوية البصرية.",
+    filter_all: "الكل", cat_web: "ويب", cat_mobile: "جوال", cat_branding: "هوية بصرية",
+    reviews_eyebrow: "التقييمات", reviews_title: "ماذا يقول العملاء", reviews_sub: "كلمات حقيقية من مشاريع حقيقية. كل تقييم يخضع للمراجعة.",
+    reviews_count: "تقييم", general: "التعاون العام",
+    form_title: "شارك تجربتك", form_hint: "تقييمك يظهر بعد موافقة الإدارة.",
+    form_name: "اسمك", form_role: "المنصب والشركة (اختياري)", form_project: "أي مشروع؟",
+    form_rating: "تقييمك", form_comment: "رأيك", form_submit: "إرسال التقييم",
+    form_ok: "شكرًا لك! تم استلام تقييمك وسيظهر بعد المراجعة.", form_err: "حدث خطأ — حاول مرة أخرى.",
+    cta_title: "لديك فكرة تستحق البناء؟", cta_sub: "حدّثني عن مشروعك — أرد خلال ٢٤ ساعة.", cta_btn: "تواصل معي",
+    footer_tag: "نبني تجارب رقمية تفوق الخيال.",
+    year: "السنة", category: "التصنيف", stack: "التقنيات", gallery: "معرض الصور", visit: "زيارة الموقع",
+    loading: "جارٍ التحميل…", empty: "لا يوجد محتوى بعد.",
+  },
+  en: {
+    nav_work: "Work", nav_reviews: "Reviews", nav_contact: "Contact",
+    badge: "Available for new projects",
+    title1: "Crafting digital", title2: "experiences", title3: "beyond imagination",
+    subtitle: "I design and engineer immersive websites, products and brands — blending 3D, motion and obsessive attention to detail.",
+    cta_work: "Explore my work", cta_contact: "Start a project",
+    stat_projects: "Projects delivered", stat_years: "Years of craft", stat_clients: "Happy clients", stat_rating: "Average rating",
+    work_eyebrow: "Portfolio", work_title: "Selected work", work_sub: "A curated collection of projects across web, mobile and brand.",
+    filter_all: "All", cat_web: "Web", cat_mobile: "Mobile", cat_branding: "Branding",
+    reviews_eyebrow: "Reviews", reviews_title: "What clients say", reviews_sub: "Real words from real projects. Every review is moderated.",
+    reviews_count: "reviews", general: "Overall collaboration",
+    form_title: "Share your experience", form_hint: "Your review appears after moderation.",
+    form_name: "Your name", form_role: "Role & company (optional)", form_project: "Which project?",
+    form_rating: "Your rating", form_comment: "Your review", form_submit: "Submit review",
+    form_ok: "Thank you! Your review will appear after moderation.", form_err: "Something went wrong — try again.",
+    cta_title: "Have an idea worth building?", cta_sub: "Tell me about your project — I reply within 24 hours.", cta_btn: "Get in touch",
+    footer_tag: "Building digital experiences beyond imagination.",
+    year: "Year", category: "Category", stack: "Stack", gallery: "Gallery", visit: "Visit live site",
+    loading: "Loading…", empty: "Nothing here yet.",
+  },
+};
+
+let locale = (navigator.language || "ar").startsWith("ar") ? "ar" : "en";
+const t = (key) => T[locale][key] ?? key;
+const loc = (row, key) => (locale === "ar" && row[key + "_ar"]?.trim() ? row[key + "_ar"] : row[key + "_en"]) ?? "";
+
+function applyI18n() {
+  document.documentElement.lang = locale;
+  document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
+  document.querySelectorAll("[data-i18n]").forEach((el) => (el.textContent = t(el.dataset.i18n)));
+  document.getElementById("lang-toggle").textContent = locale === "ar" ? "EN" : "عربي";
+}
+
+/* ---------------- helpers ---------------- */
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const asset = (url) => (url && url.startsWith("/") ? "public" + url : url);
+const stars = (n) => `<span class="stars">${"★".repeat(Math.round(n))}<span class="off">${"★".repeat(5 - Math.round(n))}</span></span>`;
+
+/* ---------------- state ---------------- */
+let projects = [], reviews = [], settings = null, activeFilter = "all", rating = 5;
+
+/* ---------------- theme (admin colors) ---------------- */
+function applySettings() {
+  if (!settings) return;
+  const ok = (v) => /^#[0-9a-fA-F]{3,8}$/.test(v);
+  const root = document.documentElement.style;
+  if (ok(settings.primary_color)) root.setProperty("--primary", settings.primary_color);
+  if (ok(settings.secondary_color)) root.setProperty("--secondary", settings.secondary_color);
+  if (ok(settings.accent_color)) root.setProperty("--accent", settings.accent_color);
+  const name = locale === "ar" ? settings.site_name_ar : settings.site_name_en;
+  document.getElementById("site-name").textContent = name;
+  document.getElementById("site-name-footer").textContent = name;
+  document.title = name + " — Portfolio";
+}
+
+/* ---------------- work grid ---------------- */
+function renderFilters() {
+  const cats = [...new Set(projects.map((p) => p.category))];
+  const el = document.getElementById("filters");
+  el.innerHTML = "";
+  [["all", t("filter_all")], ...cats.map((c) => [c, t("cat_" + c) === "cat_" + c ? c : t("cat_" + c)])].forEach(([value, label]) => {
+    const btn = document.createElement("button");
+    btn.className = "filter" + (activeFilter === value ? " active" : "");
+    btn.textContent = label;
+    btn.onclick = () => { activeFilter = value; renderFilters(); renderWork(); };
+    el.appendChild(btn);
+  });
+}
+
+function renderWork() {
+  const grid = document.getElementById("work-grid");
+  const list = activeFilter === "all" ? projects : projects.filter((p) => p.category === activeFilter);
+  if (!list.length) { grid.innerHTML = `<p class="loading">${t("empty")}</p>`; return; }
+  grid.innerHTML = list.map((p, i) => `
+    <article class="card" data-idx="${projects.indexOf(p)}">
+      <div class="cover"><img src="${esc(asset(p.cover_url))}" alt="${esc(loc(p, "title"))}" loading="lazy" /></div>
+      <div class="info">
+        <span class="chip">${esc(t("cat_" + p.category) === "cat_" + p.category ? p.category : t("cat_" + p.category))}${p.year ? " · " + p.year : ""}</span>
+        <h3>${esc(loc(p, "title"))}</h3>
+        <p>${esc(loc(p, "tagline"))}</p>
+      </div>
+    </article>`).join("");
+  grid.querySelectorAll(".card").forEach((card) => (card.onclick = () => openModal(projects[+card.dataset.idx])));
+}
+
+/* ---------------- project modal ---------------- */
+function openModal(p) {
+  const paragraphs = loc(p, "description").split(/\n{2,}/).filter(Boolean);
+  const projectReviews = reviews.filter((r) => r.project_id === p.id);
+  document.getElementById("modal-inner").innerHTML = `
+    <div class="modal-cover"><img src="${esc(asset(p.cover_url))}" alt="" /></div>
+    <h2>${esc(loc(p, "title"))}</h2>
+    <p class="section-sub">${esc(loc(p, "tagline"))}</p>
+    <dl class="meta-grid glass">
+      <div><dt>${t("year")}</dt><dd>${p.year ?? "—"}</dd></div>
+      <div><dt>${t("category")}</dt><dd>${esc(t("cat_" + p.category) === "cat_" + p.category ? p.category : t("cat_" + p.category))}</dd></div>
+      <div><dt>${t("stack")}</dt><dd>${p.tags.map((tag) => esc(tag)).join(" · ")}</dd></div>
+    </dl>
+    <div class="modal-desc">${paragraphs.map((par) => `<p>${esc(par)}</p>`).join("")}</div>
+    ${p.live_url ? `<a class="btn" target="_blank" rel="noopener" href="${esc(p.live_url)}">${t("visit")}</a>` : ""}
+    ${p.gallery?.length ? `<h3 style="margin-top:34px">${t("gallery")}</h3><div class="gallery">${p.gallery.map((g) => `<img src="${esc(asset(g))}" alt="" loading="lazy" />`).join("")}</div>` : ""}
+    ${projectReviews.length ? projectReviews.map((r) => reviewCard(r)).join("") : ""}
+  `;
+  document.getElementById("modal").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeModal() {
+  document.getElementById("modal").classList.remove("open");
+  document.body.style.overflow = "";
+}
+document.getElementById("modal-close").onclick = closeModal;
+document.getElementById("modal").addEventListener("click", (e) => { if (e.target.id === "modal") closeModal(); });
+window.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+
+/* ---------------- reviews ---------------- */
+function reviewCard(r) {
+  const project = projects.find((p) => p.id === r.project_id);
+  return `
+    <figure class="review-card glass" style="margin-top:18px">
+      <div class="review-head">${stars(r.rating)}<span class="chip">${project ? esc(loc(project, "title")) : t("general")}</span></div>
+      <blockquote dir="auto">“${esc(r.comment)}”</blockquote>
+      <figcaption class="author">
+        <span class="avatar">${esc(r.author_name.trim().charAt(0).toUpperCase())}</span>
+        <span><b>${esc(r.author_name)}</b><span>${esc(r.author_role || "")}</span></span>
+      </figcaption>
+    </figure>`;
+}
+
+function renderReviews() {
+  const wall = document.getElementById("reviews-wall");
+  const summary = document.getElementById("summary");
+  if (!reviews.length) { wall.innerHTML = `<p class="loading">${t("empty")}</p>`; summary.innerHTML = ""; return; }
+  const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+  document.getElementById("stat-rating").textContent = avg.toFixed(1) + "★";
+  summary.innerHTML = `
+    <span class="avg text-gradient">${avg.toFixed(1)}</span>
+    <div>${stars(avg)} <span style="color:var(--muted);font-size:.9rem"> ${reviews.length} ${t("reviews_count")}</span></div>
+    ${[5, 4, 3, 2, 1].map((n) => {
+      const count = reviews.filter((r) => r.rating === n).length;
+      return `<div class="bar-row"><span style="direction:ltr">${n}★</span><span class="bar"><i style="width:${(count / reviews.length) * 100}%"></i></span><span>${count}</span></div>`;
+    }).join("")}`;
+  wall.innerHTML = reviews.map((r) => reviewCard(r)).join("");
+}
+
+function renderProjectSelect() {
+  const select = document.getElementById("project-select");
+  select.innerHTML = `<option value="">${t("general")}</option>` +
+    projects.map((p) => `<option value="${p.id}">${esc(loc(p, "title"))}</option>`).join("");
+}
+
+function renderStarInput() {
+  const wrap = document.getElementById("star-input");
+  wrap.innerHTML = "";
+  for (let n = 1; n <= 5; n++) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = "★";
+    btn.className = n <= rating ? "on" : "";
+    btn.onclick = () => { rating = n; renderStarInput(); };
+    wrap.appendChild(btn);
+  }
+}
+
+document.getElementById("review-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const msg = document.getElementById("form-msg");
+  msg.className = "form-msg";
+  const data = Object.fromEntries(new FormData(form));
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/portfolio_reviews`, {
+      method: "POST",
+      headers: { apikey: ANON, Authorization: `Bearer ${ANON}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        author_name: data.author_name.trim(),
+        author_role: (data.author_role || "").trim(),
+        project_id: data.project_id || null,
+        rating,
+        comment: data.comment.trim(),
+        locale,
+        status: "pending",
+      }),
+    });
+    if (!res.ok) throw new Error();
+    form.reset(); rating = 5; renderStarInput();
+    msg.textContent = t("form_ok"); msg.className = "form-msg ok";
+  } catch {
+    msg.textContent = t("form_err"); msg.className = "form-msg err";
+  }
+});
+
+/* ---------------- language toggle ---------------- */
+document.getElementById("lang-toggle").onclick = () => {
+  locale = locale === "ar" ? "en" : "ar";
+  applyI18n(); applySettings(); renderFilters(); renderWork(); renderReviews(); renderProjectSelect();
+};
+
+/* ---------------- navbar scroll ---------------- */
+window.addEventListener("scroll", () => {
+  document.getElementById("header").classList.toggle("scrolled", window.scrollY > 24);
+}, { passive: true });
+document.getElementById("year").textContent = new Date().getFullYear();
+
+/* ---------------- boot ---------------- */
+applyI18n(); renderStarInput();
+(async () => {
+  try {
+    [settings, projects, reviews] = await Promise.all([
+      db("portfolio_settings?id=eq.1").then((rows) => rows[0] ?? null),
+      db("portfolio_projects?published=eq.true&order=sort_order.asc,created_at.desc"),
+      db("portfolio_reviews?status=eq.approved&order=created_at.desc"),
+    ]);
+  } catch (err) {
+    console.error("Supabase fetch failed:", err);
+  }
+  applySettings(); renderFilters(); renderWork(); renderReviews(); renderProjectSelect();
+})();
+</script>
+
+<script type="module">
+/* =============================================================
+   3D hero — Three.js (morphing orb + rings + star field).
+   Kept in its own module so a CDN failure never breaks the page.
+============================================================= */
+import * as THREE from "three";
+
+const holder = document.getElementById("hero-canvas");
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+holder.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 200);
+camera.position.z = 8;
+
+const cssColor = (name) => new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue(name).trim() || "#8b5cf6");
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+const lightA = new THREE.PointLight(cssColor("--secondary"), 1.6, 0, 0);
+lightA.position.set(6, 4, 8);
+const lightB = new THREE.PointLight(cssColor("--primary"), 1.3, 0, 0);
+lightB.position.set(-6, -3, 6);
+scene.add(lightA, lightB);
+
+const group = new THREE.Group();
+scene.add(group);
+
+// Morphing orb (vertex displacement each frame)
+const orbGeo = new THREE.IcosahedronGeometry(1.9, 24);
+const basePositions = orbGeo.attributes.position.array.slice();
+const orbMat = new THREE.MeshStandardMaterial({
+  color: cssColor("--primary"), emissive: cssColor("--primary"),
+  emissiveIntensity: 0.25, roughness: 0.18, metalness: 0.85,
+});
+const orb = new THREE.Mesh(orbGeo, orbMat);
+group.add(orb);
+
+const shell = new THREE.Mesh(
+  new THREE.IcosahedronGeometry(1.9, 2),
+  new THREE.MeshBasicMaterial({ color: cssColor("--secondary"), wireframe: true, transparent: true, opacity: 0.08 }),
+);
+shell.scale.setScalar(1.45);
+group.add(shell);
+
+const ringA = new THREE.Mesh(
+  new THREE.TorusGeometry(3.1, 0.016, 16, 160),
+  new THREE.MeshBasicMaterial({ color: cssColor("--secondary"), transparent: true, opacity: 0.5 }),
+);
+ringA.rotation.set(Math.PI / 2.4, 0.4, 0);
+const ringB = new THREE.Mesh(
+  new THREE.TorusGeometry(3.7, 0.009, 16, 160),
+  new THREE.MeshBasicMaterial({ color: cssColor("--accent"), transparent: true, opacity: 0.35 }),
+);
+ringB.rotation.set(Math.PI / 1.9, -0.5, 0.7);
+group.add(ringA, ringB);
+
+// Star field
+const starGeo = new THREE.BufferGeometry();
+const starCount = 1600;
+const starPos = new Float32Array(starCount * 3);
+for (let i = 0; i < starCount * 3; i++) starPos[i] = (Math.random() - 0.5) * 120;
+starGeo.setAttribute("position", new THREE.BufferAttribute(starPos, 3));
+const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.12, transparent: true, opacity: 0.7 });
+scene.add(new THREE.Points(starGeo, starMat));
+
+// Recolor scene when settings load / language switches change vars
+const recolor = () => {
+  orbMat.color = cssColor("--primary"); orbMat.emissive = cssColor("--primary");
+  shell.material.color = cssColor("--secondary");
+  ringA.material.color = cssColor("--secondary");
+  ringB.material.color = cssColor("--accent");
+  lightA.color = cssColor("--secondary"); lightB.color = cssColor("--primary");
+};
+setTimeout(recolor, 1500); // after settings apply
+setInterval(recolor, 5000);
+
+const pointer = { x: 0, y: 0 };
+window.addEventListener("pointermove", (e) => {
+  pointer.x = (e.clientX / innerWidth) * 2 - 1;
+  pointer.y = -(e.clientY / innerHeight) * 2 + 1;
+});
+
+function resize() {
+  const { clientWidth: w, clientHeight: h } = holder;
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener("resize", resize);
+resize();
+
+const clock = new THREE.Clock();
+const pos = orbGeo.attributes.position;
+const vertex = new THREE.Vector3();
+renderer.setAnimationLoop(() => {
+  const time = clock.getElapsedTime();
+  // organic distortion
+  for (let i = 0; i < pos.count; i++) {
+    vertex.fromArray(basePositions, i * 3);
+    const n = 0.22 * Math.sin(vertex.x * 2.1 + time * 1.6) * Math.cos(vertex.y * 1.7 + time * 1.2) * Math.sin(vertex.z * 1.9 + time);
+    vertex.multiplyScalar(1 + n);
+    pos.setXYZ(i, vertex.x, vertex.y, vertex.z);
+  }
+  pos.needsUpdate = true;
+  orbGeo.computeVertexNormals();
+
+  group.rotation.y += 0.0018;
+  group.rotation.x += (pointer.y * 0.22 - group.rotation.x) * 0.04;
+  group.position.x += (pointer.x * 0.5 - group.position.x) * 0.04;
+  group.position.y += (pointer.y * 0.3 - group.position.y) * 0.04;
+  shell.rotation.y -= 0.001;
+  const float = Math.sin(time * 1.1) * 0.15;
+  orb.position.y = float; shell.position.y = float;
+
+  renderer.render(scene, camera);
+});
+</script>
+</body>
+</html>
