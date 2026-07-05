@@ -92,7 +92,11 @@
     background: rgba(255,255,255,0.04); border: 1px solid var(--line); color: var(--fg);
   }
   .lang-btn:hover { border-color: var(--primary); color: var(--primary); }
-  @media (max-width: 640px) { .nav-links { display: none; } }
+  .admin-link {
+    display: inline-block; padding: 8px 18px; border-radius: 999px;
+    border: 1px solid var(--line); color: var(--muted); font-size: .85rem; font-weight: 600;
+  }
+  .admin-link:hover { color: var(--primary); border-color: var(--primary); }
 
   /* ---------- Hero ---------- */
   .hero { position: relative; min-height: 100svh; display: flex; align-items: center; overflow: hidden; }
@@ -105,7 +109,7 @@
     mask-image: radial-gradient(ellipse at center, black, transparent 75%);
     -webkit-mask-image: radial-gradient(ellipse at center, black, transparent 75%);
   }
-  .hero-content { position: relative; z-index: 1; padding: 130px 0 90px; }
+  .hero-content { position: relative; z-index: 1; width: 100%; min-width: 0; padding-block: 130px 90px; }
   .badge {
     display: inline-flex; align-items: center; gap: 10px;
     padding: 8px 16px; border-radius: 999px; font-size: 14px; color: var(--muted); margin-bottom: 26px;
@@ -219,6 +223,31 @@
   .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 20px; }
   .gallery img { border-radius: 14px; border: 1px solid var(--line); aspect-ratio: 4/3; object-fit: cover; width: 100%; }
   .loading { text-align: center; color: var(--muted); padding: 40px 0; }
+
+  /* ---------- Mobile (must stay last so it overrides base rules) ---------- */
+  @media (max-width: 640px) {
+    .nav { flex-wrap: wrap; }
+    .nav-links { order: 3; width: 100%; justify-content: center; margin-top: 6px; }
+    .nav-links a { padding: 7px 12px; font-size: 13px; }
+    header { padding: 10px 0; }
+    .hero-content { padding-block: 140px 70px; }
+    .hero-sub { font-size: 1rem; }
+    .hero-ctas { gap: 10px; }
+    .btn { padding: 12px 22px; }
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .stat b { font-size: 1.6rem; }
+    section { padding: 56px 0; }
+    .grid { grid-template-columns: 1fr; }
+    .filters { gap: 8px; }
+    .filter { padding: 8px 16px; font-size: 13px; }
+    .modal-inner { margin: 74px auto 40px; padding: 0 14px 60px; }
+    .modal-close { top: 12px; inset-inline-end: 12px; width: 40px; height: 40px; }
+    .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .summary .avg { font-size: 2.6rem; }
+    .review-card, form.review-form, .summary { padding: 18px; }
+    .footer-row { flex-direction: column; text-align: center; }
+  }
 </style>
 </head>
 <body>
@@ -302,7 +331,7 @@
   <div class="container footer-row">
     <span>© <span id="year"></span> <span id="site-name-footer"></span></span>
     <span data-i18n="footer_tag"></span>
-    <a href="admin.html" style="opacity:.55" data-i18n="admin_link"></a>
+    <a href="./admin.html" class="admin-link">⚙ <span data-i18n="admin_link"></span></a>
   </div>
 </footer>
 
