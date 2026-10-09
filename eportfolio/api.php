@@ -25,6 +25,7 @@ session_set_cookie_params([
 ]);
 session_start();
 
+const SCHEMA_VERSION     = 2;
 const LOGIN_MAX_ATTEMPTS = 5;
 const LOGIN_LOCK_SECONDS = 900;
 const STORED_FILE_RE     = '/^[a-f0-9]{32}\.(jpg|jpeg|png|webp|gif|pdf|doc|docx)$/';
@@ -168,7 +169,10 @@ function table_exists(PDO $pdo, string $table): bool
 // إنشاء الجداول تلقائياً عند أول تشغيل، ونقل بيانات النسخة السابقة (جدول ep_data) إن وُجدت
 function ensure_schema(PDO $pdo): void
 {
-    if (table_exists($pdo, 'ep_folders')) return;
+    if (table_exists($pdo, 'ep_folders')) {
+        upgrade_schema($pdo);
+        return;
+    }
     run_sql_file($pdo);
     if (table_exists($pdo, 'ep_data')) {
         $old = [];
@@ -178,6 +182,25 @@ function ensure_schema(PDO $pdo): void
         }
         $pdo->exec('RENAME TABLE ep_data TO ep_data_backup');
     }
+}
+
+// ترقية قاعدة بيانات أُنشئت بإصدار أقدم
+function upgrade_schema(PDO $pdo): void
+{
+    $version = (int)($pdo->query("SELECT setting_value FROM ep_settings WHERE setting_key = '_schema'")->fetchColumn() ?: 1);
+    if ($version >= SCHEMA_VERSION) return;
+    // الإصدار 2: وصف للشواهد والشهادات
+    add_column_if_missing($pdo, 'ep_folder_items', 'description', "TEXT NULL COMMENT 'وصف الشاهد' AFTER title");
+    add_column_if_missing($pdo, 'ep_certificates', 'description', "TEXT NULL COMMENT 'وصف الشهادة' AFTER title");
+    $pdo->prepare('INSERT INTO ep_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)')
+        ->execute(['_schema', (string)SCHEMA_VERSION]);
+}
+
+function add_column_if_missing(PDO $pdo, string $table, string $column, string $definition): void
+{
+    $stmt = $pdo->prepare('SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?');
+    $stmt->execute([$table, $column]);
+    if ((int)$stmt->fetchColumn() === 0) $pdo->exec("ALTER TABLE $table ADD COLUMN $column $definition");
 }
 
 function ordered_keys(array $keys): array
@@ -223,8 +246,17 @@ function client_ip(): string
     return substr((string)($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0'), 0, 45);
 }
 
-function password_matches(string $given): bool
+// بيانات دخول المسؤول: المحفوظة من داخل الموقع (إن وُجدت) وإلا من config.php
+function admin_credentials(): array
 {
+    $rows = db()->query("SELECT setting_key, setting_value FROM ep_settings WHERE setting_key IN ('_admin_user', '_admin_hash')")
+                ->fetchAll(PDO::FETCH_KEY_PAIR);
+    return ['user' => $rows['_admin_user'] ?? ADMIN_USERNAME, 'hash' => $rows['_admin_hash'] ?? null];
+}
+
+function password_matches(string $given, ?string $dbHash): bool
+{
+    if ($dbHash) return password_verify($given, $dbHash);
     if (strncmp(ADMIN_PASSWORD, '$2y$', 4) === 0) return password_verify($given, ADMIN_PASSWORD);
     return hash_equals(ADMIN_PASSWORD, $given);
 }
@@ -262,8 +294,8 @@ function load_all(): array
         $points[$r['folder_id']][] = $r;
     }
     $items = [];
-    foreach ($pdo->query('SELECT id, folder_id, item_type, title, url, file_size, created_at FROM ep_folder_items ORDER BY sort_order, id') as $r) {
-        $item = ['id' => 'i' . $r['id'], 'type' => $r['item_type'], 'name' => $r['title'],
+    foreach ($pdo->query('SELECT id, folder_id, item_type, title, description, url, file_size, created_at FROM ep_folder_items ORDER BY sort_order, id') as $r) {
+        $item = ['id' => 'i' . $r['id'], 'type' => $r['item_type'], 'name' => $r['title'], 'desc' => (string)($r['description'] ?? ''),
                  'size' => $r['file_size'] === null ? null : (int)$r['file_size'], 'date' => datetime_to_ms($r['created_at'])];
         if ($r['item_type'] === 'image') $item['src'] = $r['url']; else $item['url'] = $r['url'];
         $items[$r['folder_id']][] = $item;
@@ -308,7 +340,8 @@ function load_all(): array
     // الشهادات
     $certs = [];
     foreach ($pdo->query('SELECT * FROM ep_certificates ORDER BY sort_order, id') as $r) {
-        $certs[] = ['id' => 't' . $r['id'], 'cat' => $r['category'], 'title' => $r['title'], 'src' => $r['image_url'], 'date' => datetime_to_ms($r['created_at'])];
+        $certs[] = ['id' => 't' . $r['id'], 'cat' => $r['category'], 'title' => $r['title'], 'desc' => (string)($r['description'] ?? ''),
+                    'src' => $r['image_url'], 'date' => datetime_to_ms($r['created_at'])];
     }
     $data['certs'] = $certs;
 
@@ -401,7 +434,7 @@ function save_folder_state(array $state): void
     $clear = $pdo->prepare('UPDATE ep_folder_points SET is_done = 0 WHERE folder_id = ?');
     $mark = $pdo->prepare('UPDATE ep_folder_points SET is_done = 1 WHERE folder_id = ? AND point_text = ?');
     $delItems = $pdo->prepare('DELETE FROM ep_folder_items WHERE folder_id = ?');
-    $addItem = $pdo->prepare('INSERT INTO ep_folder_items (folder_id, item_type, title, url, file_size, created_at, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?)');
+    $addItem = $pdo->prepare('INSERT INTO ep_folder_items (folder_id, item_type, title, description, url, file_size, created_at, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
 
     foreach ($state as $fid => $st) {
         $fid = (string)$fid;
@@ -419,7 +452,7 @@ function save_folder_state(array $state): void
             $type = $it['type'];
             $url = safe_url($type === 'image' ? ($it['src'] ?? null) : ($it['url'] ?? null), $type === 'link');
             if (!$url) continue;
-            $addItem->execute([$fid, $type, clip($it['name'] ?? '', 255), $url, int_or_null($it['size'] ?? null), ms_to_datetime($it['date'] ?? null), $j + 1]);
+            $addItem->execute([$fid, $type, clip($it['name'] ?? '', 255), clip($it['desc'] ?? '', 2000), $url, int_or_null($it['size'] ?? null), ms_to_datetime($it['date'] ?? null), $j + 1]);
         }
     }
 }
@@ -460,11 +493,11 @@ function save_certificates(array $rows): void
 {
     $pdo = db();
     $pdo->exec('DELETE FROM ep_certificates');
-    $add = $pdo->prepare('INSERT INTO ep_certificates (category, title, image_url, created_at, sort_order) VALUES (?, ?, ?, ?, ?)');
+    $add = $pdo->prepare('INSERT INTO ep_certificates (category, title, description, image_url, created_at, sort_order) VALUES (?, ?, ?, ?, ?, ?)');
     $order = 0;
     foreach ($rows as $r) {
         if (!is_array($r) || !($url = safe_url($r['src'] ?? null))) continue;
-        $add->execute([($r['cat'] ?? '') === 'course' ? 'course' : 'thanks', clip($r['title'] ?? '', 255), $url, ms_to_datetime($r['date'] ?? null), ++$order]);
+        $add->execute([($r['cat'] ?? '') === 'course' ? 'course' : 'thanks', clip($r['title'] ?? '', 255), clip($r['desc'] ?? '', 2000), $url, ms_to_datetime($r['date'] ?? null), ++$order]);
     }
 }
 
@@ -517,12 +550,14 @@ try {
                 'data'        => load_all(),
                 'admin'       => is_admin(),
                 'csrf'        => is_admin() ? $_SESSION['csrf'] : null,
+                'adminUser'   => is_admin() ? admin_credentials()['user'] : null,
                 'maxUploadMb' => MAX_UPLOAD_MB,
             ]);
 
         // تسجيل دخول المسؤول
         case 'login':
-            if (ADMIN_PASSWORD === 'CHANGE_ME' || ADMIN_PASSWORD === '') {
+            $cred = admin_credentials();
+            if (!$cred['hash'] && (ADMIN_PASSWORD === 'CHANGE_ME' || ADMIN_PASSWORD === '')) {
                 fail('لم تُضبط كلمة مرور المسؤول بعد — افتح ملف config.php وغيّر CHANGE_ME إلى كلمة مرورك', 403);
             }
             $ip = client_ip();
@@ -535,8 +570,8 @@ try {
             }
 
             $b = body();
-            $userOk = hash_equals(ADMIN_USERNAME, (string)($b['username'] ?? ''));
-            $passOk = password_matches((string)($b['password'] ?? ''));
+            $userOk = hash_equals((string)$cred['user'], (string)($b['username'] ?? ''));
+            $passOk = password_matches((string)($b['password'] ?? ''), $cred['hash']);
             if (!$userOk || !$passOk) {
                 $attempts = $recent ? (int)$row['attempts'] + 1 : 1;
                 db()->prepare('INSERT INTO ep_login_attempts (ip, attempts, last_at) VALUES (?, ?, ?)
@@ -612,14 +647,95 @@ try {
             delete_stored_file(body()['url'] ?? null);
             out(['ok' => true]);
 
-        // حذف جميع البيانات والملفات وإعادة الوضع الافتراضي
+        // تغيير اسم المستخدم وكلمة مرور المسؤول من داخل الموقع
+        case 'change_credentials':
+            require_admin();
+            $b = body();
+            $cred = admin_credentials();
+            if (!password_matches((string)($b['current'] ?? ''), $cred['hash'])) { usleep(400000); fail('كلمة المرور الحالية غير صحيحة'); }
+            $newPass = (string)($b['password'] ?? '');
+            if (strlen($newPass) < 8) fail('كلمة المرور الجديدة يجب أن تكون 8 أحرف على الأقل');
+            $newUser = clip($b['username'] ?? '', 64) ?: (string)$cred['user'];
+            in_transaction(function () use ($newUser, $newPass) {
+                put_setting('_admin_user', $newUser);
+                put_setting('_admin_hash', password_hash($newPass, PASSWORD_DEFAULT));
+            });
+            session_regenerate_id(true);
+            out(['ok' => true, 'adminUser' => $newUser]);
+
+        // تنزيل نسخة احتياطية كاملة (البيانات + الملفات) بصيغة ZIP
+        case 'backup':
+            require_admin();
+            if (!class_exists('ZipArchive')) fail('الاستضافة لا تدعم إنشاء ملفات ZIP (إضافة zip في PHP غير مفعّلة)', 500);
+            $tmp = tempnam(sys_get_temp_dir(), 'epb');
+            $zip = new ZipArchive();
+            if ($zip->open($tmp, ZipArchive::OVERWRITE) !== true) fail('تعذر إنشاء ملف النسخة الاحتياطية', 500);
+            $zip->addFromString('data.json', json_encode(load_all(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+            foreach (glob(UPLOAD_DIR . '/*') ?: [] as $path) {
+                if (preg_match(STORED_FILE_RE, basename($path)) === 1) $zip->addFile($path, 'uploads/' . basename($path));
+            }
+            $zip->close();
+            header('Content-Type: application/zip');
+            header('Content-Disposition: attachment; filename="eportfolio-backup-' . date('Y-m-d') . '.zip"');
+            header('Content-Length: ' . filesize($tmp));
+            readfile($tmp);
+            @unlink($tmp);
+            exit;
+
+        // استعادة نسخة احتياطية كاملة من ملف ZIP
+        case 'restore':
+            require_admin();
+            if (!class_exists('ZipArchive')) fail('الاستضافة لا تدعم ملفات ZIP (إضافة zip في PHP غير مفعّلة)', 500);
+            $file = $_FILES['file'] ?? null;
+            if (!$file || !is_array($file) || is_array($file['error'])) fail('لم يُرسل أي ملف');
+            if ($file['error'] === UPLOAD_ERR_INI_SIZE || $file['error'] === UPLOAD_ERR_FORM_SIZE) fail('ملف النسخة أكبر من الحد المسموح في إعدادات الاستضافة');
+            if ($file['error'] !== UPLOAD_ERR_OK) fail('فشل رفع ملف النسخة (رمز ' . (int)$file['error'] . ')');
+            $zip = new ZipArchive();
+            if ($zip->open($file['tmp_name']) !== true) fail('ملف النسخة الاحتياطية غير صالح');
+            $data = json_decode((string)$zip->getFromName('data.json'), true);
+            if (!is_array($data)) fail('ملف النسخة لا يحتوي على بيانات صالحة (data.json)');
+
+            // استخراج الملفات المسموحة فقط (بأسمائها العشوائية) مع التحقق من نوعها
+            if (!is_dir(UPLOAD_DIR)) @mkdir(UPLOAD_DIR, 0755, true);
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                $stat = $zip->statIndex($i);
+                if (!$stat || !preg_match('#^uploads/([a-f0-9]{32}\.([a-z]+))$#', $stat['name'], $m)) continue;
+                if (preg_match(STORED_FILE_RE, $m[1]) !== 1 || $stat['size'] > MAX_UPLOAD_MB * 1024 * 1024) continue;
+                $dest = UPLOAD_DIR . '/' . $m[1];
+                $in = $zip->getStream($stat['name']);
+                if (!$in) continue;
+                $outFile = fopen($dest, 'wb');
+                stream_copy_to_stream($in, $outFile, MAX_UPLOAD_MB * 1024 * 1024);
+                fclose($in); fclose($outFile);
+                if (!in_array($finfo->file($dest) ?: '', ALLOWED_UPLOADS[$m[2]] ?? [], true)) @unlink($dest);
+                else @chmod($dest, 0644);
+            }
+            $zip->close();
+
+            in_transaction(function () use ($data) {
+                $pdo = db();
+                $pdo->exec('DELETE FROM ep_profile');
+                $pdo->exec('INSERT INTO ep_profile (id) VALUES (1)');
+                $pdo->exec('UPDATE ep_cards SET image_url = NULL');
+                $pdo->exec("DELETE FROM ep_settings WHERE setting_key = 'logo'");
+                foreach (ordered_keys(array_keys($data)) as $key) {
+                    $key = (string)$key;
+                    if (in_array($key, KEY_ORDER, true) || strpos($key, 'img:') === 0) save_key($key, $data[$key]);
+                }
+            });
+            out(['ok' => true]);
+
+        // حذف جميع البيانات والملفات وإعادة الوضع الافتراضي (مع الإبقاء على بيانات دخول المسؤول)
         case 'reset':
             require_admin();
             $pdo = db();
+            $keepAuth = $pdo->query("SELECT setting_key, setting_value FROM ep_settings WHERE setting_key IN ('_admin_user', '_admin_hash')")->fetchAll(PDO::FETCH_KEY_PAIR);
             foreach (['ep_folder_items', 'ep_folder_points', 'ep_folders', 'ep_certificates', 'ep_courses', 'ep_cards', 'ep_profile', 'ep_settings'] as $t) {
                 $pdo->exec("DROP TABLE IF EXISTS $t");
             }
             run_sql_file($pdo);
+            foreach ($keepAuth as $k => $v) put_setting($k, $v);
             foreach (glob(UPLOAD_DIR . '/*') ?: [] as $path) {
                 if (preg_match(STORED_FILE_RE, basename($path)) === 1) @unlink($path);
             }

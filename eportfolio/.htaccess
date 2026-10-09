@@ -1,3 +1,6 @@
+# الصفحة الرئيسية: index.php (يضيف بطاقة معاينة الرابط) ثم index.html كاحتياط
+DirectoryIndex index.php index.html
+
 # منع عرض محتويات المجلدات
 Options -Indexes
 

@@ -78,6 +78,7 @@ CREATE TABLE IF NOT EXISTS ep_certificates (
   id         INT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
   category   ENUM('thanks','course') NOT NULL DEFAULT 'thanks' COMMENT 'thanks = شكر وتقدير، course = دورة',
   title      VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'اسم الشهادة',
+  description TEXT        NULL     COMMENT 'وصف الشهادة',
   image_url  VARCHAR(500) NOT NULL COMMENT 'صورة الشهادة',
   created_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   sort_order INT          NOT NULL DEFAULT 0
@@ -108,6 +109,7 @@ CREATE TABLE IF NOT EXISTS ep_folder_items (
   folder_id  VARCHAR(40)  NOT NULL,
   item_type  ENUM('link','image','word','pdf') NOT NULL COMMENT 'نوع الشاهد',
   title      VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'اسم الشاهد',
+  description TEXT        NULL     COMMENT 'وصف الشاهد',
   url        TEXT         NOT NULL COMMENT 'الرابط أو مسار الملف',
   file_size  INT          NULL     COMMENT 'الحجم بالبايت',
   created_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -126,6 +128,9 @@ CREATE TABLE IF NOT EXISTS ep_login_attempts (
 -- =====================================================================
 -- البيانات الافتراضية
 -- =====================================================================
+
+-- رقم إصدار هيكل قاعدة البيانات (يُستخدم للترقية التلقائية)
+INSERT IGNORE INTO ep_settings (setting_key, setting_value) VALUES ('_schema', '2');
 
 INSERT IGNORE INTO ep_profile (id) VALUES (1);
 
