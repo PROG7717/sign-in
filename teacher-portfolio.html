@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- ✏️ عدّل عنوان الصفحة الذي يظهر في تبويب المتصفح -->
+<title>ملف الإنجاز الإلكتروني للمعلم</title>
+<meta name="description" content="ملف إنجاز إلكتروني للمعلم: السيرة الذاتية، النمو المهني، الشهادات، ومجلدات الأداء والمبادرات.">
+
+<!-- الخط العربي: Tajawal من Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+
+<!-- مكتبة الأيقونات Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- إطار Tailwind CSS عبر CDN -->
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>
+  // إعدادات Tailwind: الخط الافتراضي هو Tajawal
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { sans: ['Tajawal', 'system-ui', 'sans-serif'] }
+      }
+    }
+  };
+</script>
+
+<style>
+  /* =========================================================
+     🎨 لوحة الألوان — عدّل هذه القيم لتغيير ألوان الموقع بالكامل
+     ========================================================= */
+  :root {
+    --primary: #059669;        /* الأخضر الزمردي الأساسي */
+    --primary-dark: #047857;   /* أخضر داكن */
+    --primary-deep: #064e3b;   /* أخضر عميق (خلفية الواجهة) */
+    --primary-soft: #ecfdf5;   /* أخضر فاتح جداً */
+    --primary-ring: rgba(16, 185, 129, .18);
+    --bg: #f6f8f7;             /* خلفية الصفحة (رمادي فاتح مائل للأخضر) */
+    --surface: #ffffff;        /* خلفية البطاقات */
+    --line: #e5e9e7;           /* لون الحدود */
+    --text: #1e293b;           /* لون النص الأساسي */
+    --muted: #64748b;          /* لون النص الثانوي */
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Tajawal', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: #a7f3d0; color: var(--primary-deep); }
+
+  /* ---------- شريط التمرير ---------- */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: #eef2f0; }
+  ::-webkit-scrollbar-thumb { background: #a7c4b8; border-radius: 10px; border: 2px solid #eef2f0; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+  /* =========================================================
+     ✨ حركة الظهور التدريجي عند التمرير (Fade-in on scroll)
+     أضف الكلاس reveal لأي عنصر، واستخدم --d للتأخير
+     ========================================================= */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity .8s cubic-bezier(.2,.65,.3,1), transform .8s cubic-bezier(.2,.65,.3,1);
+    transition-delay: var(--d, 0ms);
+  }
+  .reveal.is-visible { opacity: 1; transform: none; }
+
+  /* ---------- شريط التنقل ---------- */
+  #navbar { transition: background-color .35s, box-shadow .35s, backdrop-filter .35s; }
+  #navbar .nav-link, #navbar .nav-brand, #navbar .menu-btn { color: #fff; transition: color .3s, background-color .3s; }
+  #navbar .nav-link:hover { background: rgba(255,255,255,.12); }
+  #navbar.scrolled { background: rgba(255,255,255,.88); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 6px 24px -12px rgba(6,78,59,.25); }
+  #navbar.scrolled .nav-link, #navbar.scrolled .menu-btn { color: #334155; }
+  #navbar.scrolled .nav-brand { color: var(--primary-deep); }
+  #navbar.scrolled .nav-link:hover { background: var(--primary-soft); color: var(--primary-dark); }
+  #navbar .nav-link.active { background: rgba(255,255,255,.18); }
+  #navbar.scrolled .nav-link.active { background: var(--primary-soft); color: var(--primary-dark); }
+  #mobileMenu { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .4s ease; }
+  #mobileMenu.open { grid-template-rows: 1fr; }
+  #mobileMenu > div { overflow: hidden; }
+
+  /* ---------- الواجهة الرئيسية (Hero) ---------- */
+  .hero-bg {
+    background:
+      radial-gradient(1200px 500px at 85% -10%, rgba(52,211,153,.35), transparent 60%),
+      radial-gradient(900px 500px at 0% 110%, rgba(16,185,129,.3), transparent 60%),
+      linear-gradient(135deg, #022c22 0%, #064e3b 45%, #047857 100%);
+  }
+  /* نقش هندسي (نجمة ثمانية) بشفافية خفيفة */
+  .hero-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.07' stroke-width='1'%3E%3Cpath d='M32 6l7 19 19 7-19 7-7 19-7-19-19-7 19-7z'/%3E%3Crect x='20' y='20' width='24' height='24' transform='rotate(45 32 32)'/%3E%3C/g%3E%3C/svg%3E");
+  }
+  .blob { position: absolute; border-radius: 9999px; filter: blur(50px); opacity: .45; animation: float 9s ease-in-out infinite; pointer-events: none; }
+  @keyframes float { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-14px,-22px); } }
+
+  .avatar-ring { background: conic-gradient(from 180deg, #34d399, #a7f3d0, #10b981, #6ee7b7, #34d399); animation: spin 14s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .stat-card { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); backdrop-filter: blur(8px); transition: transform .35s, background-color .35s; }
+  .stat-card:hover { transform: translateY(-4px); background: rgba(255,255,255,.13); }
+
+  /* ---------- الأزرار ---------- */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; font-weight: 700; border-radius: .9rem; padding: .7rem 1.2rem; transition: transform .2s, box-shadow .25s, background-color .25s, color .25s, border-color .25s; cursor: pointer; white-space: nowrap; }
+  .btn:active { transform: scale(.97); }
+  .btn:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--primary-ring); }
+  .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 8px 20px -8px rgba(5,150,105,.6); }
+  .btn-primary:hover { background: var(--primary-dark); box-shadow: 0 12px 26px -10px rgba(5,150,105,.75); transform: translateY(-1px); }
+  .btn-light { background: #fff; color: var(--primary-deep); }
+  .btn-light:hover { background: var(--primary-soft); transform: translateY(-1px); }
+  .btn-ghost { background: transparent; color: #334155; border: 1px solid var(--line); }
+  .btn-ghost:hover { border-color: #a7f3d0; background: var(--primary-soft); color: var(--primary-dark); }
+  .btn-outline-white { border: 1px solid rgba(255,255,255,.4); color: #fff; }
+  .btn-outline-white:hover { background: rgba(255,255,255,.12); border-color: #fff; }
+  .btn-danger { background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
+  .btn-danger:hover { background: #ffe4e6; }
+  .btn-sm { padding: .45rem .8rem; font-size: .85rem; border-radius: .7rem; }
+  .icon-btn { width: 2.25rem; height: 2.25rem; display: inline-grid; place-items: center; border-radius: .7rem; color: #64748b; transition: background-color .2s, color .2s, transform .2s; }
+  .icon-btn:hover { background: #f1f5f9; color: var(--primary-dark); }
+  .icon-btn.danger:hover { background: #fff1f2; color: #e11d48; }
+
+  /* ---------- عناوين الأقسام ---------- */
+  .section-num { font-size: clamp(3rem, 7vw, 5rem); line-height: 1; font-weight: 900; color: transparent; -webkit-text-stroke: 2px #a7d8c4; }
+  .eyebrow { display: inline-flex; align-items: center; gap: .5rem; color: var(--primary); font-weight: 700; font-size: .9rem; }
+  .eyebrow::before { content: ''; width: 28px; height: 3px; border-radius: 3px; background: var(--primary); }
+
+  /* =========================================================
+     🃏 البطاقات (Cards) مع تأثيرات التمرير
+     ========================================================= */
+  .card {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 1.4rem;
+    box-shadow: 0 1px 2px rgba(15,23,42,.04);
+    transition: transform .45s cubic-bezier(.2,.65,.3,1), box-shadow .45s, border-color .45s;
+  }
+  .card:hover { transform: translateY(-6px); box-shadow: 0 24px 48px -18px rgba(6,95,70,.28); border-color: #a7f3d0; }
+  .card-icon { width: 3.25rem; height: 3.25rem; border-radius: 1rem; display: grid; place-items: center; font-size: 1.35rem; color: var(--primary); background: var(--primary-soft); transition: transform .45s, background-color .45s, color .45s; }
+  .card:hover .card-icon { transform: rotate(-8deg) scale(1.06); background: var(--primary); color: #fff; }
+  .card-num { position: absolute; top: 1rem; left: 1rem; z-index: 3; min-width: 2rem; height: 2rem; padding: 0 .55rem; border-radius: 999px; display: grid; place-items: center; font-size: .85rem; font-weight: 800; background: rgba(255,255,255,.92); color: var(--primary-dark); border: 1px solid #d1fae5; box-shadow: 0 4px 10px -4px rgba(0,0,0,.15); }
+
+  /* حاوية الصور مع تكبير خفيف عند التمرير */
+  .img-wrap { position: relative; overflow: hidden; aspect-ratio: 4 / 3; border-radius: 1.4rem 1.4rem 0 0; background: #f1f5f4; cursor: zoom-in; }
+  .img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2,.65,.3,1); }
+  .card:hover .img-wrap img { transform: scale(1.08); }
+  .img-wrap::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(2,44,34,.35), transparent 45%); opacity: 0; transition: opacity .45s; pointer-events: none; }
+  .card:hover .img-wrap.has-img::after { opacity: 1; }
+
+  /* مكان الصورة الفارغ (Placeholder) */
+  .img-placeholder {
+    position: absolute; inset: .75rem; border-radius: 1rem;
+    border: 2px dashed #b7dccb; background:
+      repeating-linear-gradient(45deg, rgba(16,185,129,.04) 0 12px, transparent 12px 24px), #f7fbf9;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .4rem;
+    color: #5f8f7b; text-align: center; padding: 1rem; transition: border-color .35s, background-color .35s, transform .6s;
+  }
+  .img-placeholder i { font-size: 2.2rem; color: #7cc4a6; transition: transform .5s; }
+  .card:hover .img-placeholder { border-color: var(--primary); }
+  .card:hover .img-placeholder i { transform: scale(1.12) translateY(-3px); }
+
+  .mini-progress { height: 6px; border-radius: 99px; background: #edf2f0; overflow: hidden; }
+  .mini-progress > span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #10b981, #059669); transition: width .8s cubic-bezier(.2,.65,.3,1); }
+
+  /* ---------- مناطق السحب والإفلات ---------- */
+  .dropzone { border: 2px dashed #c9dfd5; border-radius: 1.1rem; background: #fbfdfc; transition: border-color .25s, background-color .25s, transform .25s; }
+  .dropzone:hover { border-color: #6ee7b7; background: #f3fbf7; }
+  .dropzone.dragover { border-color: var(--primary); background: var(--primary-soft); transform: scale(1.01); }
+
+  /* ---------- تبويبات الفلترة ---------- */
+  .seg { display: inline-flex; padding: .3rem; gap: .25rem; background: #eef3f1; border-radius: .9rem; }
+  .seg button { padding: .45rem .9rem; border-radius: .7rem; font-weight: 700; font-size: .875rem; color: #475569; transition: background-color .25s, color .25s, box-shadow .25s; }
+  .seg button:hover { color: var(--primary-dark); }
+  .seg button.active { background: #fff; color: var(--primary-dark); box-shadow: 0 2px 8px -2px rgba(15,23,42,.12); }
+
+  /* ---------- معرض الشهادات ---------- */
+  .g-item { position: relative; overflow: hidden; border-radius: 1rem; aspect-ratio: 4 / 3; background: #eef3f1; cursor: zoom-in; animation: popIn .5s cubic-bezier(.2,.65,.3,1) both; }
+  .g-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.2,.65,.3,1); }
+  .g-item:hover img { transform: scale(1.08); }
+  .g-item .g-cap { position: absolute; inset: auto 0 0 0; padding: 2rem .8rem .7rem; color: #fff; background: linear-gradient(to top, rgba(2,44,34,.85), transparent); transform: translateY(35%); opacity: .92; transition: transform .4s; }
+  .g-item:hover .g-cap { transform: none; }
+  .g-item .g-del { position: absolute; top: .5rem; left: .5rem; opacity: 0; transform: scale(.85); transition: opacity .3s, transform .3s; }
+  .g-item:hover .g-del, .g-item:focus-within .g-del { opacity: 1; transform: none; }
+  @media (hover: none) { .g-item .g-del { opacity: 1; transform: none; } .g-item .g-cap { transform: none; } }
+  @keyframes popIn { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: none; } }
+
+  /* =========================================================
+     📁 المجلدات التفاعلية (Accordion) مع حركة الانزلاق
+     ========================================================= */
+  .folder {
+    position: relative; margin-top: 14px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 0 1.25rem 1.25rem 1.25rem;
+    transition: box-shadow .4s, border-color .4s;
+  }
+  /* لسان المجلد العلوي */
+  .folder::before {
+    content: ''; position: absolute; top: -13px; right: -1px; width: 140px; height: 14px;
+    background: var(--surface); border: 1px solid var(--line); border-bottom: 0; border-radius: 12px 12px 0 0;
+    transition: background-color .4s, border-color .4s;
+  }
+  .folder:hover { border-color: #b8e6d2; box-shadow: 0 16px 36px -20px rgba(6,95,70,.35); }
+  .folder:hover::before { border-color: #b8e6d2; }
+  .folder.open { border-color: #6ee7b7; box-shadow: 0 22px 48px -22px rgba(6,95,70,.45); }
+  .folder.open::before { background: var(--primary-soft); border-color: #6ee7b7; }
+  .folder-head { width: 100%; display: flex; align-items: center; gap: 1rem; padding: 1.1rem 1.25rem; text-align: right; border-radius: inherit; }
+  .folder-head:focus-visible { outline: none; box-shadow: inset 0 0 0 3px var(--primary-ring); }
+  .folder-icon { width: 3rem; height: 3rem; flex-shrink: 0; border-radius: .95rem; display: grid; place-items: center; font-size: 1.35rem; color: #d97706; background: #fffbeb; transition: background-color .4s, color .4s, transform .4s; }
+  .folder:hover .folder-icon { transform: translateY(-2px) rotate(-4deg); }
+  .folder.open .folder-icon, .folder.filled .folder-icon { color: var(--primary); background: var(--primary-soft); }
+  .folder-chevron { width: 2.25rem; height: 2.25rem; flex-shrink: 0; display: grid; place-items: center; border-radius: 999px; background: #f1f5f4; color: #64748b; transition: transform .45s cubic-bezier(.2,.65,.3,1), background-color .3s, color .3s; }
+  .folder.open .folder-chevron { transform: rotate(180deg); background: var(--primary); color: #fff; }
+  /* حركة الانزلاق للأسفل (Slide Down) باستخدام grid-template-rows */
+  .folder-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .55s cubic-bezier(.4,0,.2,1); }
+  .folder.open .folder-body { grid-template-rows: 1fr; }
+  .folder-body > .inner { overflow: hidden; min-height: 0; }
+  .folder-body .inner-content { opacity: 0; transform: translateY(-8px); transition: opacity .4s .05s, transform .45s .05s; }
+  .folder.open .folder-body .inner-content { opacity: 1; transform: none; transition-delay: .15s; }
+
+  /* قائمة النقاط الفرعية */
+  .check-item { display: flex; align-items: flex-start; gap: .7rem; padding: .6rem .7rem; border-radius: .8rem; cursor: pointer; transition: background-color .2s; }
+  .check-item:hover { background: #f4faf7; }
+  .check-item input { position: absolute; opacity: 0; pointer-events: none; }
+  .check-box { width: 1.3rem; height: 1.3rem; flex-shrink: 0; margin-top: .1rem; border-radius: .4rem; border: 2px solid #b6cdc3; display: grid; place-items: center; color: transparent; font-size: .7rem; transition: all .25s; }
+  .check-item input:checked + .check-box { background: var(--primary); border-color: var(--primary); color: #fff; transform: scale(1.05); }
+  .check-item input:focus-visible + .check-box { box-shadow: 0 0 0 4px var(--primary-ring); }
+  .check-item input:checked ~ .check-label { color: #94a3b8; text-decoration: line-through; text-decoration-color: #a7f3d0; }
+
+  /* أزرار رفع الملفات حسب النوع */
+  .up-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .4rem; padding: .9rem .5rem; border-radius: 1rem; border: 1px solid; font-weight: 700; font-size: .875rem; transition: transform .25s, box-shadow .25s, background-color .25s; cursor: pointer; }
+  .up-btn i { font-size: 1.4rem; transition: transform .3s; }
+  .up-btn:hover { transform: translateY(-3px); }
+  .up-btn:hover i { transform: scale(1.15); }
+  .up-btn:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--primary-ring); }
+  .t-link  { color: #0369a1; background: #f0f9ff; border-color: #bae6fd; } .t-link:hover  { box-shadow: 0 10px 20px -12px #0284c7; }
+  .t-image { color: #047857; background: #ecfdf5; border-color: #a7f3d0; } .t-image:hover { box-shadow: 0 10px 20px -12px #059669; }
+  .t-word  { color: #1d4ed8; background: #eff6ff; border-color: #bfdbfe; } .t-word:hover  { box-shadow: 0 10px 20px -12px #2563eb; }
+  .t-pdf   { color: #be123c; background: #fff1f2; border-color: #fecdd3; } .t-pdf:hover   { box-shadow: 0 10px 20px -12px #e11d48; }
+  .item-icon { width: 2.6rem; height: 2.6rem; flex-shrink: 0; border-radius: .75rem; display: grid; place-items: center; font-size: 1.1rem; border: 1px solid; overflow: hidden; }
+  .item-row { animation: slideIn .4s cubic-bezier(.2,.65,.3,1) both; }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
+
+  .link-form { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .4s ease; }
+  .link-form.open { grid-template-rows: 1fr; }
+  .link-form > div { overflow: hidden; }
+
+  /* ---------- حقول الإدخال ---------- */
+  .field { width: 100%; background: #fff; border: 1px solid #dbe4e0; border-radius: .8rem; padding: .6rem .85rem; transition: border-color .2s, box-shadow .2s; }
+  .field:focus { outline: none; border-color: #10b981; box-shadow: 0 0 0 4px var(--primary-ring); }
+  .tbl-input { width: 100%; min-width: 0; background: transparent; border: 1px solid transparent; border-radius: .6rem; padding: .55rem .75rem; transition: background-color .2s, border-color .2s, box-shadow .2s; }
+  .tbl-input:hover { background: #f6faf8; border-color: #e3ece8; }
+  .tbl-input:focus { outline: none; background: #fff; border-color: #10b981; box-shadow: 0 0 0 3px var(--primary-ring); }
+  .tbl-input::placeholder, .field::placeholder { color: #a3b1ac; }
+
+  /* ---------- الجداول ---------- */
+  .pro-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+  .pro-table th, .pro-table td { border-bottom: 1px solid #eef2f0; }
+  .pro-table thead th { position: sticky; top: 0; z-index: 1; background: var(--primary-deep); color: #fff; font-weight: 700; font-size: .875rem; padding: .85rem .75rem; text-align: right; white-space: nowrap; }
+  .pro-table thead th:first-child { border-top-right-radius: .9rem; }
+  .pro-table thead th:last-child { border-top-left-radius: .9rem; }
+  .pro-table tbody tr { transition: background-color .2s; }
+  .pro-table tbody tr:hover { background: #f8fbfa; }
+  .pro-table tbody tr:nth-child(even) { background: #fbfcfc; }
+  .pro-table tbody tr:nth-child(even):hover { background: #f4faf7; }
+  .cv-group td { background: var(--primary-soft) !important; color: var(--primary-dark); font-weight: 800; padding: .7rem 1rem; }
+  .cv-label { width: 34%; padding: .4rem 1rem; font-weight: 700; color: #334155; font-size: .925rem; background: #fafcfb; border-left: 1px solid #eef2f0; }
+
+  /* =========================================================
+     🪟 النوافذ المنبثقة (Modals)
+     ========================================================= */
+  .modal { position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center; padding: 1rem; visibility: hidden; opacity: 0; transition: opacity .35s, visibility .35s; }
+  .modal.show { visibility: visible; opacity: 1; }
+  .modal-backdrop { position: absolute; inset: 0; background: rgba(2,30,24,.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .modal-panel { position: relative; width: 100%; max-height: calc(100vh - 2rem); display: flex; flex-direction: column; background: #fff; border-radius: 1.5rem; box-shadow: 0 40px 80px -30px rgba(2,44,34,.6); transform: translateY(24px) scale(.97); transition: transform .45s cubic-bezier(.2,.65,.3,1); overflow: hidden; }
+  .modal.show .modal-panel { transform: none; }
+  .modal-head { background: linear-gradient(135deg, #064e3b, #059669); color: #fff; }
+
+  /* عارض الصور (Lightbox) */
+  #lightbox .modal-backdrop { background: rgba(2,20,16,.88); }
+  #lightboxImg { max-height: calc(100vh - 9rem); max-width: 100%; border-radius: 1rem; box-shadow: 0 30px 80px -20px rgba(0,0,0,.6); transition: opacity .3s, transform .4s; }
+  #lightboxImg.loading { opacity: 0; transform: scale(.97); }
+  .lb-nav { width: 3rem; height: 3rem; border-radius: 999px; display: grid; place-items: center; color: #fff; background: rgba(255,255,255,.12); transition: background-color .25s, transform .25s; }
+  .lb-nav:hover { background: rgba(255,255,255,.24); transform: scale(1.06); }
+
+  /* ---------- الإشعارات (Toast) ---------- */
+  .toast { display: flex; align-items: center; gap: .7rem; padding: .85rem 1.1rem; border-radius: 1rem; background: #0f172a; color: #fff; box-shadow: 0 18px 40px -16px rgba(0,0,0,.45); font-weight: 500; animation: toastIn .45s cubic-bezier(.2,.65,.3,1) both; max-width: min(92vw, 420px); }
+  .toast.hide { animation: toastOut .35s ease forwards; }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(16px) scale(.96); } to { opacity: 1; transform: none; } }
+  @keyframes toastOut { to { opacity: 0; transform: translateY(10px) scale(.96); } }
+
+  #toTop { opacity: 0; transform: translateY(16px); pointer-events: none; transition: opacity .35s, transform .35s, background-color .25s; }
+  #toTop.show { opacity: 1; transform: none; pointer-events: auto; }
+
+  .progress-track { height: 10px; border-radius: 99px; background: #e3ece8; overflow: hidden; }
+  .progress-track > span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #34d399, #059669); transition: width 1s cubic-bezier(.2,.65,.3,1); position: relative; overflow: hidden; }
+  .progress-track > span::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.45), transparent); animation: shimmer 2.2s infinite; }
+  @keyframes shimmer { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+
+  /* ---------- تقليل الحركة لمن يفضل ذلك ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
+
+  /* =========================================================
+     🖨️ إعدادات الطباعة
+     ========================================================= */
+  @media print {
+    @page { margin: 12mm; }
+    body { background: #fff; }
+    .no-print, #navbar, #toTop, #toasts, .blob { display: none !important; }
+    .reveal { opacity: 1 !important; transform: none !important; }
+    .card, .folder { box-shadow: none !important; break-inside: avoid; }
+    .folder-body { grid-template-rows: 1fr !important; }
+    .folder-body .inner-content { opacity: 1 !important; transform: none !important; }
+    .hero-bg { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    /* عند طباعة جدول من داخل نافذة منبثقة: تُطبع النافذة فقط */
+    body.print-modal > *:not(.modal.show) { display: none !important; }
+    body.print-modal .modal.show { position: static; padding: 0; display: block; }
+    body.print-modal .modal-backdrop { display: none; }
+    body.print-modal .modal-panel { max-height: none; box-shadow: none; transform: none; border-radius: 0; }
+    body.print-modal .modal-panel .overflow-auto { overflow: visible !important; }
+    .tbl-input { border: 0 !important; padding: .3rem; }
+    .pro-table thead th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+
+<body class="overflow-x-hidden">
+
+<!-- =========================================================
+     شريط التنقل العلوي
+     ========================================================= -->
+<header id="navbar" class="fixed top-0 inset-x-0 z-50">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4" aria-label="التنقل الرئيسي">
+    <a href="#home" class="nav-brand flex items-center gap-2.5 font-extrabold text-lg">
+      <span class="w-10 h-10 rounded-xl bg-emerald-500/90 text-white grid place-items-center shadow-lg shadow-emerald-900/20"><i class="fa-solid fa-book-open-reader"></i></span>
+      <span>ملف الإنجاز</span>
+    </a>
+    <div class="hidden md:flex items-center gap-1">
+      <a href="#home" class="nav-link px-4 py-2 rounded-xl font-bold text-[15px]">الرئيسية</a>
+      <a href="#basics" class="nav-link px-4 py-2 rounded-xl font-bold text-[15px]">الأساسيات</a>
+      <a href="#folders" class="nav-link px-4 py-2 rounded-xl font-bold text-[15px]">مجلدات الأداء</a>
+      <button type="button" data-action="print" class="nav-link px-4 py-2 rounded-xl font-bold text-[15px]"><i class="fa-solid fa-print ms-1"></i> طباعة</button>
+    </div>
+    <button id="menuBtn" type="button" class="menu-btn md:hidden w-10 h-10 grid place-items-center rounded-xl text-xl" aria-label="فتح القائمة" aria-expanded="false" aria-controls="mobileMenu">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+  </nav>
+  <div id="mobileMenu" class="md:hidden">
+    <div>
+      <div class="mx-4 mb-3 p-2 rounded-2xl bg-white shadow-xl border border-slate-100 flex flex-col">
+        <a href="#home" class="px-4 py-3 rounded-xl font-bold text-slate-700 hover:bg-emerald-50 hover:text-emerald-700">الرئيسية</a>
+        <a href="#basics" class="px-4 py-3 rounded-xl font-bold text-slate-700 hover:bg-emerald-50 hover:text-emerald-700">الأساسيات</a>
+        <a href="#folders" class="px-4 py-3 rounded-xl font-bold text-slate-700 hover:bg-emerald-50 hover:text-emerald-700">مجلدات الأداء</a>
+        <button type="button" data-action="print" class="text-right px-4 py-3 rounded-xl font-bold text-slate-700 hover:bg-emerald-50 hover:text-emerald-700"><i class="fa-solid fa-print ms-1"></i> طباعة الملف</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- =========================================================
+     الواجهة الرئيسية (Hero) — بيانات المعلم تُقرأ تلقائياً من جدول السيرة الذاتية
+     ========================================================= -->
+<section id="home" class="hero-bg relative overflow-hidden pt-28 pb-32 sm:pb-40 text-white">
+  <div class="hero-pattern absolute inset-0"></div>
+  <div class="blob w-72 h-72 bg-emerald-300 -top-10 -left-16"></div>
+  <div class="blob w-96 h-96 bg-teal-400 bottom-0 right-1/3" style="animation-delay:-4s"></div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-[auto,1fr] gap-10 lg:gap-14 items-center">
+
+      <!-- الصورة الشخصية: اضغط عليها لرفع صورتك -->
+      <div class="reveal mx-auto lg:mx-0">
+        <div class="relative w-44 h-44 sm:w-52 sm:h-52">
+          <div class="avatar-ring absolute inset-0 rounded-full p-[4px]"><div class="w-full h-full rounded-full bg-emerald-950/40"></div></div>
+          <label class="group absolute inset-[7px] rounded-full overflow-hidden bg-emerald-900/60 border-4 border-emerald-950/30 cursor-pointer grid place-items-center" title="اضغط لرفع صورتك الشخصية">
+            <img id="avatarImg" alt="الصورة الشخصية للمعلم" class="hidden w-full h-full object-cover transition duration-700 group-hover:scale-110">
+            <span id="avatarPlaceholder" class="flex flex-col items-center gap-1 text-emerald-100/90">
+              <i class="fa-solid fa-user-tie text-5xl"></i>
+              <span class="text-xs font-bold">صورتك الشخصية</span>
+            </span>
+            <span class="absolute inset-0 bg-emerald-950/60 opacity-0 group-hover:opacity-100 transition grid place-items-center text-sm font-bold"><span><i class="fa-solid fa-camera ms-1"></i> تغيير الصورة</span></span>
+            <input id="avatarInput" type="file" accept="image/*" class="sr-only">
+          </label>
+          <span class="absolute bottom-3 right-3 w-11 h-11 rounded-full bg-white text-emerald-700 grid place-items-center shadow-xl pointer-events-none"><i class="fa-solid fa-camera"></i></span>
+        </div>
+      </div>
+
+      <div class="text-center lg:text-right">
+        <!-- ✏️ عدّل العام الدراسي هنا -->
+        <span class="reveal inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-emerald-50 text-sm font-bold" style="--d:80ms">
+          <i class="fa-solid fa-award text-amber-300"></i> ملف الإنجاز الإلكتروني — العام الدراسي 1448هـ
+        </span>
+        <h1 id="heroName" class="reveal mt-5 text-4xl sm:text-5xl lg:text-6xl font-black leading-tight" style="--d:160ms">اسم المعلم / المعلمة</h1>
+        <p id="heroTitle" class="reveal mt-3 text-xl sm:text-2xl font-bold text-emerald-200" style="--d:240ms">معلم العلوم العامة</p>
+        <p id="heroSchool" class="reveal mt-2 text-emerald-50/80 text-base sm:text-lg" style="--d:300ms"><i class="fa-solid fa-school ms-1"></i> اسم المدرسة — إدارة التعليم</p>
+        <!-- ✏️ عدّل العبارة الملهمة -->
+        <p class="reveal mt-5 max-w-2xl mx-auto lg:mx-0 text-emerald-50/80 leading-relaxed" style="--d:360ms">
+          «التعليم ليس ملء دلو، بل إشعال نار» — أؤمن بأن كل طالب يحمل شغفاً يستحق الاكتشاف، وأن العلم رحلة نصنعها معاً بالتجربة والسؤال.
+        </p>
+        <div class="reveal mt-8 flex flex-wrap gap-3 justify-center lg:justify-start no-print" style="--d:440ms">
+          <button type="button" data-open="cvModal" class="btn btn-light"><i class="fa-solid fa-id-card"></i> تعبئة السيرة الذاتية</button>
+          <a href="#folders" class="btn btn-outline-white"><i class="fa-solid fa-folder-open"></i> استعراض المجلدات</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- الإحصائيات (تُحدَّث تلقائياً) -->
+    <div class="mt-14 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div class="stat-card reveal rounded-2xl p-4 sm:p-5 flex items-center gap-3 sm:gap-4" style="--d:100ms">
+        <span class="w-12 h-12 rounded-xl bg-emerald-400/20 text-emerald-200 grid place-items-center text-xl shrink-0"><i class="fa-solid fa-chalkboard-user"></i></span>
+        <div><b id="statCourses" class="block text-2xl sm:text-3xl font-black">0</b><span class="text-emerald-100/80 text-sm">برنامج تدريبي</span></div>
+      </div>
+      <div class="stat-card reveal rounded-2xl p-4 sm:p-5 flex items-center gap-3 sm:gap-4" style="--d:180ms">
+        <span class="w-12 h-12 rounded-xl bg-amber-300/20 text-amber-200 grid place-items-center text-xl shrink-0"><i class="fa-solid fa-certificate"></i></span>
+        <div><b id="statCerts" class="block text-2xl sm:text-3xl font-black">0</b><span class="text-emerald-100/80 text-sm">شهادة شكر ودورة</span></div>
+      </div>
+      <div class="stat-card reveal rounded-2xl p-4 sm:p-5 flex items-center gap-3 sm:gap-4" style="--d:260ms">
+        <span class="w-12 h-12 rounded-xl bg-sky-300/20 text-sky-200 grid place-items-center text-xl shrink-0"><i class="fa-solid fa-paperclip"></i></span>
+        <div><b id="statEvidence" class="block text-2xl sm:text-3xl font-black">0</b><span class="text-emerald-100/80 text-sm">شاهد مرفوع</span></div>
+      </div>
+      <div class="stat-card reveal rounded-2xl p-4 sm:p-5 flex items-center gap-3 sm:gap-4" style="--d:340ms">
+        <span class="w-12 h-12 rounded-xl bg-white/15 text-white grid place-items-center text-xl shrink-0"><i class="fa-solid fa-folder-tree"></i></span>
+        <div><b class="block text-2xl sm:text-3xl font-black"><span id="statFolders">0</span><span class="text-lg text-emerald-100/70">/12</span></b><span class="text-emerald-100/80 text-sm">مجلد مُعبّأ</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- موجة سفلية زخرفية -->
+  <svg class="absolute bottom-0 inset-x-0 w-full h-16 sm:h-24 text-[#f6f8f7]" viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true">
+    <path fill="currentColor" d="M0,64 C240,110 480,10 720,40 C960,70 1200,100 1440,50 L1440,100 L0,100 Z"></path>
+  </svg>
+</section>
+
+<!-- =========================================================
+     القسم الأول: الأساسيات
+     ========================================================= -->
+<section id="basics" class="py-16 sm:py-24 scroll-mt-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <div class="reveal flex items-end gap-5 mb-10 sm:mb-14">
+      <span class="section-num">01</span>
+      <div>
+        <span class="eyebrow">القسم الأول</span>
+        <h2 class="text-3xl sm:text-4xl font-black text-slate-800 mt-1">الأساسيات</h2>
+        <p class="text-slate-500 mt-2 max-w-2xl">البيانات الشخصية والمرجعيات التربوية والنمو المهني. اضغط على أي بطاقة للتعبئة أو لرفع الصورة.</p>
+      </div>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- ===== (1) السيرة الذاتية ===== -->
+      <article class="card reveal p-6 sm:p-7 flex flex-col">
+        <span class="card-num">1</span>
+        <div class="card-icon"><i class="fa-solid fa-id-card"></i></div>
+        <h3 class="mt-5 text-xl font-extrabold text-slate-800">السيرة الذاتية</h3>
+        <p class="mt-2 text-slate-500 leading-relaxed">البيانات الشخصية والوظيفية والمؤهلات العلمية في جدول منسق جاهز للتعبئة والطباعة.</p>
+        <ul id="cvPreview" class="mt-5 space-y-2.5 text-sm"></ul>
+        <div class="mt-5">
+          <div class="flex justify-between text-xs font-bold text-slate-500 mb-1.5"><span>نسبة اكتمال البيانات</span><span id="cvPercent">0%</span></div>
+          <div class="mini-progress"><span id="cvBar" style="width:0%"></span></div>
+        </div>
+        <button type="button" data-open="cvModal" class="btn btn-primary mt-6 w-full no-print"><i class="fa-solid fa-table-list"></i> فتح الجدول وتعبئته</button>
+      </article>
+
+      <!-- ===== (2) أهداف التعليم في المملكة =====
+           ✏️ لوضع صورة ثابتة: ضع مسار الصورة في الخاصية data-src
+           مثال: data-src="images/ksa-goals.jpg"
+           (أو ارفعها مباشرة من زر «رفع صورة» داخل الصفحة) -->
+      <article class="card img-card reveal flex flex-col" style="--d:80ms" data-key="ksa-goals" data-src="" data-title="أهداف التعليم في المملكة">
+        <span class="card-num">2</span>
+        <div class="img-wrap" data-action="view-img">
+          <img alt="أهداف التعليم في المملكة العربية السعودية" class="hidden">
+          <div class="img-placeholder">
+            <i class="fa-regular fa-image"></i>
+            <b class="text-slate-700">مكان صورة أهداف التعليم</b>
+            <small>اضغط «رفع صورة» بالأسفل لإضافتها</small>
+          </div>
+        </div>
+        <div class="p-6 flex flex-col flex-1">
+          <div class="flex items-center gap-3">
+            <div class="card-icon !w-11 !h-11 !text-lg"><i class="fa-solid fa-flag"></i></div>
+            <h3 class="text-lg font-extrabold text-slate-800">أهداف التعليم في المملكة</h3>
+          </div>
+          <p class="mt-3 text-slate-500 text-sm leading-relaxed flex-1">الأهداف العامة لسياسة التعليم في المملكة العربية السعودية وفق رؤية 2030.</p>
+          <div class="mt-5 flex gap-2 no-print">
+            <label class="btn btn-primary btn-sm flex-1"><i class="fa-solid fa-cloud-arrow-up"></i> رفع صورة<input type="file" accept="image/*" class="sr-only" data-img-input></label>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="view-img" title="عرض الصورة"><i class="fa-solid fa-expand"></i></button>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="remove-img" title="حذف الصورة"><i class="fa-regular fa-trash-can"></i></button>
+          </div>
+        </div>
+      </article>
+
+      <!-- ===== (3) أهداف تدريس العلوم العامة ===== ✏️ ضع مسار الصورة في data-src -->
+      <article class="card img-card reveal flex flex-col" style="--d:160ms" data-key="science-goals" data-src="" data-title="أهداف تدريس العلوم العامة">
+        <span class="card-num">3</span>
+        <div class="img-wrap" data-action="view-img">
+          <img alt="أهداف تدريس العلوم العامة" class="hidden">
+          <div class="img-placeholder">
+            <i class="fa-regular fa-image"></i>
+            <b class="text-slate-700">مكان صورة أهداف العلوم</b>
+            <small>اضغط «رفع صورة» بالأسفل لإضافتها</small>
+          </div>
+        </div>
+        <div class="p-6 flex flex-col flex-1">
+          <div class="flex items-center gap-3">
+            <div class="card-icon !w-11 !h-11 !text-lg"><i class="fa-solid fa-flask"></i></div>
+            <h3 class="text-lg font-extrabold text-slate-800">أهداف تدريس العلوم العامة</h3>
+          </div>
+          <p class="mt-3 text-slate-500 text-sm leading-relaxed flex-1">تنمية التفكير العلمي ومهارات الاستقصاء وربط العلم بالحياة والبيئة.</p>
+          <div class="mt-5 flex gap-2 no-print">
+            <label class="btn btn-primary btn-sm flex-1"><i class="fa-solid fa-cloud-arrow-up"></i> رفع صورة<input type="file" accept="image/*" class="sr-only" data-img-input></label>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="view-img" title="عرض الصورة"><i class="fa-solid fa-expand"></i></button>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="remove-img" title="حذف الصورة"><i class="fa-regular fa-trash-can"></i></button>
+          </div>
+        </div>
+      </article>
+
+      <!-- ===== (4) ميثاق أخلاقيات المهنة ===== ✏️ ضع مسار الصورة في data-src -->
+      <article class="card img-card reveal flex flex-col" data-key="ethics" data-src="" data-title="ميثاق أخلاقيات مهنة التعليم">
+        <span class="card-num">4</span>
+        <div class="img-wrap" data-action="view-img">
+          <img alt="ميثاق أخلاقيات مهنة التعليم" class="hidden">
+          <div class="img-placeholder">
+            <i class="fa-regular fa-image"></i>
+            <b class="text-slate-700">مكان صورة الميثاق</b>
+            <small>اضغط «رفع صورة» بالأسفل لإضافتها</small>
+          </div>
+        </div>
+        <div class="p-6 flex flex-col flex-1">
+          <div class="flex items-center gap-3">
+            <div class="card-icon !w-11 !h-11 !text-lg"><i class="fa-solid fa-scale-balanced"></i></div>
+            <h3 class="text-lg font-extrabold text-slate-800">ميثاق أخلاقيات المهنة</h3>
+          </div>
+          <p class="mt-3 text-slate-500 text-sm leading-relaxed flex-1">القيم والمبادئ المهنية التي يلتزم بها المعلم تجاه طلابه ومجتمعه ومهنته.</p>
+          <div class="mt-5 flex gap-2 no-print">
+            <label class="btn btn-primary btn-sm flex-1"><i class="fa-solid fa-cloud-arrow-up"></i> رفع صورة<input type="file" accept="image/*" class="sr-only" data-img-input></label>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="view-img" title="عرض الصورة"><i class="fa-solid fa-expand"></i></button>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="remove-img" title="حذف الصورة"><i class="fa-regular fa-trash-can"></i></button>
+          </div>
+        </div>
+      </article>
+
+      <!-- ===== (5) الرؤية والرسالة ===== ✏️ ضع مسار الصورة في data-src -->
+      <article class="card img-card reveal flex flex-col" style="--d:80ms" data-key="vision" data-src="" data-title="الرؤية والرسالة">
+        <span class="card-num">5</span>
+        <div class="img-wrap" data-action="view-img">
+          <img alt="الرؤية والرسالة" class="hidden">
+          <div class="img-placeholder">
+            <i class="fa-regular fa-image"></i>
+            <b class="text-slate-700">مكان صورة الرؤية والرسالة</b>
+            <small>اضغط «رفع صورة» بالأسفل لإضافتها</small>
+          </div>
+        </div>
+        <div class="p-6 flex flex-col flex-1">
+          <div class="flex items-center gap-3">
+            <div class="card-icon !w-11 !h-11 !text-lg"><i class="fa-solid fa-eye"></i></div>
+            <h3 class="text-lg font-extrabold text-slate-800">الرؤية والرسالة</h3>
+          </div>
+          <p class="mt-3 text-slate-500 text-sm leading-relaxed flex-1">رؤيتي التربوية ورسالتي التعليمية التي أسعى لتحقيقها مع طلابي.</p>
+          <div class="mt-5 flex gap-2 no-print">
+            <label class="btn btn-primary btn-sm flex-1"><i class="fa-solid fa-cloud-arrow-up"></i> رفع صورة<input type="file" accept="image/*" class="sr-only" data-img-input></label>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="view-img" title="عرض الصورة"><i class="fa-solid fa-expand"></i></button>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="remove-img" title="حذف الصورة"><i class="fa-regular fa-trash-can"></i></button>
+          </div>
+        </div>
+      </article>
+
+      <!-- ===== (6) النمو المهني ===== -->
+      <article class="card reveal p-6 sm:p-7 flex flex-col" style="--d:160ms">
+        <span class="card-num">6</span>
+        <div class="card-icon"><i class="fa-solid fa-seedling"></i></div>
+        <h3 class="mt-5 text-xl font-extrabold text-slate-800">النمو المهني</h3>
+        <p class="mt-2 text-slate-500 leading-relaxed">سجّل الدورات والبرامج التدريبية وورش العمل مع الجهة المنفذة والتاريخ وعدد الساعات.</p>
+        <div class="mt-5 grid grid-cols-2 gap-3">
+          <div class="rounded-2xl bg-emerald-50 border border-emerald-100 p-4 text-center">
+            <b id="growthCount" class="block text-3xl font-black text-emerald-700">0</b>
+            <span class="text-xs font-bold text-emerald-800/70">برنامج مسجّل</span>
+          </div>
+          <div class="rounded-2xl bg-slate-50 border border-slate-100 p-4 text-center">
+            <b id="growthHours" class="block text-3xl font-black text-slate-700">0</b>
+            <span class="text-xs font-bold text-slate-500">ساعة تدريبية</span>
+          </div>
+        </div>
+        <ul id="growthPreview" class="mt-4 space-y-2 text-sm flex-1"></ul>
+        <button type="button" data-open="growthModal" class="btn btn-primary mt-6 w-full no-print"><i class="fa-solid fa-table"></i> فتح جدول النمو المهني</button>
+      </article>
+
+      <!-- ===== (7) شهادات الشكر وشهادات الدورات (معرض صور) ===== -->
+      <article class="card reveal p-6 sm:p-8 sm:col-span-2 lg:col-span-3">
+        <span class="card-num">7</span>
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+          <div class="flex items-center gap-4">
+            <div class="card-icon"><i class="fa-solid fa-award"></i></div>
+            <div>
+              <h3 class="text-xl font-extrabold text-slate-800">شهادات الشكر وشهادات الدورات</h3>
+              <p class="text-slate-500 mt-1 text-sm">معرض تفاعلي لشهاداتك. اختر التصنيف ثم ارفع الصور أو اسحبها وأفلتها.</p>
+            </div>
+          </div>
+          <!-- تبويبات الفلترة -->
+          <div class="seg self-start lg:self-auto" role="tablist" aria-label="تصفية الشهادات">
+            <button type="button" class="active" data-cert-filter="all">الكل <span class="opacity-60" data-count="all">0</span></button>
+            <button type="button" data-cert-filter="thanks">شكر وتقدير <span class="opacity-60" data-count="thanks">0</span></button>
+            <button type="button" data-cert-filter="course">دورات <span class="opacity-60" data-count="course">0</span></button>
+          </div>
+        </div>
+
+        <!-- واجهة رفع الصور -->
+        <div id="certDrop" class="dropzone mt-6 p-5 sm:p-6 flex flex-col md:flex-row items-center gap-5 no-print">
+          <div class="w-16 h-16 rounded-2xl bg-white border border-emerald-100 shadow-sm grid place-items-center text-emerald-600 text-2xl shrink-0"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+          <div class="flex-1 text-center md:text-right">
+            <b class="text-slate-700">اسحب صور الشهادات وأفلتها هنا</b>
+            <p class="text-sm text-slate-500 mt-1">الصيغ المدعومة: JPG، PNG، WEBP — يمكنك اختيار عدة صور مرة واحدة</p>
+          </div>
+          <div class="flex flex-wrap items-center justify-center gap-3">
+            <label class="text-sm font-bold text-slate-600" for="certCategory">التصنيف:</label>
+            <select id="certCategory" class="field !w-auto !py-2 text-sm font-bold">
+              <option value="thanks">شهادة شكر وتقدير</option>
+              <option value="course">شهادة دورة تدريبية</option>
+            </select>
+            <label class="btn btn-primary"><i class="fa-solid fa-images"></i> اختيار الصور<input id="certInput" type="file" accept="image/*" multiple class="sr-only"></label>
+          </div>
+        </div>
+
+        <!-- شبكة المعرض -->
+        <div id="certGallery" class="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+        <div id="certEmpty" class="hidden mt-6 text-center py-10 rounded-2xl bg-slate-50 border border-dashed border-slate-200">
+          <i class="fa-regular fa-images text-4xl text-slate-300"></i>
+          <p class="mt-3 font-bold text-slate-500">لا توجد شهادات في هذا التصنيف بعد</p>
+          <p class="text-sm text-slate-400 mt-1">ابدأ برفع أول شهادة من الأعلى</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     القسم الثاني: مجلدات الأداء والمبادرات
+     (يتم إنشاء المجلدات تلقائياً من المصفوفة FOLDERS في كود JavaScript بالأسفل)
+     ========================================================= -->
+<section id="folders" class="py-16 sm:py-24 bg-white border-y border-slate-100 scroll-mt-16">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <div class="reveal flex items-end gap-5 mb-8">
+      <span class="section-num">02</span>
+      <div>
+        <span class="eyebrow">القسم الثاني</span>
+        <h2 class="text-3xl sm:text-4xl font-black text-slate-800 mt-1">مجلدات الأداء والمبادرات</h2>
+        <p class="text-slate-500 mt-2 max-w-2xl">اضغط على أي مجلد لفتحه، ثم أرفق الشواهد: روابط، صور، ملفات Word، أو PDF.</p>
+      </div>
+    </div>
+
+    <!-- شريط التقدم وأدوات التحكم -->
+    <div class="reveal rounded-3xl bg-gradient-to-l from-emerald-50 to-slate-50 border border-emerald-100 p-5 sm:p-6 mb-8">
+      <div class="flex flex-col md:flex-row md:items-center gap-5">
+        <div class="flex-1">
+          <div class="flex items-center justify-between mb-2">
+            <b class="text-slate-700"><i class="fa-solid fa-chart-simple text-emerald-600 ms-1"></i> نسبة تعبئة المجلدات</b>
+            <span class="font-black text-emerald-700"><span id="folderProgressText">0</span> / 12</span>
+          </div>
+          <div class="progress-track"><span id="folderProgressBar" style="width:0%"></span></div>
+        </div>
+        <div class="flex flex-wrap gap-2 no-print">
+          <div class="relative flex-1 min-w-[180px]">
+            <i class="fa-solid fa-magnifying-glass absolute top-1/2 -translate-y-1/2 right-3.5 text-slate-400 text-sm"></i>
+            <input id="folderSearch" type="search" class="field !pr-10 !py-2 text-sm" placeholder="ابحث عن مجلد...">
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm bg-white" data-action="expand-all"><i class="fa-solid fa-folder-open"></i> فتح الكل</button>
+          <button type="button" class="btn btn-ghost btn-sm bg-white" data-action="collapse-all"><i class="fa-solid fa-folder-closed"></i> إغلاق الكل</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="foldersContainer" class="space-y-5"></div>
+    <p id="folderNoResults" class="hidden text-center text-slate-500 py-10"><i class="fa-regular fa-folder-open text-3xl text-slate-300 block mb-2"></i> لا توجد مجلدات مطابقة للبحث</p>
+  </div>
+</section>
+
+</main>
+
+<!-- =========================================================
+     التذييل
+     ========================================================= -->
+<footer class="bg-[#022c22] text-emerald-50/80">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid md:grid-cols-3 gap-8 items-start">
+    <div>
+      <div class="flex items-center gap-2.5 text-white font-extrabold text-lg">
+        <span class="w-10 h-10 rounded-xl bg-emerald-500 grid place-items-center"><i class="fa-solid fa-book-open-reader"></i></span>
+        ملف الإنجاز الإلكتروني
+      </div>
+      <p class="mt-3 text-sm leading-relaxed">توثيق مسيرة <b id="footerName" class="text-white">المعلم</b> المهنية وشواهد الأداء الوظيفي.</p>
+    </div>
+    <div class="text-sm">
+      <b class="text-white block mb-3">روابط سريعة</b>
+      <ul class="space-y-2">
+        <li><a href="#basics" class="hover:text-emerald-300 transition">الأساسيات</a></li>
+        <li><a href="#folders" class="hover:text-emerald-300 transition">مجلدات الأداء والمبادرات</a></li>
+        <li><button type="button" data-open="cvModal" class="hover:text-emerald-300 transition">السيرة الذاتية</button></li>
+      </ul>
+    </div>
+    <div class="no-print">
+      <b class="text-white block mb-3 text-sm">النسخ الاحتياطي للبيانات</b>
+      <p class="text-xs text-emerald-50/60 mb-3 leading-relaxed">بياناتك محفوظة في هذا المتصفح فقط. صدّر نسخة احتياطية لنقلها إلى جهاز آخر.</p>
+      <div class="flex flex-wrap gap-2">
+        <button type="button" data-action="export" class="btn btn-sm bg-white/10 hover:bg-white/20 text-white"><i class="fa-solid fa-download"></i> تصدير</button>
+        <label class="btn btn-sm bg-white/10 hover:bg-white/20 text-white"><i class="fa-solid fa-upload"></i> استيراد<input id="importInput" type="file" accept="application/json,.json" class="sr-only"></label>
+        <button type="button" data-action="reset" class="btn btn-sm bg-rose-500/15 hover:bg-rose-500/25 text-rose-200"><i class="fa-solid fa-rotate-left"></i> مسح الكل</button>
+      </div>
+    </div>
+  </div>
+  <div class="border-t border-white/10 py-5 text-center text-xs text-emerald-50/50">
+    © <span id="year"></span> — جميع الحقوق محفوظة | ملف الإنجاز الإلكتروني للمعلم
+  </div>
+</footer>
+
+<!-- زر العودة للأعلى -->
+<button id="toTop" type="button" class="fixed bottom-5 left-5 z-40 w-12 h-12 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-xl shadow-emerald-900/30 grid place-items-center" aria-label="العودة للأعلى">
+  <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+<!-- حاوية الإشعارات -->
+<div id="toasts" class="fixed bottom-5 right-5 left-5 sm:left-auto z-[90] flex flex-col items-center sm:items-end gap-2 pointer-events-none" aria-live="polite"></div>
+
+<!-- =========================================================
+     نافذة السيرة الذاتية (Modal)
+     الحقول تُنشأ من المصفوفة CV_FIELDS في JavaScript
+     ========================================================= -->
+<div id="cvModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="cvTitle" aria-hidden="true">
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-panel max-w-3xl">
+    <div class="modal-head px-6 py-5 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <span class="w-11 h-11 rounded-xl bg-white/15 grid place-items-center text-xl"><i class="fa-solid fa-id-card"></i></span>
+        <div>
+          <h3 id="cvTitle" class="text-xl font-extrabold">السيرة الذاتية</h3>
+          <p class="text-emerald-100/80 text-sm">اضغط على أي خانة واكتب بياناتك — يتم الحفظ تلقائياً</p>
+        </div>
+      </div>
+      <button type="button" class="w-10 h-10 rounded-xl hover:bg-white/15 grid place-items-center text-lg no-print" data-close aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="overflow-auto p-4 sm:p-6">
+      <div class="rounded-2xl border border-slate-100 overflow-hidden">
+        <table class="pro-table text-sm sm:text-[15px]">
+          <tbody id="cvBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="px-4 sm:px-6 py-4 border-t border-slate-100 bg-slate-50/70 flex flex-wrap items-center justify-between gap-3 no-print">
+      <span class="text-sm text-slate-500"><i class="fa-solid fa-circle-check text-emerald-500 ms-1"></i> <span id="cvSaved">الحفظ تلقائي</span></span>
+      <div class="flex gap-2">
+        <button type="button" class="btn btn-danger btn-sm" data-action="cv-clear"><i class="fa-regular fa-trash-can"></i> مسح</button>
+        <button type="button" class="btn btn-ghost btn-sm" data-action="print-modal"><i class="fa-solid fa-print"></i> طباعة</button>
+        <button type="button" class="btn btn-primary btn-sm" data-action="cv-save"><i class="fa-solid fa-floppy-disk"></i> حفظ وإغلاق</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+     نافذة النمو المهني (Modal)
+     الأعمدة تُنشأ من المصفوفة GROWTH_COLS في JavaScript
+     ========================================================= -->
+<div id="growthModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="growthTitle" aria-hidden="true">
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-panel max-w-6xl">
+    <div class="modal-head px-6 py-5 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <span class="w-11 h-11 rounded-xl bg-white/15 grid place-items-center text-xl"><i class="fa-solid fa-seedling"></i></span>
+        <div>
+          <h3 id="growthTitle" class="text-xl font-extrabold">سجل النمو المهني</h3>
+          <p class="text-emerald-100/80 text-sm">الدورات والبرامج التدريبية وورش العمل — يتم الحفظ تلقائياً</p>
+        </div>
+      </div>
+      <button type="button" class="w-10 h-10 rounded-xl hover:bg-white/15 grid place-items-center text-lg no-print" data-close aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="overflow-auto p-4 sm:p-6">
+      <div class="rounded-2xl border border-slate-100 overflow-x-auto">
+        <table class="pro-table text-sm min-w-[860px]">
+          <thead id="growthHead"></thead>
+          <tbody id="growthBody"></tbody>
+        </table>
+      </div>
+      <button type="button" class="btn btn-ghost w-full mt-4 border-dashed !border-2 no-print" data-action="growth-add"><i class="fa-solid fa-plus"></i> إضافة برنامج جديد</button>
+    </div>
+    <div class="px-4 sm:px-6 py-4 border-t border-slate-100 bg-slate-50/70 flex flex-wrap items-center justify-between gap-3">
+      <span class="text-sm font-bold text-slate-600">المجموع: <span id="growthTotalCount" class="text-emerald-700">0</span> برنامج — <span id="growthTotalHours" class="text-emerald-700">0</span> ساعة</span>
+      <div class="flex gap-2 no-print">
+        <button type="button" class="btn btn-ghost btn-sm" data-action="print-modal"><i class="fa-solid fa-print"></i> طباعة</button>
+        <button type="button" class="btn btn-primary btn-sm" data-action="growth-save"><i class="fa-solid fa-floppy-disk"></i> حفظ وإغلاق</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+     عارض الصور (Lightbox)
+     ========================================================= -->
+<div id="lightbox" class="modal" role="dialog" aria-modal="true" aria-label="عارض الصور" aria-hidden="true">
+  <div class="modal-backdrop" data-close></div>
+  <div class="relative w-full max-w-5xl flex flex-col items-center gap-4 pointer-events-none">
+    <div class="w-full flex items-center justify-between text-white pointer-events-auto">
+      <p id="lightboxCaption" class="font-bold text-lg truncate"></p>
+      <button type="button" class="lb-nav shrink-0" data-close aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="relative w-full flex items-center justify-center gap-3">
+      <button type="button" id="lbPrev" class="lb-nav shrink-0 pointer-events-auto" aria-label="السابق"><i class="fa-solid fa-chevron-right"></i></button>
+      <img id="lightboxImg" alt="" class="pointer-events-auto">
+      <button type="button" id="lbNext" class="lb-nav shrink-0 pointer-events-auto" aria-label="التالي"><i class="fa-solid fa-chevron-left"></i></button>
+    </div>
+    <p id="lightboxCounter" class="text-white/60 text-sm"></p>
+  </div>
+</div>
+
+
+<script>
+/* =====================================================================
+   ⚙️ الإعدادات القابلة للتعديل
+   ===================================================================== */
+
+// ✏️ حقول جدول السيرة الذاتية — أضف أو احذف أو عدّل الحقول كما تشاء
+// type: نوع الحقل (text, date, email, tel, number) — placeholder: النص الإرشادي
+const CV_FIELDS = [
+  { group: 'البيانات الشخصية', icon: 'fa-user', fields: [
+    { key: 'name',        label: 'الاسم الكامل',          placeholder: 'مثال: أحمد بن محمد العتيبي' },
+    { key: 'nationalId',  label: 'رقم السجل المدني',      placeholder: '10 أرقام', inputmode: 'numeric' },
+    { key: 'birth',       label: 'تاريخ الميلاد',         type: 'date' },
+    { key: 'nationality', label: 'الجنسية',               placeholder: 'سعودي' },
+    { key: 'phone',       label: 'رقم الجوال',            type: 'tel',   placeholder: '05xxxxxxxx' },
+    { key: 'email',       label: 'البريد الإلكتروني',     type: 'email', placeholder: 'name@moe.gov.sa' },
+  ]},
+  { group: 'البيانات الوظيفية', icon: 'fa-briefcase', fields: [
+    { key: 'jobTitle',    label: 'المسمى الوظيفي',        placeholder: 'معلم العلوم العامة' },
+    { key: 'rank',        label: 'الرتبة',                placeholder: 'معلم ممارس / متقدم / خبير' },
+    { key: 'employeeId',  label: 'الرقم الوظيفي' },
+    { key: 'school',      label: 'المدرسة',               placeholder: 'متوسطة ...' },
+    { key: 'department',  label: 'إدارة التعليم',         placeholder: 'الإدارة العامة للتعليم بمنطقة ...' },
+    { key: 'hireDate',    label: 'تاريخ التعيين',         type: 'date' },
+    { key: 'experience',  label: 'سنوات الخبرة',          type: 'number', placeholder: '0' },
+    { key: 'subjects',    label: 'المواد التي أدرّسها',   placeholder: 'العلوم — الصف الأول المتوسط' },
+    { key: 'load',        label: 'النصاب (عدد الحصص)',    type: 'number', placeholder: '24' },
+  ]},
+  { group: 'المؤهلات العلمية والمهنية', icon: 'fa-graduation-cap', fields: [
+    { key: 'degree',      label: 'المؤهل العلمي',         placeholder: 'بكالوريوس / ماجستير / دكتوراه' },
+    { key: 'major',       label: 'التخصص',                placeholder: 'أحياء / كيمياء / فيزياء' },
+    { key: 'university',  label: 'الجامعة',               placeholder: 'جامعة ...' },
+    { key: 'gradYear',    label: 'سنة التخرج',            placeholder: '1440هـ' },
+    { key: 'license',     label: 'الرخصة المهنية',        placeholder: 'رقم الرخصة وتاريخ انتهائها' },
+  ]},
+];
+
+// ✏️ أعمدة جدول النمو المهني
+const GROWTH_COLS = [
+  { key: 'title',    label: 'اسم البرنامج / الدورة', placeholder: 'مثال: استراتيجيات التعلم النشط', cls: 'min-w-[220px]' },
+  { key: 'provider', label: 'الجهة المنفذة',          placeholder: 'المركز الوطني للتطوير المهني', cls: 'min-w-[180px]' },
+  { key: 'date',     label: 'التاريخ',                type: 'date', cls: 'min-w-[150px]' },
+  { key: 'hours',    label: 'عدد الساعات',            type: 'number', placeholder: '0', cls: 'w-28' },
+  { key: 'mode',     label: 'نوع الحضور',             type: 'select', options: ['حضوري', 'عن بُعد', 'مدمج'], cls: 'w-32' },
+  { key: 'cert',     label: 'شهادة',                  type: 'select', options: ['نعم', 'لا'], cls: 'w-24' },
+];
+
+// ✏️ مجلدات الأداء والمبادرات — عدّل العنوان أو الأيقونة أو النقاط الفرعية لكل مجلد
+// icon: اسم أيقونة من Font Awesome — points: النقاط الفرعية (الشواهد المقترحة)
+const FOLDERS = [
+  { id: 'duties', title: 'أداء الواجبات الوظيفية', icon: 'fa-briefcase',
+    points: ['التقيد بالدوام الرسمي وأنظمة العمل', 'تأدية الحصص الدراسية وفق الجدول المعتمد', 'المشاركة في الإشراف والمناوبة اليومية', 'المشاركة في اللجان والاجتماعات المدرسية', 'تنفيذ المهام والأعمال المكلّف بها'] },
+  { id: 'plan', title: 'إعداد وتنفيذ خطة التعلم', icon: 'fa-clipboard-list',
+    points: ['توزيع المنهج على الفصل الدراسي', 'إعداد الدروس (التحضير) وفق الأهداف', 'تنفيذ الدروس بحسب الخطة الزمنية', 'إعداد أوراق العمل والأنشطة الصفية', 'الخطط العلاجية والإثرائية'] },
+  { id: 'class', title: 'الإدارة الصفية', icon: 'fa-users-rectangle',
+    points: ['قواعد وتعليمات الصف المتفق عليها', 'أساليب التعزيز والتحفيز (لوحة النجوم، التكريم)', 'إدارة وقت الحصة بفاعلية', 'سجل متابعة الحضور والسلوك', 'توزيع الأدوار والمهام على الطلاب'] },
+  { id: 'community', title: 'التفاعل مع المجتمع المحلي', icon: 'fa-people-group',
+    points: ['المشاركة في المناسبات الوطنية والمجتمعية', 'الشراكات مع الجهات الحكومية والخاصة', 'الزيارات والرحلات الميدانية', 'الأعمال التطوعية', 'البرامج والحملات التوعوية'] },
+  { id: 'parents', title: 'التفاعل مع أولياء الأمور', icon: 'fa-handshake',
+    points: ['سجل التواصل مع أولياء الأمور', 'تقارير دورية عن مستوى الطلاب', 'حضور اجتماعات الجمعية العمومية', 'رسائل وإشعارات عبر منصة مدرستي', 'استبانات رضا أولياء الأمور'] },
+  { id: 'strategies', title: 'التنويع في استراتيجيات التدريس', icon: 'fa-shapes',
+    points: ['التعلم التعاوني', 'العصف الذهني', 'التعلم بالاستقصاء والتجريب', 'حل المشكلات', 'الخرائط الذهنية والمفاهيمية', 'التعلم باللعب'] },
+  { id: 'initiatives', title: 'المبادرات في المدرسة', icon: 'fa-lightbulb',
+    points: ['المبادرات المقدمة (الفكرة والأهداف)', 'خطة التنفيذ والجدول الزمني', 'صور وشواهد التنفيذ', 'المسابقات والأنشطة العلمية', 'أثر المبادرة ونتائجها'] },
+  { id: 'improve', title: 'تحسين نتائج المتعلمين', icon: 'fa-arrow-trend-up',
+    points: ['الخطط العلاجية للطلاب المتعثرين', 'البرامج الإثرائية للمتفوقين', 'متابعة تقدم الطلاب', 'تكريم الطلاب المتميزين', 'مقارنة النتائج قبل وبعد التدخل'] },
+  { id: 'analysis', title: 'تحليل نتائج المتعلمين وتشخيص مستوياتهم', icon: 'fa-chart-pie',
+    points: ['الاختبارات التشخيصية (القبلية)', 'تحليل نتائج الاختبارات', 'تصنيف الطلاب حسب المستويات', 'تحليل نتائج الاختبارات الوطنية (نافس)', 'خطط مبنية على نتائج التحليل'] },
+  { id: 'assessment', title: 'تنويع أساليب التقويم', icon: 'fa-list-check',
+    points: ['التقويم القبلي والتكويني والختامي', 'الاختبارات القصيرة والمراجعات', 'سلالم التقدير وقوائم الرصد', 'ملفات إنجاز الطلاب', 'التقويم الذاتي وتقويم الأقران'] },
+  { id: 'environment', title: 'تهيئة البيئة التعليمية', icon: 'fa-chalkboard',
+    points: ['تنظيم الفصل وترتيب المقاعد', 'الوسائل والمعلقات التعليمية', 'مراعاة الفروق الفردية', 'إجراءات الأمن والسلامة في المعمل', 'بيئة صفية محفزة وآمنة'] },
+  { id: 'tech', title: 'توظيف تقنيات ووسائل التعلم المناسبة', icon: 'fa-laptop-code',
+    points: ['توظيف منصة مدرستي', 'العروض التقديمية والمقاطع التعليمية', 'المعامل الافتراضية والمحاكاة', 'السبورة التفاعلية', 'التطبيقات والمصادر الرقمية'] },
+];
+
+// أنواع الملفات المسموح برفعها داخل المجلدات
+const UPLOAD_TYPES = {
+  link:  { label: 'رابط',     icon: 'fa-solid fa-link',      cls: 't-link' },
+  image: { label: 'صور',      icon: 'fa-solid fa-image',     cls: 't-image', accept: 'image/*' },
+  word:  { label: 'ملف Word', icon: 'fa-solid fa-file-word', cls: 't-word',  accept: '.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document' },
+  pdf:   { label: 'ملف PDF',  icon: 'fa-solid fa-file-pdf',  cls: 't-pdf',   accept: '.pdf,application/pdf' },
+};
+
+/* =====================================================================
+   🧰 أدوات مساعدة
+   ===================================================================== */
+const STORAGE_PREFIX = 'teacherPortfolio:';
+const $  = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const debounce = (fn, ms = 400) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
+const fmtSize = (b) => b < 1024 ? `${b} بايت` : b < 1048576 ? `${(b / 1024).toFixed(1)} ك.ب` : `${(b / 1048576).toFixed(1)} م.ب`;
+const fmtDate = (ts) => new Date(ts).toLocaleDateString('ar-SA', { year: 'numeric', month: 'short', day: 'numeric' });
+const stripExt = (name) => name.replace(/\.[^.]+$/, '');
+
+// التخزين المحلي في المتصفح (localStorage)
+const store = {
+  get(key, fallback) {
+    try { const v = localStorage.getItem(STORAGE_PREFIX + key); return v ? JSON.parse(v) : fallback; }
+    catch { return fallback; }
+  },
+  set(key, value) {
+    try { localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value)); return true; }
+    catch { toast('مساحة التخزين في المتصفح ممتلئة — ستبقى البيانات ظاهرة في هذه الجلسة فقط. صدّر نسخة احتياطية أو احذف بعض الصور.', 'error'); return false; }
+  },
+  remove(key) { try { localStorage.removeItem(STORAGE_PREFIX + key); } catch {} },
+};
+
+// ضغط الصور قبل حفظها (لتوفير مساحة التخزين)
+function compressImage(file, max = 1400, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = () => {
+        const scale = Math.min(1, max / Math.max(img.width, img.height));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// الإشعارات المنبثقة
+function toast(message, type = 'success') {
+  const icons = { success: 'fa-circle-check text-emerald-400', error: 'fa-circle-exclamation text-rose-400', info: 'fa-circle-info text-sky-400' };
+  const el = document.createElement('div');
+  el.className = 'toast pointer-events-auto';
+  el.innerHTML = `<i class="fa-solid ${icons[type] || icons.info} text-lg"></i><span>${esc(message)}</span>`;
+  $('#toasts').appendChild(el);
+  setTimeout(() => { el.classList.add('hide'); el.addEventListener('animationend', () => el.remove(), { once: true }); }, type === 'error' ? 5200 : 3000);
+}
+
+/* =====================================================================
+   ✨ الظهور التدريجي عند التمرير
+   ===================================================================== */
+const revealObserver = 'IntersectionObserver' in window
+  ? new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-visible'); revealObserver.unobserve(e.target); } });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' })
+  : null;
+function observeReveals(root = document) {
+  $$('.reveal:not(.is-visible)', root).forEach(el => revealObserver ? revealObserver.observe(el) : el.classList.add('is-visible'));
+}
+
+/* =====================================================================
+   🪟 النوافذ المنبثقة
+   ===================================================================== */
+let lastFocus = null;
+function openModal(id) {
+  const m = document.getElementById(id);
+  if (!m) return;
+  lastFocus = document.activeElement;
+  m.classList.add('show');
+  m.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => (m.querySelector('input, select, textarea') || m.querySelector('[data-close]'))?.focus({ preventScroll: true }), 80);
+}
+function closeModal(m) {
+  if (!m) return;
+  m.classList.remove('show');
+  m.setAttribute('aria-hidden', 'true');
+  if (!$('.modal.show')) document.body.style.overflow = '';
+  lastFocus?.focus?.({ preventScroll: true });
+}
+
+/* =====================================================================
+   👤 السيرة الذاتية
+   ===================================================================== */
+let cv = store.get('cv', {});
+const allCvFields = CV_FIELDS.flatMap(g => g.fields);
+
+function renderCV() {
+  $('#cvBody').innerHTML = CV_FIELDS.map(g => `
+    <tr class="cv-group"><td colspan="2"><i class="fa-solid ${g.icon} ms-2"></i>${esc(g.group)}</td></tr>
+    ${g.fields.map(f => `
+      <tr>
+        <th scope="row" class="cv-label text-right"><label for="cv-${f.key}">${esc(f.label)}</label></th>
+        <td class="p-1.5"><input id="cv-${f.key}" class="tbl-input" data-cv="${f.key}" type="${f.type || 'text'}"
+            ${f.inputmode ? `inputmode="${f.inputmode}"` : ''} placeholder="${esc(f.placeholder || 'اكتب هنا...')}" value="${esc(cv[f.key] || '')}"></td>
+      </tr>`).join('')}
+  `).join('');
+}
+
+const saveCV = debounce(() => {
+  if (store.set('cv', cv)) $('#cvSaved').textContent = 'تم الحفظ تلقائياً ✓';
+}, 350);
+
+// تحديث الواجهة الرئيسية وبطاقة السيرة الذاتية من بيانات الجدول
+function syncCV() {
+  const name = cv.name?.trim();
+  $('#heroName').textContent = name || 'اسم المعلم / المعلمة';
+  $('#footerName').textContent = name || 'المعلم';
+  $('#heroTitle').textContent = [cv.jobTitle?.trim() || 'معلم العلوم العامة', cv.rank?.trim()].filter(Boolean).join(' — ');
+  const place = [cv.school, cv.department].map(v => v?.trim()).filter(Boolean).join(' — ');
+  $('#heroSchool').innerHTML = `<i class="fa-solid fa-school ms-1"></i> ${esc(place || 'اسم المدرسة — إدارة التعليم')}`;
+  if (name) document.title = `ملف الإنجاز الإلكتروني | ${name}`;
+
+  const filled = allCvFields.filter(f => String(cv[f.key] || '').trim()).length;
+  const pct = Math.round((filled / allCvFields.length) * 100);
+  $('#cvPercent').textContent = `${pct}%`;
+  $('#cvBar').style.width = `${pct}%`;
+
+  const preview = [['fa-user', 'الاسم', cv.name], ['fa-briefcase', 'الوظيفة', cv.jobTitle], ['fa-graduation-cap', 'المؤهل', [cv.degree, cv.major].filter(Boolean).join(' — ')], ['fa-school', 'المدرسة', cv.school]];
+  $('#cvPreview').innerHTML = preview.map(([icon, label, val]) => `
+    <li class="flex items-center gap-2.5">
+      <span class="w-7 h-7 rounded-lg bg-slate-50 border border-slate-100 grid place-items-center text-slate-400 text-xs shrink-0"><i class="fa-solid ${icon}"></i></span>
+      <span class="text-slate-400 w-14 shrink-0">${label}</span>
+      <span class="font-bold truncate ${val ? 'text-slate-700' : 'text-slate-300'}">${esc(val || 'لم يُعبّأ بعد')}</span>
+    </li>`).join('');
+}
+
+/* =====================================================================
+   🌱 النمو المهني
+   ===================================================================== */
+const blankGrowthRow = () => ({ id: uid(), title: '', provider: '', date: '', hours: '', mode: 'حضوري', cert: 'نعم' });
+let growth = store.get('growth', null) || [blankGrowthRow(), blankGrowthRow(), blankGrowthRow()];
+
+function renderGrowthHead() {
+  $('#growthHead').innerHTML = `<tr><th class="w-12 text-center">م</th>${GROWTH_COLS.map(c => `<th class="${c.cls || ''}">${esc(c.label)}</th>`).join('')}<th class="w-14 no-print"><span class="sr-only">حذف</span></th></tr>`;
+}
+function renderGrowth() {
+  $('#growthBody').innerHTML = growth.map((row, i) => `
+    <tr data-row="${row.id}">
+      <td class="text-center font-black text-emerald-700">${i + 1}</td>
+      ${GROWTH_COLS.map(c => `<td class="p-1.5">${
+        c.type === 'select'
+          ? `<select class="tbl-input" data-g="${c.key}" aria-label="${esc(c.label)}">${c.options.map(o => `<option ${row[c.key] === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select>`
+          : `<input class="tbl-input" data-g="${c.key}" type="${c.type || 'text'}" ${c.type === 'number' ? 'min="0"' : ''} aria-label="${esc(c.label)}" placeholder="${esc(c.placeholder || '')}" value="${esc(row[c.key] || '')}">`
+      }</td>`).join('')}
+      <td class="text-center no-print"><button type="button" class="icon-btn danger" data-action="growth-del" aria-label="حذف الصف"><i class="fa-regular fa-trash-can"></i></button></td>
+    </tr>`).join('');
+  syncGrowth();
+}
+const saveGrowth = debounce(() => store.set('growth', growth), 350);
+
+function syncGrowth() {
+  const filled = growth.filter(r => r.title.trim());
+  const hours = filled.reduce((s, r) => s + (parseFloat(r.hours) || 0), 0);
+  $('#growthCount').textContent = filled.length;
+  $('#growthHours').textContent = hours;
+  $('#growthTotalCount').textContent = filled.length;
+  $('#growthTotalHours').textContent = hours;
+  $('#statCourses').textContent = filled.length;
+  $('#growthPreview').innerHTML = filled.length
+    ? filled.slice(-3).reverse().map(r => `
+        <li class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+          <i class="fa-solid fa-circle-check text-emerald-500"></i>
+          <span class="font-bold text-slate-700 truncate flex-1">${esc(r.title)}</span>
+          ${r.hours ? `<span class="text-xs text-slate-400 shrink-0">${esc(r.hours)} س</span>` : ''}
+        </li>`).join('')
+    : `<li class="text-slate-400 text-center py-3 rounded-xl border border-dashed border-slate-200">لم تُسجَّل برامج بعد</li>`;
+}
+
+/* =====================================================================
+   🖼️ بطاقات الصور الثابتة + الصورة الشخصية
+   ===================================================================== */
+function setCardImage(card, src) {
+  const img = $('img', card), ph = $('.img-placeholder', card), wrap = $('.img-wrap', card);
+  if (src) { img.src = src; img.classList.remove('hidden'); ph.classList.add('hidden'); wrap.classList.add('has-img'); }
+  else { img.removeAttribute('src'); img.classList.add('hidden'); ph.classList.remove('hidden'); wrap.classList.remove('has-img'); }
+}
+function initImageCards() {
+  $$('.img-card').forEach(card => {
+    // الأولوية: الصورة المرفوعة من الصفحة، ثم الصورة الثابتة في data-src
+    setCardImage(card, store.get('img:' + card.dataset.key, null) || card.dataset.src);
+    $('[data-img-input]', card).addEventListener('change', async (e) => {
+      const file = e.target.files[0]; e.target.value = '';
+      if (!file) return;
+      if (!file.type.startsWith('image/')) return toast('الرجاء اختيار ملف صورة', 'error');
+      const src = await compressImage(file);
+      setCardImage(card, src);
+      store.set('img:' + card.dataset.key, src);
+      toast(`تم رفع صورة «${card.dataset.title}» بنجاح`);
+    });
+  });
+}
+
+function setAvatar(src) {
+  $('#avatarImg').classList.toggle('hidden', !src);
+  $('#avatarPlaceholder').classList.toggle('hidden', !!src);
+  if (src) $('#avatarImg').src = src; else $('#avatarImg').removeAttribute('src');
+}
+
+/* =====================================================================
+   🏅 معرض الشهادات
+   ===================================================================== */
+let certs = store.get('certs', []);
+let certFilter = 'all';
+const CERT_LABELS = { thanks: 'شكر وتقدير', course: 'دورة تدريبية' };
+const visibleCerts = () => certs.filter(c => certFilter === 'all' || c.cat === certFilter);
+
+function renderCerts() {
+  const list = visibleCerts();
+  $('#certGallery').innerHTML = list.map((c, i) => `
+    <figure class="g-item group" data-cert="${c.id}" style="animation-delay:${Math.min(i, 8) * 50}ms" tabindex="0" role="button" aria-label="عرض ${esc(c.title)}">
+      <img src="${c.src}" alt="${esc(c.title)}" loading="lazy">
+      <figcaption class="g-cap">
+        <span class="inline-block text-[11px] font-bold px-2 py-0.5 rounded-full mb-1 ${c.cat === 'thanks' ? 'bg-amber-400/90 text-amber-950' : 'bg-emerald-400/90 text-emerald-950'}">${CERT_LABELS[c.cat]}</span>
+        <b class="block text-sm truncate">${esc(c.title)}</b>
+        <small class="text-white/70">${fmtDate(c.date)}</small>
+      </figcaption>
+      <button type="button" class="g-del icon-btn !bg-white/95 !text-rose-600 shadow no-print" data-action="cert-del" aria-label="حذف الشهادة"><i class="fa-regular fa-trash-can"></i></button>
+    </figure>`).join('');
+  $('#certEmpty').classList.toggle('hidden', list.length > 0);
+  $('[data-count="all"]').textContent = certs.length;
+  $('[data-count="thanks"]').textContent = certs.filter(c => c.cat === 'thanks').length;
+  $('[data-count="course"]').textContent = certs.filter(c => c.cat === 'course').length;
+  $('#statCerts').textContent = certs.length;
+}
+
+async function addCerts(files) {
+  const cat = $('#certCategory').value;
+  const images = [...files].filter(f => f.type.startsWith('image/'));
+  if (images.length < files.length) toast('تم تجاهل الملفات غير المدعومة — الصور فقط', 'info');
+  for (const file of images) {
+    certs.push({ id: uid(), cat, title: stripExt(file.name), src: await compressImage(file), date: Date.now() });
+  }
+  if (!images.length) return;
+  store.set('certs', certs);
+  if (certFilter !== 'all' && certFilter !== cat) setCertFilter('all'); else renderCerts();
+  toast(images.length === 1 ? 'تمت إضافة الشهادة إلى المعرض' : `تمت إضافة ${images.length} شهادات إلى المعرض`);
+}
+function setCertFilter(f) {
+  certFilter = f;
+  $$('[data-cert-filter]').forEach(b => b.classList.toggle('active', b.dataset.certFilter === f));
+  renderCerts();
+}
+
+/* =====================================================================
+   🔍 عارض الصور (Lightbox)
+   ===================================================================== */
+let lbItems = [], lbIndex = 0;
+function openLightbox(items, index = 0) {
+  lbItems = items; lbIndex = index;
+  showLightboxItem();
+  openModal('lightbox');
+}
+function showLightboxItem() {
+  const it = lbItems[lbIndex];
+  const img = $('#lightboxImg');
+  img.classList.add('loading');
+  img.onload = () => img.classList.remove('loading');
+  img.src = it.src; img.alt = it.title;
+  $('#lightboxCaption').textContent = it.title;
+  const multi = lbItems.length > 1;
+  $('#lbPrev').style.visibility = $('#lbNext').style.visibility = multi ? 'visible' : 'hidden';
+  $('#lightboxCounter').textContent = multi ? `${lbIndex + 1} / ${lbItems.length}` : '';
+}
+function lbStep(dir) {
+  if (lbItems.length < 2) return;
+  lbIndex = (lbIndex + dir + lbItems.length) % lbItems.length;
+  showLightboxItem();
+}
+
+/* =====================================================================
+   📁 مجلدات الأداء والمبادرات
+   ===================================================================== */
+// حالة كل مجلد: { items: [], checks: [], notes: '' }
+let folderState = store.get('folders', {});
+const getFolder = (id) => (folderState[id] ||= { items: [], checks: [], notes: '' });
+const saveFolders = () => store.set('folders', folderState);
+const saveFoldersDebounced = debounce(saveFolders, 400);
+// ملفات Word وPDF تُحفظ كسجل (الاسم والحجم)، ويمكن فتحها خلال الجلسة الحالية فقط (محاكاة رفع)
+const sessionFiles = new Map();
+
+function folderHTML(f, i) {
+  const st = getFolder(f.id);
+  const num = String(i + 1).padStart(2, '0');
+  return `
+  <div class="folder reveal" data-folder="${f.id}" data-title="${esc(f.title)}" style="--d:${(i % 4) * 60}ms">
+    <button type="button" class="folder-head" aria-expanded="false" aria-controls="fb-${f.id}">
+      <span class="folder-icon"><i class="fa-solid fa-folder"></i></span>
+      <span class="flex-1 min-w-0">
+        <span class="block text-xs font-bold text-slate-400">المجلد ${num} <i class="fa-solid ${f.icon} me-1 text-emerald-500/70"></i></span>
+        <span class="block font-extrabold text-slate-800 text-base sm:text-lg leading-snug mt-0.5">${esc(f.title)}</span>
+      </span>
+      <span class="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full bg-slate-100 text-slate-500" data-badge></span>
+      <span class="folder-chevron"><i class="fa-solid fa-chevron-down text-sm"></i></span>
+    </button>
+
+    <div class="folder-body" id="fb-${f.id}" role="region">
+      <div class="inner">
+        <div class="inner-content px-4 sm:px-6 pb-6 pt-1">
+          <div class="h-px bg-gradient-to-l from-transparent via-emerald-200 to-transparent mb-5"></div>
+          <div class="grid md:grid-cols-5 gap-6">
+
+            <!-- النقاط الفرعية -->
+            <div class="md:col-span-2">
+              <h4 class="font-extrabold text-slate-700 flex items-center gap-2 mb-2"><i class="fa-solid fa-list-ul text-emerald-600"></i> عناصر وشواهد المجلد</h4>
+              <p class="text-xs text-slate-400 mb-2">ضع علامة ✓ على العناصر المكتملة</p>
+              <div class="space-y-0.5">
+                ${f.points.map((p, j) => `
+                  <label class="check-item">
+                    <input type="checkbox" data-check="${j}" ${st.checks.includes(j) ? 'checked' : ''}>
+                    <span class="check-box"><i class="fa-solid fa-check"></i></span>
+                    <span class="check-label text-slate-600 text-[15px] leading-relaxed transition">${esc(p)}</span>
+                  </label>`).join('')}
+              </div>
+              <label class="block mt-4">
+                <span class="text-sm font-bold text-slate-600"><i class="fa-regular fa-note-sticky text-emerald-600 ms-1"></i> ملاحظات ووصف الشواهد</span>
+                <textarea class="field mt-2 text-sm min-h-[90px] resize-y" data-notes placeholder="اكتب وصفاً مختصراً للشواهد أو أي ملاحظات...">${esc(st.notes)}</textarea>
+              </label>
+            </div>
+
+            <!-- واجهة رفع الملفات -->
+            <div class="md:col-span-3">
+              <h4 class="font-extrabold text-slate-700 flex items-center gap-2 mb-3"><i class="fa-solid fa-cloud-arrow-up text-emerald-600"></i> رفع الشواهد</h4>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 no-print">
+                ${Object.entries(UPLOAD_TYPES).map(([type, t]) => `
+                  <button type="button" class="up-btn ${t.cls}" data-upload="${type}">
+                    <i class="${t.icon}"></i><span>${t.label}</span>
+                  </button>`).join('')}
+              </div>
+              ${Object.entries(UPLOAD_TYPES).filter(([, t]) => t.accept).map(([type, t]) =>
+                `<input type="file" class="sr-only" data-file="${type}" accept="${t.accept}" multiple tabindex="-1" aria-hidden="true">`).join('')}
+
+              <!-- نموذج إضافة رابط -->
+              <div class="link-form no-print">
+                <div>
+                  <form class="mt-3 p-3 rounded-2xl bg-sky-50/70 border border-sky-100 grid sm:grid-cols-[1fr,1fr,auto] gap-2" data-link-form>
+                    <input class="field !py-2 text-sm" name="url" type="text" inputmode="url" dir="ltr" placeholder="https://..." aria-label="الرابط">
+                    <input class="field !py-2 text-sm" name="title" type="text" placeholder="عنوان الرابط (اختياري)" aria-label="عنوان الرابط">
+                    <button class="btn btn-primary btn-sm !bg-sky-600 hover:!bg-sky-700" type="submit"><i class="fa-solid fa-plus"></i> إضافة</button>
+                  </form>
+                </div>
+              </div>
+
+              <!-- منطقة السحب والإفلات -->
+              <div class="dropzone mt-3 py-5 px-4 text-center text-sm text-slate-500 no-print" data-drop>
+                <i class="fa-regular fa-hand-pointer text-emerald-500 ms-1"></i> أو اسحب الملفات وأفلتها هنا <span class="text-slate-400">(صور، Word، PDF)</span>
+              </div>
+
+              <!-- قائمة الشواهد المرفوعة -->
+              <ul class="mt-4 space-y-2" data-items></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderFolders() {
+  $('#foldersContainer').innerHTML = FOLDERS.map(folderHTML).join('');
+  FOLDERS.forEach(f => renderItems(f.id));
+  observeReveals($('#foldersContainer'));
+  syncFolderStats();
+}
+
+function itemHTML(it) {
+  const t = UPLOAD_TYPES[it.type];
+  const thumb = it.type === 'image'
+    ? `<span class="item-icon ${t.cls} !p-0"><img src="${it.src}" alt="" class="w-full h-full object-cover"></span>`
+    : `<span class="item-icon ${t.cls}"><i class="${t.icon}"></i></span>`;
+  const meta = it.type === 'link'
+    ? `<span dir="ltr" class="truncate">${esc(it.url.replace(/^https?:\/\//, ''))}</span>`
+    : `<span>${fmtSize(it.size)}</span>`;
+  return `
+    <li class="item-row flex items-center gap-3 p-2.5 rounded-2xl bg-white border border-slate-100 hover:border-emerald-200 hover:shadow-sm transition" data-item="${it.id}">
+      ${thumb}
+      <div class="min-w-0 flex-1">
+        <b class="block text-sm text-slate-700 truncate">${esc(it.name)}</b>
+        <span class="flex items-center gap-1.5 text-xs text-slate-400 min-w-0">${meta}<span>•</span><span class="shrink-0">${fmtDate(it.date)}</span></span>
+      </div>
+      <button type="button" class="icon-btn" data-action="item-open" aria-label="فتح"><i class="fa-solid ${it.type === 'link' ? 'fa-arrow-up-right-from-square' : 'fa-eye'}"></i></button>
+      <button type="button" class="icon-btn danger no-print" data-action="item-del" aria-label="حذف"><i class="fa-regular fa-trash-can"></i></button>
+    </li>`;
+}
+
+function renderItems(id) {
+  const folder = $(`[data-folder="${id}"]`);
+  const { items } = getFolder(id);
+  $('[data-items]', folder).innerHTML = items.length
+    ? items.map(itemHTML).join('')
+    : `<li class="text-center text-sm text-slate-400 py-4 rounded-2xl bg-slate-50/70 border border-dashed border-slate-200"><i class="fa-regular fa-folder-open ms-1"></i> لم تُرفع شواهد في هذا المجلد بعد</li>`;
+  const n = items.length;
+  const badge = $('[data-badge]', folder);
+  badge.innerHTML = `<i class="fa-solid fa-paperclip"></i> ${n ? `${n} ${n === 1 ? 'شاهد' : n === 2 ? 'شاهدان' : n <= 10 ? 'شواهد' : 'شاهداً'}` : 'فارغ'}`;
+  badge.className = `hidden sm:inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full ${n ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}`;
+  folder.classList.toggle('filled', n > 0);
+}
+
+function syncFolderStats() {
+  const filled = FOLDERS.filter(f => getFolder(f.id).items.length > 0).length;
+  const total = FOLDERS.reduce((s, f) => s + getFolder(f.id).items.length, 0);
+  $('#folderProgressText').textContent = filled;
+  $('#folderProgressBar').style.width = `${(filled / FOLDERS.length) * 100}%`;
+  $('#statFolders').textContent = filled;
+  $('#statEvidence').textContent = total;
+}
+
+function toggleFolder(folder, force) {
+  const open = force ?? !folder.classList.contains('open');
+  folder.classList.toggle('open', open);
+  $('.folder-head', folder).setAttribute('aria-expanded', open);
+  $('.folder-icon i', folder).className = `fa-solid ${open ? 'fa-folder-open' : 'fa-folder'}`;
+}
+
+// تحديد نوع الملف تلقائياً (عند السحب والإفلات)
+function detectType(file) {
+  const n = file.name.toLowerCase();
+  if (file.type.startsWith('image/')) return 'image';
+  if (file.type === 'application/pdf' || n.endsWith('.pdf')) return 'pdf';
+  if (/\.(docx?|rtf)$/.test(n) || file.type.includes('word')) return 'word';
+  return null;
+}
+
+async function addFolderFiles(id, files, expected) {
+  const st = getFolder(id);
+  let added = 0;
+  for (const file of files) {
+    const type = detectType(file);
+    if (!type || (expected && type !== expected)) { toast(`الملف «${file.name}» غير مدعوم في هذا الزر`, 'error'); continue; }
+    const item = { id: uid(), type, name: type === 'image' ? stripExt(file.name) : file.name, size: file.size, date: Date.now() };
+    if (type === 'image') item.src = await compressImage(file, 1200, 0.8);
+    else sessionFiles.set(item.id, URL.createObjectURL(file));
+    st.items.push(item);
+    added++;
+  }
+  if (!added) return;
+  saveFolders();
+  renderItems(id);
+  syncFolderStats();
+  toast(added === 1 ? 'تم رفع الملف بنجاح' : `تم رفع ${added} ملفات بنجاح`);
+}
+
+function addFolderLink(id, form) {
+  let url = form.url.value.trim();
+  if (!url) return toast('الرجاء كتابة الرابط أولاً', 'error');
+  if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+  try { new URL(url); } catch { return toast('الرابط غير صحيح', 'error'); }
+  getFolder(id).items.push({ id: uid(), type: 'link', name: form.title.value.trim() || url.replace(/^https?:\/\//, ''), url, date: Date.now() });
+  form.reset();
+  saveFolders();
+  renderItems(id);
+  syncFolderStats();
+  toast('تمت إضافة الرابط');
+}
+
+function openFolderItem(id, itemId) {
+  const items = getFolder(id).items;
+  const it = items.find(x => x.id === itemId);
+  if (!it) return;
+  if (it.type === 'link') return window.open(it.url, '_blank', 'noopener');
+  if (it.type === 'image') {
+    const imgs = items.filter(x => x.type === 'image').map(x => ({ src: x.src, title: x.name }));
+    return openLightbox(imgs, items.filter(x => x.type === 'image').indexOf(it));
+  }
+  const url = sessionFiles.get(it.id);
+  if (url) window.open(url, '_blank', 'noopener');
+  else toast('هذا الملف محفوظ كسجل فقط (محاكاة رفع). أعد رفعه لفتحه في هذه الجلسة.', 'info');
+}
+
+/* =====================================================================
+   💾 النسخ الاحتياطي (تصدير / استيراد / مسح)
+   ===================================================================== */
+function exportData() {
+  const data = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k.startsWith(STORAGE_PREFIX)) data[k.slice(STORAGE_PREFIX.length)] = JSON.parse(localStorage.getItem(k));
+  }
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `ملف-الإنجاز-${new Date().toISOString().slice(0, 10)}.json` });
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  toast('تم تصدير النسخة الاحتياطية');
+}
+function importData(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (typeof data !== 'object' || !data) throw new Error();
+      Object.entries(data).forEach(([k, v]) => store.set(k, v));
+      toast('تم استيراد البيانات — جارٍ إعادة التحميل...');
+      setTimeout(() => location.reload(), 900);
+    } catch { toast('ملف النسخة الاحتياطية غير صالح', 'error'); }
+  };
+  reader.readAsText(file);
+}
+
+/* =====================================================================
+   🎛️ ربط الأحداث
+   ===================================================================== */
+function bindEvents() {
+  // --- النقرات العامة (تفويض الأحداث) ---
+  document.addEventListener('click', (e) => {
+    const t = e.target;
+    const opener = t.closest('[data-open]');
+    if (opener) { openModal(opener.dataset.open); closeMobileMenu(); return; }
+    if (t.closest('[data-close]')) { closeModal(t.closest('.modal')); return; }
+
+    const action = t.closest('[data-action]')?.dataset.action;
+    switch (action) {
+      case 'print': closeMobileMenu(); $$('.folder').forEach(f => toggleFolder(f, true)); setTimeout(() => window.print(), 600); return;
+      case 'print-modal': document.body.classList.add('print-modal'); window.print(); document.body.classList.remove('print-modal'); return;
+      case 'cv-save': saveCV(); closeModal($('#cvModal')); toast('تم حفظ السيرة الذاتية'); return;
+      case 'cv-clear':
+        if (confirm('هل تريد مسح جميع بيانات السيرة الذاتية؟')) { cv = {}; store.set('cv', cv); renderCV(); syncCV(); toast('تم مسح البيانات', 'info'); }
+        return;
+      case 'growth-add': {
+        growth.push(blankGrowthRow()); saveGrowth(); renderGrowth();
+        $('#growthBody tr:last-child input')?.focus();
+        return;
+      }
+      case 'growth-del': {
+        const id = t.closest('tr').dataset.row;
+        growth = growth.filter(r => r.id !== id);
+        if (!growth.length) growth.push(blankGrowthRow());
+        store.set('growth', growth); renderGrowth(); toast('تم حذف الصف', 'info');
+        return;
+      }
+      case 'growth-save': store.set('growth', growth); closeModal($('#growthModal')); toast('تم حفظ سجل النمو المهني'); return;
+      case 'view-img': {
+        const card = t.closest('.img-card');
+        const img = $('img', card);
+        if (img.getAttribute('src')) openLightbox([{ src: img.src, title: card.dataset.title }]);
+        else toast('لم تُرفع صورة بعد — استخدم زر «رفع صورة»', 'info');
+        return;
+      }
+      case 'remove-img': {
+        const card = t.closest('.img-card');
+        if (!store.get('img:' + card.dataset.key, null)) return toast('لا توجد صورة مرفوعة لحذفها', 'info');
+        store.remove('img:' + card.dataset.key); setCardImage(card, card.dataset.src); toast('تم حذف الصورة', 'info');
+        return;
+      }
+      case 'cert-del': {
+        e.stopPropagation();
+        const id = t.closest('[data-cert]').dataset.cert;
+        certs = certs.filter(c => c.id !== id); store.set('certs', certs); renderCerts(); toast('تم حذف الشهادة', 'info');
+        return;
+      }
+      case 'expand-all': $$('.folder:not(.hidden)').forEach(f => toggleFolder(f, true)); return;
+      case 'collapse-all': $$('.folder').forEach(f => toggleFolder(f, false)); return;
+      case 'export': exportData(); return;
+      case 'reset':
+        if (confirm('سيتم حذف جميع البيانات والصور المحفوظة نهائياً. هل أنت متأكد؟')) {
+          Object.keys(localStorage).filter(k => k.startsWith(STORAGE_PREFIX)).forEach(k => localStorage.removeItem(k));
+          location.reload();
+        }
+        return;
+    }
+
+    // فتح شهادة في العارض
+    const certEl = t.closest('[data-cert]');
+    if (certEl) {
+      const list = visibleCerts();
+      openLightbox(list.map(c => ({ src: c.src, title: c.title })), list.findIndex(c => c.id === certEl.dataset.cert));
+      return;
+    }
+
+    // التبويبات
+    const filterBtn = t.closest('[data-cert-filter]');
+    if (filterBtn) { setCertFilter(filterBtn.dataset.certFilter); return; }
+  });
+
+  // --- السيرة الذاتية ---
+  $('#cvBody').addEventListener('input', (e) => {
+    const key = e.target.dataset.cv;
+    if (!key) return;
+    cv[key] = e.target.value;
+    $('#cvSaved').textContent = 'جارٍ الحفظ...';
+    saveCV(); syncCV();
+  });
+
+  // --- النمو المهني ---
+  const onGrowthChange = (e) => {
+    const key = e.target.dataset.g;
+    if (!key) return;
+    const row = growth.find(r => r.id === e.target.closest('tr').dataset.row);
+    row[key] = e.target.value;
+    saveGrowth(); syncGrowth();
+  };
+  $('#growthBody').addEventListener('input', onGrowthChange);
+  $('#growthBody').addEventListener('change', onGrowthChange);
+
+  // --- الصورة الشخصية ---
+  $('#avatarInput').addEventListener('change', async (e) => {
+    const file = e.target.files[0]; e.target.value = '';
+    if (!file || !file.type.startsWith('image/')) return;
+    const src = await compressImage(file, 600, 0.85);
+    setAvatar(src); store.set('avatar', src); toast('تم تحديث الصورة الشخصية');
+  });
+
+  // --- الشهادات ---
+  $('#certInput').addEventListener('change', (e) => { addCerts(e.target.files); e.target.value = ''; });
+  $('#certGallery').addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-cert]')) { e.preventDefault(); e.target.click(); } });
+  setupDropzone($('#certDrop'), (files) => addCerts(files));
+
+  // --- المجلدات ---
+  const fc = $('#foldersContainer');
+  fc.addEventListener('click', (e) => {
+    const folder = e.target.closest('[data-folder]');
+    if (!folder) return;
+    const id = folder.dataset.folder;
+    if (e.target.closest('.folder-head')) return toggleFolder(folder);
+    const up = e.target.closest('[data-upload]');
+    if (up) {
+      const type = up.dataset.upload;
+      if (type === 'link') {
+        const lf = $('.link-form', folder);
+        lf.classList.toggle('open');
+        if (lf.classList.contains('open')) setTimeout(() => $('[name="url"]', lf).focus(), 250);
+      } else $(`[data-file="${type}"]`, folder).click();
+      return;
+    }
+    const act = e.target.closest('[data-action]')?.dataset.action;
+    const itemId = e.target.closest('[data-item]')?.dataset.item;
+    if (act === 'item-open') openFolderItem(id, itemId);
+    if (act === 'item-del') {
+      const st = getFolder(id);
+      const url = sessionFiles.get(itemId);
+      if (url) { URL.revokeObjectURL(url); sessionFiles.delete(itemId); }
+      st.items = st.items.filter(x => x.id !== itemId);
+      saveFolders(); renderItems(id); syncFolderStats(); toast('تم حذف الشاهد', 'info');
+    }
+  });
+  fc.addEventListener('change', (e) => {
+    const folder = e.target.closest('[data-folder]');
+    if (!folder) return;
+    const id = folder.dataset.folder;
+    if (e.target.matches('[data-file]')) { addFolderFiles(id, [...e.target.files], e.target.dataset.file); e.target.value = ''; }
+    if (e.target.matches('[data-check]')) {
+      const st = getFolder(id), j = +e.target.dataset.check;
+      st.checks = e.target.checked ? [...new Set([...st.checks, j])] : st.checks.filter(x => x !== j);
+      saveFolders();
+    }
+  });
+  fc.addEventListener('input', (e) => {
+    if (!e.target.matches('[data-notes]')) return;
+    getFolder(e.target.closest('[data-folder]').dataset.folder).notes = e.target.value;
+    saveFoldersDebounced();
+  });
+  fc.addEventListener('submit', (e) => {
+    if (!e.target.matches('[data-link-form]')) return;
+    e.preventDefault();
+    addFolderLink(e.target.closest('[data-folder]').dataset.folder, e.target);
+  });
+  $$('[data-drop]', fc).forEach(dz => setupDropzone(dz, (files) => addFolderFiles(dz.closest('[data-folder]').dataset.folder, [...files])));
+
+  // البحث في المجلدات
+  $('#folderSearch').addEventListener('input', (e) => {
+    const q = e.target.value.trim();
+    let shown = 0;
+    $$('.folder').forEach(f => { const ok = !q || f.dataset.title.includes(q); f.classList.toggle('hidden', !ok); if (ok) { shown++; f.classList.add('is-visible'); } });
+    $('#folderNoResults').classList.toggle('hidden', shown > 0);
+  });
+
+  // --- العارض: الأسهم ---
+  $('#lbPrev').addEventListener('click', () => lbStep(-1));
+  $('#lbNext').addEventListener('click', () => lbStep(1));
+
+  // --- لوحة المفاتيح ---
+  document.addEventListener('keydown', (e) => {
+    const open = $$('.modal.show').pop();
+    if (!open) return;
+    if (e.key === 'Escape') closeModal(open);
+    if (open.id === 'lightbox') {
+      // في الاتجاه من اليمين لليسار: السهم الأيسر = التالي
+      if (e.key === 'ArrowLeft') lbStep(1);
+      if (e.key === 'ArrowRight') lbStep(-1);
+    }
+  });
+
+  // --- الاستيراد ---
+  $('#importInput').addEventListener('change', (e) => { if (e.target.files[0]) importData(e.target.files[0]); e.target.value = ''; });
+
+  // --- القائمة في الجوال ---
+  $('#menuBtn').addEventListener('click', () => {
+    const open = $('#mobileMenu').classList.toggle('open');
+    $('#menuBtn').setAttribute('aria-expanded', open);
+    $('#menuBtn i').className = `fa-solid ${open ? 'fa-xmark' : 'fa-bars'}`;
+    $('#navbar').classList.toggle('scrolled', open || scrollY > 20);
+  });
+  $$('#mobileMenu a').forEach(a => a.addEventListener('click', closeMobileMenu));
+
+  // --- التمرير: شريط التنقل وزر العودة للأعلى ---
+  const onScroll = () => {
+    $('#navbar').classList.toggle('scrolled', scrollY > 20 || $('#mobileMenu').classList.contains('open'));
+    $('#toTop').classList.toggle('show', scrollY > 600);
+  };
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  $('#toTop').addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
+
+  // تمييز رابط القسم الحالي في القائمة
+  if ('IntersectionObserver' in window) {
+    const navObs = new IntersectionObserver((entries) => {
+      entries.forEach(en => {
+        if (en.isIntersecting) $$('#navbar .nav-link[href]').forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + en.target.id));
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    ['home', 'basics', 'folders'].forEach(id => navObs.observe(document.getElementById(id)));
+  }
+}
+
+function closeMobileMenu() {
+  if (!$('#mobileMenu').classList.contains('open')) return;
+  $('#mobileMenu').classList.remove('open');
+  $('#menuBtn').setAttribute('aria-expanded', 'false');
+  $('#menuBtn i').className = 'fa-solid fa-bars';
+  $('#navbar').classList.toggle('scrolled', scrollY > 20);
+}
+
+// تفعيل السحب والإفلات على أي منطقة
+function setupDropzone(el, onFiles) {
+  ['dragenter', 'dragover'].forEach(ev => el.addEventListener(ev, (e) => { e.preventDefault(); el.classList.add('dragover'); }));
+  ['dragleave', 'drop'].forEach(ev => el.addEventListener(ev, (e) => { e.preventDefault(); el.classList.remove('dragover'); }));
+  el.addEventListener('drop', (e) => { if (e.dataTransfer.files.length) onFiles(e.dataTransfer.files); });
+}
+
+/* =====================================================================
+   🚀 التشغيل
+   ===================================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+  $('#year').textContent = new Date().getFullYear();
+  renderCV(); syncCV();
+  renderGrowthHead(); renderGrowth();
+  initImageCards();
+  setAvatar(store.get('avatar', null));
+  renderCerts();
+  renderFolders();
+  bindEvents();
+  observeReveals();
+});
+</script>
+</body>
+</html>
