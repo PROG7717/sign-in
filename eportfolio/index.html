@@ -98,7 +98,7 @@
   // دمج الإعدادات المحفوظة مع الافتراضية
   function mergeSettings(saved) {
     saved = saved || {};
-    return { ...DEFAULT_SETTINGS, ...saved, sections: { ...DEFAULT_SETTINGS.sections, ...(saved.sections || {}) }, cards: saved.cards || {} };
+    return { ...DEFAULT_SETTINGS, ...saved, sections: { ...DEFAULT_SETTINGS.sections, ...(saved.sections || {}) }, cards: (saved.cards && !Array.isArray(saved.cards)) ? saved.cards : {} };
   }
   // نسخة مؤقتة من آخر إعدادات محمّلة (لتطبيق الألوان فوراً قبل وصول البيانات من الخادم)
   function readSettings() {
@@ -488,6 +488,11 @@
   /* صلاحيات: عناصر المسؤول فقط / الزوار فقط */
   html:not(.is-admin) .admin-only { display: none !important; }
   html.is-admin .guest-only { display: none !important; }
+  html.local-mode .server-only { display: none !important; }
+  /* إفساح المجال لشريط المسؤول أسفل الشاشة */
+  html.is-admin #toTop { bottom: 5.25rem; }
+  html.is-admin #toasts { bottom: 5.25rem; }
+  html.is-admin footer { padding-bottom: 4.5rem; }
   /* مؤشر حالة الحفظ */
   #saveStatus { transition: opacity .3s, background-color .3s, color .3s; }
   #saveStatus[data-state="saving"] i { animation: spin 1s linear infinite; }
@@ -496,7 +501,7 @@
   #navbar.scrolled #saveStatus { background: var(--surface-3); color: var(--muted); }
   /* شريط تنبيه (وضع تجريبي / خطأ اتصال) */
   #notice { animation: toastIn .5s both; }
-  #viewPill { animation: toastIn .5s both; }
+  #adminBar > div { animation: toastIn .5s both; }
 
   /* ---------- إيقاف الحركات ---------- */
   html.no-anim *, html.no-anim *::before, html.no-anim *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
@@ -513,7 +518,7 @@
     @page { margin: 12mm; }
     html.dark { --bg: #fff; --surface: #fff; --surface-2: #f8faf9; --surface-3: #edf2f0; --line: #e5e9e7; --line-2: #d6e0dc; --text: #1e293b; --text-2: #334155; --muted: #64748b; --faint: #94a3b8; --brand-soft: rgb(var(--c-50)); --brand-line: rgb(var(--c-200)); --brand-ink: rgb(var(--c-700)); }
     body { background: #fff; }
-    .no-print, .edit-only, #navbar, #toTop, #toasts, .blob, #scrollProgress, #preloader, #viewPill, .drawer { display: none !important; }
+    .no-print, .edit-only, #navbar, #toTop, #toasts, .blob, #scrollProgress, #preloader, #adminBar, .drawer { display: none !important; }
     .reveal { opacity: 1 !important; transform: none !important; }
     .card, .folder { box-shadow: none !important; break-inside: avoid; }
     .folder-body { grid-template-rows: 1fr !important; }
@@ -565,9 +570,8 @@
       </div>
       <button type="button" data-action="print" class="nav-icon hidden sm:grid w-10 h-10 place-items-center rounded-xl" title="طباعة الملف" aria-label="طباعة الملف"><i class="fa-solid fa-print"></i></button>
       <span id="saveStatus" class="admin-only hidden md:inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-white/10 text-white/80 text-xs font-bold" data-state="saved" role="status"><i class="fa-solid fa-cloud"></i><span>محفوظ</span></span>
-      <button type="button" data-action="toggle-view" class="admin-only nav-icon hidden sm:grid w-10 h-10 place-items-center rounded-xl" title="معاينة كما يراها الزوار" aria-label="معاينة كما يراها الزوار"><i class="fa-regular fa-eye"></i></button>
       <button type="button" data-action="toggle-dark" class="nav-icon grid w-10 h-10 place-items-center rounded-xl" title="الوضع الداكن / الفاتح" aria-label="تبديل الوضع الداكن"><i class="fa-solid fa-moon"></i></button>
-      <button type="button" data-open-login class="guest-only nav-icon grid w-10 h-10 place-items-center rounded-xl" title="دخول المسؤول" aria-label="دخول المسؤول"><i class="fa-solid fa-lock"></i></button>
+      <button type="button" data-open-login class="guest-only nav-icon flex items-center gap-2 h-10 px-3 rounded-xl font-bold text-[15px]" title="دخول المسؤول" aria-label="دخول المسؤول"><i class="fa-solid fa-lock"></i><span class="hidden sm:inline">دخول المسؤول</span></button>
       <button type="button" data-action="open-settings" class="admin-only nav-icon flex items-center gap-2 h-10 px-3 rounded-xl font-bold text-[15px]" title="الإعدادات" aria-label="الإعدادات">
         <i class="fa-solid fa-gear"></i><span class="hidden sm:inline">الإعدادات</span>
       </button>
@@ -584,7 +588,7 @@
         <a href="#folders" class="px-4 py-3 rounded-xl font-bold text-ink-2 hover:bg-brand-soft hover:text-brand-ink">مجلدات الأداء</a>
         <div class="h-px bg-line my-1"></div>
         <button type="button" data-action="toggle-view" class="admin-only text-right px-4 py-3 rounded-xl font-bold text-ink-2 hover:bg-brand-soft hover:text-brand-ink"><i class="fa-regular fa-eye ms-1"></i> <span class="edit-only">معاينة كما يراها الزوار</span><span class="view-only">الرجوع لوضع التعديل</span></button>
-        <button type="button" data-action="logout" class="admin-only text-right px-4 py-3 rounded-xl font-bold text-ink-2 hover:bg-brand-soft hover:text-brand-ink"><i class="fa-solid fa-right-from-bracket ms-1"></i> تسجيل الخروج</button>
+        <button type="button" data-action="logout" class="admin-only server-only text-right px-4 py-3 rounded-xl font-bold text-ink-2 hover:bg-brand-soft hover:text-brand-ink"><i class="fa-solid fa-right-from-bracket ms-1"></i> تسجيل الخروج</button>
         <button type="button" data-action="print" class="text-right px-4 py-3 rounded-xl font-bold text-ink-2 hover:bg-brand-soft hover:text-brand-ink"><i class="fa-solid fa-print ms-1"></i> طباعة الملف</button>
       </div>
     </div>
@@ -854,11 +858,17 @@
   <i class="fa-solid fa-arrow-up"></i>
 </button>
 
-<!-- شارة وضع العرض -->
-<div id="viewPill" class="admin-only view-only fixed bottom-5 inset-x-0 z-40 flex justify-center pointer-events-none no-print">
-  <div class="pointer-events-auto flex items-center gap-3 ps-4 pe-2 py-2 rounded-full bg-slate-900/90 text-white shadow-2xl backdrop-blur text-sm">
-    <i class="fa-regular fa-eye text-brand-300"></i> معاينة كما يراها الزوار
-    <button type="button" data-action="toggle-view" class="px-3 py-1.5 rounded-full bg-white/15 hover:bg-white/25 font-bold transition">خروج</button>
+<!-- =========================================================
+     شريط المسؤول — يظهر بعد تسجيل الدخول فقط
+     ========================================================= -->
+<div id="adminBar" class="admin-only fixed bottom-4 inset-x-0 z-40 flex justify-center px-3 pointer-events-none no-print">
+  <div class="pointer-events-auto flex items-center gap-1 p-1.5 rounded-2xl bg-slate-900/95 text-white shadow-2xl backdrop-blur text-sm max-w-full overflow-x-auto">
+    <span class="edit-only flex items-center gap-2 ps-3 pe-2 font-bold whitespace-nowrap"><i class="fa-solid fa-user-shield text-brand-300"></i><span class="hidden sm:inline">وضع المسؤول</span></span>
+    <span class="view-only flex items-center gap-2 ps-3 pe-2 font-bold whitespace-nowrap"><i class="fa-regular fa-eye text-amber-300"></i> هكذا يرى الزوار الصفحة</span>
+    <button type="button" data-action="open-settings" class="edit-only flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 font-bold whitespace-nowrap transition"><i class="fa-solid fa-gear"></i> الإعدادات</button>
+    <button type="button" data-action="toggle-view" class="edit-only flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-white/10 font-bold whitespace-nowrap transition" title="معاينة الصفحة كما يراها الزوار"><i class="fa-regular fa-eye"></i><span class="hidden sm:inline">معاينة كزائر</span></button>
+    <button type="button" data-action="toggle-view" class="view-only flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 font-bold whitespace-nowrap transition"><i class="fa-solid fa-pen"></i> رجوع للتعديل</button>
+    <button type="button" data-action="logout" class="server-only flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-white/10 font-bold whitespace-nowrap transition" title="تسجيل الخروج"><i class="fa-solid fa-right-from-bracket"></i><span class="hidden sm:inline">خروج</span></button>
   </div>
 </div>
 
@@ -1405,10 +1415,13 @@ async function flushSaves() {
   clearTimeout(flushTimer);
   if (saving || !pendingKeys.size) return;
   saving = true;
-  const keys = [...pendingKeys];
+  // الحفظ بالترتيب: الإعدادات أولاً (تُنشئ المجلدات في قاعدة البيانات قبل حفظ محتواها)
+  const ORDER = ['settings', 'cv', 'growth', 'certs', 'folders'];
+  const rank = (k) => { const i = ORDER.indexOf(k); return i < 0 ? 99 : i; };
+  const keys = [...pendingKeys].sort((a, b) => rank(a) - rank(b));
   pendingKeys.clear();
   try {
-    await Promise.all(keys.map(k => backend.save(k, DB[k])));
+    for (const k of keys) await backend.save(k, DB[k]);
     setSaveStatus(pendingKeys.size ? 'saving' : 'saved');
   } catch (e) {
     keys.forEach(k => pendingKeys.add(k));
@@ -2196,7 +2209,7 @@ function updateStorageMeter() {
   $('#logoutBtn').classList.toggle('hidden', local);
   $('#backendInfo').innerHTML = local
     ? '<i class="fa-solid fa-flask text-amber-500 ms-1"></i> <b>وضع تجريبي:</b> الصفحة مفتوحة بدون خادم PHP، لذلك تُحفظ البيانات في هذا المتصفح فقط ولا يراها الزوار.'
-    : '<i class="fa-solid fa-database text-brand-500 ms-1"></i> أنت مسجّل كمسؤول. البيانات والملفات محفوظة في <b>قاعدة بيانات MySQL</b> ويراها جميع الزوار للقراءة فقط.';
+    : '<i class="fa-solid fa-database text-brand-500 ms-1"></i> أنت مسجّل كمسؤول. كل قسم محفوظ في جدول خاص به في <b>قاعدة بيانات MySQL</b>، ويراه جميع الزوار للقراءة فقط.';
   if (!local) return;
   let bytes = 0;
   try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k.startsWith(STORAGE_PREFIX)) bytes += (k.length + localStorage.getItem(k).length) * 2; } } catch {}
@@ -2315,13 +2328,13 @@ function bindEvents() {
       }
       case 'folders-reset':
         if (confirm('استعادة المجلدات الافتراضية؟ (ستبقى الشواهد المرفوعة في المجلدات الأصلية)')) {
-          settings.folders = null; editingFolder = null; saveSettings(); renderFolderSettings(); renderFolders(); toast('تمت استعادة المجلدات الافتراضية', 'info');
+          settings.folders = clone(DEFAULT_FOLDERS); editingFolder = null; saveSettings(); renderFolderSettings(); renderFolders(); toast('تمت استعادة المجلدات الافتراضية', 'info');
         }
         return;
       case 'export': exportData(); return;
       case 'reset-settings':
         if (confirm('استعادة جميع الإعدادات (الألوان، الخطوط، النصوص، المجلدات) إلى الوضع الافتراضي؟')) {
-          settings = clone(DEFAULT_SETTINGS); store.set('settings', settings);
+          settings = { ...clone(DEFAULT_SETTINGS), folders: clone(DEFAULT_FOLDERS) }; store.set('settings', settings);
           applySettings(); renderCV(); renderFolders(); openSettings(); toast('تمت استعادة الإعدادات الافتراضية', 'info');
         }
         return;
@@ -2634,7 +2647,7 @@ function bindAuthEvents() {
       form.reset();
       closeModal($('#loginModal'));
       applyAccess();
-      toast('مرحباً بك — يمكنك الآن تعديل الملف');
+      toast('تم الدخول — يمكنك الآن الإضافة والتعديل والرفع مباشرة في الصفحة، والإعدادات من الشريط بالأسفل');
     } catch (ex) {
       err.textContent = ex.message; err.classList.remove('hidden');
     } finally { btn.disabled = false; }
@@ -2663,7 +2676,8 @@ async function loadData() {
       return {};
     }
     backend = localBackend;
-    showNotice('<b>وضع تجريبي:</b> الصفحة تعمل بدون خادم PHP، لذلك تُحفظ التعديلات في هذا المتصفح فقط ولا يراها الزوار. ارفع المجلد على استضافة تدعم PHP وMySQL لتفعيل قاعدة البيانات.');
+    document.documentElement.classList.add('local-mode');
+    showNotice('<b>وضع تجريبي:</b> الصفحة مفتوحة بدون خادم PHP، لذلك أنت المسؤول تلقائياً والتعديلات تُحفظ في هذا المتصفح فقط. بعد رفع المجلد على استضافة تدعم PHP وMySQL سيحتاج التعديل إلى تسجيل الدخول، وسيرى الزوار المحتوى للقراءة فقط.');
     return localBackend.load();
   }
 }
@@ -2673,10 +2687,11 @@ function loadState(data) {
   DB = data || {};
   settings = window.APP.mergeSettings(DB.settings);
   cacheSettings();
-  cv = DB.cv || {};
+  const isObj = (v) => v && typeof v === 'object' && !Array.isArray(v);
+  cv = isObj(DB.cv) ? DB.cv : {};
   growth = Array.isArray(DB.growth) && DB.growth.length ? DB.growth : [blankGrowthRow(), blankGrowthRow(), blankGrowthRow()];
   certs = Array.isArray(DB.certs) ? DB.certs : [];
-  folderState = DB.folders && typeof DB.folders === 'object' ? DB.folders : {};
+  folderState = isObj(DB.folders) ? DB.folders : {};
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -2701,6 +2716,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   applyAccess();
   observeReveals();
   setTimeout(hidePreloader, 300);
+
+  // فتح نافذة الدخول مباشرة عبر الرابط: index.html#login أو admin.html
+  const wantsLogin = location.hash === '#login' || new URLSearchParams(location.search).has('login');
+  if (wantsLogin) {
+    history.replaceState(null, '', location.pathname);
+    if (!isAdmin) setTimeout(() => openModal('loginModal'), 500);
+    else if (backend.kind === 'local') showNotice('<b>وضع تجريبي:</b> أنت المسؤول تلقائياً على هذا الجهاز. صفحة تسجيل الدخول تعمل بعد رفع الموقع على استضافة تدعم PHP وMySQL.');
+  }
 });
 </script>
 </body>
