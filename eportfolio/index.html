@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#064e3b">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%98%3C/text%3E%3C/svg%3E">
 <title>ملف الإنجاز الإلكتروني</title>
 <meta name="description" content="ملف إنجاز إلكتروني للمعلم: السيرة الذاتية، النمو المهني، الشهادات، ومجلدات الأداء والمبادرات.">
 
@@ -61,7 +62,7 @@
     mode: 'light',                    // light | dark | auto
     font: 'Tajawal', fontScale: 100, radius: 'soft',
     animations: true, pattern: true, preloader: true, confetti: true, scrollBar: true, spotlight: true,
-    showStats: true, showQuote: true, showAvatar: true, viewMode: false,
+    showStats: true, showQuote: true, showAvatar: true,
     sections: {
       basicsTitle: 'الأساسيات',
       basicsDesc: 'البيانات الشخصية والمرجعيات التربوية والنمو المهني. اضغط على أي بطاقة للتعبئة أو لرفع الصورة.',
@@ -94,25 +95,33 @@
     document.head.appendChild(l);
   }
 
-  function readSettings() {
-    let saved = {};
-    try { saved = JSON.parse(localStorage.getItem('teacherPortfolio:settings')) || {}; } catch {}
+  // دمج الإعدادات المحفوظة مع الافتراضية
+  function mergeSettings(saved) {
+    saved = saved || {};
     return { ...DEFAULT_SETTINGS, ...saved, sections: { ...DEFAULT_SETTINGS.sections, ...(saved.sections || {}) }, cards: saved.cards || {} };
   }
+  // نسخة مؤقتة من آخر إعدادات محمّلة (لتطبيق الألوان فوراً قبل وصول البيانات من الخادم)
+  function readSettings() {
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem('teacherPortfolio-cache:settings')); } catch {}
+    return mergeSettings(saved);
+  }
+  // تفضيل الزائر الشخصي للوضع الداكن/الفاتح (لا يؤثر على الآخرين)
+  function prefMode() { try { return localStorage.getItem('teacherPortfolio-pref:mode'); } catch { return null; } }
 
   const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
   function applyAppearance(s) {
     const root = document.documentElement;
     const pal = paletteOf(s);
     SHADES.forEach((n, i) => root.style.setProperty('--c-' + n, hexToRgb(pal[i]).join(' ')));
-    const dark = s.mode === 'dark' || (s.mode === 'auto' && darkQuery.matches);
+    const mode = prefMode() || s.mode;
+    const dark = mode === 'dark' || (mode === 'auto' && darkQuery.matches);
     root.classList.toggle('dark', dark);
     root.classList.toggle('no-anim', !s.animations);
     root.classList.toggle('no-pattern', !s.pattern);
     root.classList.toggle('no-preloader', !s.preloader);
     root.classList.toggle('no-scrollbar', !s.scrollBar);
     root.classList.toggle('no-spotlight', !s.spotlight);
-    root.classList.toggle('view-mode', !!s.viewMode);
     root.dataset.radius = s.radius;
     root.style.fontSize = (s.fontScale || 100) + '%';
     root.style.setProperty('--font', `'${s.font}'`);
@@ -120,7 +129,9 @@
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', pal[9]);
   }
 
-  window.APP = { SHADES, THEMES, FONTS, DEFAULT_SETTINGS, paletteOf, loadFont, readSettings, applyAppearance, darkQuery, settings: readSettings() };
+  window.APP = { SHADES, THEMES, FONTS, DEFAULT_SETTINGS, paletteOf, loadFont, mergeSettings, readSettings, prefMode, applyAppearance, darkQuery, settings: readSettings() };
+  // أدوات التعديل مخفية افتراضياً حتى يتأكد الخادم أن الزائر هو المسؤول
+  document.documentElement.classList.add('view-mode');
   applyAppearance(window.APP.settings);
 })();
 </script>
@@ -474,6 +485,17 @@
   html.view-mode .check-item, html.view-mode .tbl-input, html.view-mode [data-notes], html.view-mode #avatarLabel { pointer-events: none; }
   html.view-mode .tbl-input::placeholder, html.view-mode [data-notes]::placeholder { color: transparent; }
   html.view-mode .notes-block:has(textarea:placeholder-shown) { display: none; }
+  /* صلاحيات: عناصر المسؤول فقط / الزوار فقط */
+  html:not(.is-admin) .admin-only { display: none !important; }
+  html.is-admin .guest-only { display: none !important; }
+  /* مؤشر حالة الحفظ */
+  #saveStatus { transition: opacity .3s, background-color .3s, color .3s; }
+  #saveStatus[data-state="saving"] i { animation: spin 1s linear infinite; }
+  #saveStatus[data-state="error"] { background: rgba(244,63,94,.18) !important; color: #fecdd3 !important; }
+  #navbar.scrolled #saveStatus[data-state="error"] { color: #be123c !important; }
+  #navbar.scrolled #saveStatus { background: var(--surface-3); color: var(--muted); }
+  /* شريط تنبيه (وضع تجريبي / خطأ اتصال) */
+  #notice { animation: toastIn .5s both; }
   #viewPill { animation: toastIn .5s both; }
 
   /* ---------- إيقاف الحركات ---------- */
@@ -542,9 +564,11 @@
         <a href="#folders" class="nav-link px-4 py-2 rounded-xl font-bold text-[15px]">مجلدات الأداء</a>
       </div>
       <button type="button" data-action="print" class="nav-icon hidden sm:grid w-10 h-10 place-items-center rounded-xl" title="طباعة الملف" aria-label="طباعة الملف"><i class="fa-solid fa-print"></i></button>
-      <button type="button" data-action="toggle-view" class="nav-icon hidden sm:grid w-10 h-10 place-items-center rounded-xl" title="وضع العرض (إخفاء أدوات التعديل)" aria-label="وضع العرض"><i class="fa-regular fa-eye"></i></button>
+      <span id="saveStatus" class="admin-only hidden md:inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-white/10 text-white/80 text-xs font-bold" data-state="saved" role="status"><i class="fa-solid fa-cloud"></i><span>محفوظ</span></span>
+      <button type="button" data-action="toggle-view" class="admin-only nav-icon hidden sm:grid w-10 h-10 place-items-center rounded-xl" title="معاينة كما يراها الزوار" aria-label="معاينة كما يراها الزوار"><i class="fa-regular fa-eye"></i></button>
       <button type="button" data-action="toggle-dark" class="nav-icon grid w-10 h-10 place-items-center rounded-xl" title="الوضع الداكن / الفاتح" aria-label="تبديل الوضع الداكن"><i class="fa-solid fa-moon"></i></button>
-      <button type="button" data-action="open-settings" class="nav-icon flex items-center gap-2 h-10 px-3 rounded-xl font-bold text-[15px]" title="الإعدادات" aria-label="الإعدادات">
+      <button type="button" data-open-login class="guest-only nav-icon grid w-10 h-10 place-items-center rounded-xl" title="دخول المسؤول" aria-label="دخول المسؤول"><i class="fa-solid fa-lock"></i></button>
+      <button type="button" data-action="open-settings" class="admin-only nav-icon flex items-center gap-2 h-10 px-3 rounded-xl font-bold text-[15px]" title="الإعدادات" aria-label="الإعدادات">
         <i class="fa-solid fa-gear"></i><span class="hidden sm:inline">الإعدادات</span>
       </button>
       <button id="menuBtn" type="button" class="nav-icon lg:hidden w-10 h-10 grid place-items-center rounded-xl text-xl" aria-label="فتح القائمة" aria-expanded="false" aria-controls="mobileMenu">
@@ -559,7 +583,8 @@
         <a href="#basics" class="px-4 py-3 rounded-xl font-bold text-ink-2 hover:bg-brand-soft hover:text-brand-ink" data-s="sections.basicsTitle">الأساسيات</a>
         <a href="#folders" class="px-4 py-3 rounded-xl font-bold text-ink-2 hover:bg-brand-soft hover:text-brand-ink">مجلدات الأداء</a>
         <div class="h-px bg-line my-1"></div>
-        <button type="button" data-action="toggle-view" class="text-right px-4 py-3 rounded-xl font-bold text-ink-2 hover:bg-brand-soft hover:text-brand-ink"><i class="fa-regular fa-eye ms-1"></i> <span class="edit-only">وضع العرض</span><span class="view-only">وضع التعديل</span></button>
+        <button type="button" data-action="toggle-view" class="admin-only text-right px-4 py-3 rounded-xl font-bold text-ink-2 hover:bg-brand-soft hover:text-brand-ink"><i class="fa-regular fa-eye ms-1"></i> <span class="edit-only">معاينة كما يراها الزوار</span><span class="view-only">الرجوع لوضع التعديل</span></button>
+        <button type="button" data-action="logout" class="admin-only text-right px-4 py-3 rounded-xl font-bold text-ink-2 hover:bg-brand-soft hover:text-brand-ink"><i class="fa-solid fa-right-from-bracket ms-1"></i> تسجيل الخروج</button>
         <button type="button" data-action="print" class="text-right px-4 py-3 rounded-xl font-bold text-ink-2 hover:bg-brand-soft hover:text-brand-ink"><i class="fa-solid fa-print ms-1"></i> طباعة الملف</button>
       </div>
     </div>
@@ -807,7 +832,11 @@
         <li><button type="button" data-open="cvModal" class="hover:text-brand-300 transition">السيرة الذاتية</button></li>
       </ul>
     </div>
-    <div class="edit-only">
+    <div class="guest-only text-sm">
+      <b class="text-white block mb-3">الإدارة</b>
+      <button type="button" data-open-login class="inline-flex items-center gap-2 hover:text-brand-300 transition"><i class="fa-solid fa-lock text-xs"></i> دخول المسؤول</button>
+    </div>
+    <div class="admin-only edit-only">
       <b class="text-white block mb-3 text-sm">التخصيص والنسخ الاحتياطي</b>
       <p class="text-xs text-white/55 mb-3 leading-relaxed">غيّر الأسماء والألوان والخطوط والمجلدات من لوحة الإعدادات، وصدّر نسخة احتياطية لنقل بياناتك.</p>
       <div class="flex flex-wrap gap-2">
@@ -826,14 +855,48 @@
 </button>
 
 <!-- شارة وضع العرض -->
-<div id="viewPill" class="view-only fixed bottom-5 inset-x-0 z-40 flex justify-center pointer-events-none no-print">
+<div id="viewPill" class="admin-only view-only fixed bottom-5 inset-x-0 z-40 flex justify-center pointer-events-none no-print">
   <div class="pointer-events-auto flex items-center gap-3 ps-4 pe-2 py-2 rounded-full bg-slate-900/90 text-white shadow-2xl backdrop-blur text-sm">
-    <i class="fa-regular fa-eye text-brand-300"></i> وضع العرض مفعّل
+    <i class="fa-regular fa-eye text-brand-300"></i> معاينة كما يراها الزوار
     <button type="button" data-action="toggle-view" class="px-3 py-1.5 rounded-full bg-white/15 hover:bg-white/25 font-bold transition">خروج</button>
   </div>
 </div>
 
+<!-- شريط تنبيه (يظهر عند تشغيل الصفحة بدون خادم PHP أو عند خطأ في الاتصال) -->
+<div id="notice" class="hidden fixed top-20 inset-x-0 z-40 px-4 pointer-events-none no-print">
+  <div class="pointer-events-auto max-w-2xl mx-auto flex items-start gap-3 p-3.5 rounded-2xl bg-amber-50 text-amber-900 border border-amber-200 shadow-xl text-sm">
+    <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
+    <span id="noticeText" class="flex-1 leading-relaxed"></span>
+    <button type="button" class="icon-btn !w-7 !h-7 !text-amber-900" onclick="this.closest('#notice').classList.add('hidden')" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+</div>
+
 <div id="toasts" class="fixed bottom-5 right-5 left-5 sm:left-auto z-[110] flex flex-col items-center sm:items-end gap-2 pointer-events-none" aria-live="polite"></div>
+
+<!-- =========================================================
+     نافذة دخول المسؤول
+     ========================================================= -->
+<div id="loginModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="loginTitle" aria-hidden="true">
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-panel max-w-md">
+    <div class="modal-head px-6 py-6 text-center">
+      <span class="w-14 h-14 rounded-2xl bg-white/15 grid place-items-center text-2xl mx-auto"><i class="fa-solid fa-user-shield"></i></span>
+      <h3 id="loginTitle" class="text-xl font-extrabold mt-3">دخول المسؤول</h3>
+      <p class="text-white/75 text-sm mt-1">التعديل متاح للمسؤول فقط</p>
+    </div>
+    <form id="loginForm" class="p-6 space-y-4" autocomplete="on">
+      <label class="block"><span class="s-label">اسم المستخدم</span>
+        <input class="field" name="username" autocomplete="username" required dir="ltr"></label>
+      <label class="block"><span class="s-label">كلمة المرور</span>
+        <span class="relative block">
+          <input class="field !pl-11" name="password" type="password" autocomplete="current-password" required dir="ltr">
+          <button type="button" class="icon-btn !w-8 !h-8 absolute left-1.5 top-1/2 -translate-y-1/2" data-toggle-pass aria-label="إظهار كلمة المرور"><i class="fa-regular fa-eye"></i></button>
+        </span></label>
+      <p id="loginError" class="hidden text-sm font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl px-3 py-2"></p>
+      <button type="submit" class="btn btn-primary w-full"><i class="fa-solid fa-right-to-bracket"></i> <span>دخول</span></button>
+    </form>
+  </div>
+</div>
 
 <!-- =========================================================
      نافذة السيرة الذاتية
@@ -1092,15 +1155,19 @@
       <!-- ===== أدوات ===== -->
       <section class="s-pane" data-pane="tools">
         <div class="s-group">
-          <h5 class="s-title !mb-1"><i class="fa-regular fa-eye"></i> وضع العرض</h5>
-          <label class="s-switch"><span><b>إخفاء أدوات التعديل</b><small>مناسب لعرض الملف على المشرف أو مشاركته</small></span><input type="checkbox" data-set="viewMode"><i class="sw"></i></label>
+          <h5 class="s-title"><i class="fa-solid fa-user-shield"></i> الحساب</h5>
+          <p id="backendInfo" class="text-sm text-ink-2 leading-relaxed"></p>
+          <div class="grid grid-cols-2 gap-2 mt-3">
+            <button type="button" class="btn btn-ghost btn-sm" data-action="toggle-view"><i class="fa-regular fa-eye"></i> معاينة الزائر</button>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="logout" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</button>
+          </div>
         </div>
 
-        <div class="s-group">
+        <div class="s-group" id="storageGroup">
           <h5 class="s-title"><i class="fa-solid fa-hard-drive"></i> مساحة التخزين</h5>
           <div class="flex justify-between text-sm font-bold text-ink-2 mb-2"><span>المستخدم</span><span id="storageText">—</span></div>
           <div class="mini-progress !h-2"><span id="storageBar" style="width:0%"></span></div>
-          <p class="s-hint">البيانات محفوظة في هذا المتصفح فقط (الحد التقريبي 5 م.ب). صدّر نسخة احتياطية بانتظام.</p>
+          <p class="s-hint">في الوضع التجريبي تُحفظ البيانات في هذا المتصفح فقط (الحد التقريبي 5 م.ب).</p>
         </div>
 
         <div class="s-group">
@@ -1115,7 +1182,7 @@
           <h5 class="s-title"><i class="fa-solid fa-triangle-exclamation"></i> إعادة الضبط</h5>
           <div class="grid gap-2">
             <button type="button" class="btn btn-ghost btn-sm !whitespace-normal" data-action="reset-settings"><i class="fa-solid fa-rotate-left"></i> استعادة الإعدادات الافتراضية (مع إبقاء البيانات)</button>
-            <button type="button" class="btn btn-danger btn-sm" data-action="reset"><i class="fa-regular fa-trash-can"></i> حذف جميع البيانات والإعدادات</button>
+            <button type="button" class="btn btn-danger btn-sm" data-action="reset"><i class="fa-regular fa-trash-can"></i> حذف جميع البيانات والملفات والإعدادات</button>
           </div>
         </div>
       </section>
@@ -1244,41 +1311,173 @@ const setPath = (o, p, v) => { const ks = p.split('.'); const last = ks.pop(); k
 const g = (female, male) => settings.gender === 'male' ? male : female;   // اختيار النص حسب صيغة المخاطبة
 const noAnim = () => document.documentElement.classList.contains('no-anim') || matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const store = {
-  get(key, fallback) {
-    try { const v = localStorage.getItem(STORAGE_PREFIX + key); return v ? JSON.parse(v) : fallback; }
-    catch { return fallback; }
+/* =====================================================================
+   🗄️ طبقة البيانات
+   - الوضع الأساسي: قاعدة بيانات MySQL عبر api.php (الجميع يقرأ، المسؤول فقط يكتب)
+   - وضع تجريبي: إذا فُتحت الصفحة بدون خادم PHP تُحفظ البيانات في المتصفح فقط
+   ===================================================================== */
+const API_URL = 'api.php';
+let isAdmin = false;        // يحدده الخادم بعد التحقق من جلسة المسؤول
+let csrf = null;            // رمز الحماية لطلبات الكتابة
+let previewMode = false;    // معاينة المسؤول للصفحة كما يراها الزوار
+let maxUploadMb = 20;
+let DB = {};                // نسخة من جميع البيانات المحمّلة
+const liveBlobs = new Set();   // ملفات الوضع التجريبي المتاحة في هذه الجلسة
+const canEdit = () => isAdmin && !previewMode;
+
+const blobToDataURL = (blob) => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(blob); });
+
+const serverBackend = {
+  kind: 'server',
+  async call(action, { method = 'POST', json, form } = {}) {
+    const opts = { method, credentials: 'same-origin', headers: {} };
+    if (csrf) opts.headers['X-CSRF-Token'] = csrf;
+    if (json !== undefined) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(json); }
+    if (form) opts.body = form;
+    const res = await fetch(`${API_URL}?action=${action}`, opts);
+    let data;
+    try { data = await res.json(); } catch { const e = new Error('استجابة غير صالحة من الخادم'); e.noServer = true; throw e; }
+    if (!res.ok || !data.ok) throw new Error(data.error || 'حدث خطأ في الخادم');
+    return data;
   },
-  set(key, value) {
-    try { localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value)); return true; }
-    catch { toast('مساحة التخزين في المتصفح ممتلئة — ستبقى البيانات ظاهرة في هذه الجلسة فقط. صدّر نسخة احتياطية أو احذف بعض الصور.', 'error'); return false; }
+  async load() {
+    const d = await this.call('load', { method: 'GET' });
+    isAdmin = !!d.admin; csrf = d.csrf || null; maxUploadMb = d.maxUploadMb || maxUploadMb;
+    return d.data || {};
   },
-  remove(key) { try { localStorage.removeItem(STORAGE_PREFIX + key); } catch {} },
+  save(k, v) { return this.call('save', { json: { key: k, value: v } }); },
+  remove(k) { return this.call('delete', { json: { key: k } }); },
+  saveMany(items) { return this.call('save_many', { json: { items } }); },
+  async upload(blob, name) {
+    const form = new FormData();
+    form.append('file', blob, name);
+    return (await this.call('upload', { form })).url;
+  },
+  deleteFile(url) { return this.call('delete_file', { json: { url } }).catch(() => {}); },
+  async login(username, password) { const d = await this.call('login', { json: { username, password } }); csrf = d.csrf; isAdmin = true; },
+  async logout() { await this.call('logout', { json: {} }); isAdmin = false; csrf = null; },
+  reset() { return this.call('reset', { json: {} }); },
 };
 
-// ضغط الصور قبل حفظها
+const localBackend = {
+  kind: 'local',
+  async load() {
+    isAdmin = true;
+    const data = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k.startsWith(STORAGE_PREFIX)) { try { data[k.slice(STORAGE_PREFIX.length)] = JSON.parse(localStorage.getItem(k)); } catch {} }
+    }
+    return data;
+  },
+  async save(k, v) {
+    try { localStorage.setItem(STORAGE_PREFIX + k, JSON.stringify(v)); }
+    catch { throw new Error('مساحة التخزين في المتصفح ممتلئة'); }
+  },
+  async remove(k) { localStorage.removeItem(STORAGE_PREFIX + k); },
+  async saveMany(items) { for (const [k, v] of Object.entries(items)) await this.save(k, v); },
+  async upload(blob) {
+    if (blob.type.startsWith('image/')) return blobToDataURL(blob);
+    const url = URL.createObjectURL(blob); liveBlobs.add(url); return url;   // ملفات Word/PDF للجلسة الحالية فقط
+  },
+  async deleteFile(url) { if (url?.startsWith('blob:')) { URL.revokeObjectURL(url); liveBlobs.delete(url); } },
+  async login() {}, async logout() {},
+  async reset() { Object.keys(localStorage).filter(k => k.startsWith(STORAGE_PREFIX)).forEach(k => localStorage.removeItem(k)); },
+};
+
+let backend = serverBackend;
+
+/* ---------- الحفظ (يُجمَّع ويُرسل للخادم تلقائياً) ---------- */
+const pendingKeys = new Set();
+let flushTimer = null, saving = false;
+
+function setSaveStatus(state, message) {
+  const el = $('#saveStatus');
+  if (!el) return;
+  el.dataset.state = state;
+  const map = { saved: ['fa-cloud', 'محفوظ'], saving: ['fa-rotate', 'جارٍ الحفظ...'], error: ['fa-triangle-exclamation', 'فشل الحفظ — اضغط للإعادة'] };
+  el.innerHTML = `<i class="fa-solid ${map[state][0]}"></i><span>${map[state][1]}</span>`;
+  el.title = message || '';
+  el.style.cursor = state === 'error' ? 'pointer' : '';
+}
+
+async function flushSaves() {
+  clearTimeout(flushTimer);
+  if (saving || !pendingKeys.size) return;
+  saving = true;
+  const keys = [...pendingKeys];
+  pendingKeys.clear();
+  try {
+    await Promise.all(keys.map(k => backend.save(k, DB[k])));
+    setSaveStatus(pendingKeys.size ? 'saving' : 'saved');
+  } catch (e) {
+    keys.forEach(k => pendingKeys.add(k));
+    setSaveStatus('error', e.message);
+    toast(`لم يتم الحفظ: ${e.message}`, 'error');
+  } finally {
+    saving = false;
+    if (pendingKeys.size && $('#saveStatus').dataset.state !== 'error') flushTimer = setTimeout(flushSaves, 600);
+  }
+}
+
+const store = {
+  get(key, fallback) { return key in DB ? DB[key] : fallback; },
+  set(key, value) {
+    if (!isAdmin) return false;      // الزوار لا يستطيعون الحفظ
+    DB[key] = value;
+    pendingKeys.add(key);
+    setSaveStatus('saving');
+    clearTimeout(flushTimer);
+    flushTimer = setTimeout(flushSaves, 600);
+    return true;
+  },
+  remove(key) {
+    if (!isAdmin) return;
+    delete DB[key];
+    pendingKeys.delete(key);
+    backend.remove(key).catch(e => toast(`لم يتم الحذف: ${e.message}`, 'error'));
+  },
+};
+
+// ضغط الصور قبل رفعها (يُرجع Blob)
 function compressImage(file, max = 1400, quality = 0.82, type = 'image/jpeg') {
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = reject;
-    reader.onload = () => {
-      const img = new Image();
-      img.onerror = reject;
-      img.onload = () => {
-        const scale = Math.min(1, max / Math.max(img.width, img.height));
-        const canvas = document.createElement('canvas');
-        canvas.width = Math.round(img.width * scale);
-        canvas.height = Math.round(img.height * scale);
-        const ctx = canvas.getContext('2d');
-        if (type === 'image/jpeg') { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL(type, quality));
-      };
-      img.src = reader.result;
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('تعذر قراءة الصورة')); };
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const scale = Math.min(1, max / Math.max(img.width, img.height));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      const ctx = canvas.getContext('2d');
+      if (type === 'image/jpeg') { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(b => b ? resolve(b) : reject(new Error('تعذر معالجة الصورة')), type, quality);
     };
-    reader.readAsDataURL(file);
+    img.src = url;
   });
 }
+
+// رفع صورة مضغوطة أو ملف، ويُرجع رابطه
+async function uploadImage(file, max, quality, type = 'image/jpeg') {
+  const blob = await compressImage(file, max, quality, type);
+  return backend.upload(blob, stripExt(file.name) + (type === 'image/png' ? '.png' : '.jpg'));
+}
+async function uploadFile(file) {
+  if (file.size > maxUploadMb * 1024 * 1024) throw new Error(`حجم «${file.name}» أكبر من ${maxUploadMb} ميجابايت`);
+  return backend.upload(file, file.name);
+}
+// تنفيذ عملية رفع مع إظهار الحالة والأخطاء
+async function withUpload(fn) {
+  setSaveStatus('saving');
+  try { return await fn(); }
+  catch (e) { toast(e.message || 'فشل الرفع', 'error'); return null; }
+  finally { if (!pendingKeys.size && !saving) setSaveStatus('saved'); }
+}
+const isStoredFile = (url) => typeof url === 'string' && (url.startsWith('uploads/') || url.startsWith('blob:'));
+const deleteFileOf = (url) => { if (isStoredFile(url)) backend.deleteFile(url); };
 
 function toast(message, type = 'success') {
   const icons = { success: 'fa-circle-check text-emerald-400', error: 'fa-circle-exclamation text-rose-400', info: 'fa-circle-info text-sky-400' };
@@ -1356,7 +1555,7 @@ function openModal(id) {
   m.classList.add('show');
   m.setAttribute('aria-hidden', 'false');
   lockScroll();
-  const target = settings.viewMode ? m.querySelector('[data-close]') : (m.querySelector('input, select, textarea') || m.querySelector('[data-close]'));
+  const target = !canEdit() ? m.querySelector('[data-close]') : (m.querySelector('input, select, textarea') || m.querySelector('[data-close]'));
   setTimeout(() => target?.focus({ preventScroll: true }), 80);
 }
 function closeModal(m) {
@@ -1370,7 +1569,7 @@ function closeModal(m) {
 /* =====================================================================
    👤 السيرة الذاتية (مرتبطة بإعدادات «عام»)
    ===================================================================== */
-let cv = store.get('cv', {});
+let cv = {};
 const allCvFields = CV_FIELDS.flatMap(gr => gr.fields);
 const phOf = (f) => typeof f.placeholder === 'object' ? g(f.placeholder.f, f.placeholder.m) : (f.placeholder || 'اكتب هنا...');
 
@@ -1384,12 +1583,14 @@ function renderCV() {
             ${f.inputmode ? `inputmode="${f.inputmode}"` : ''} placeholder="${esc(phOf(f))}" value="${esc(cv[f.key] || '')}"></td>
       </tr>`).join('')}
   `).join('');
+  lockInputs();
 }
 
 const saveCV = debounce(() => { if (store.set('cv', cv)) $('#cvSaved').textContent = 'تم الحفظ تلقائياً ✓'; }, 350);
 
 // تحديث قيمة في السيرة الذاتية من أي مكان (الجدول أو الإعدادات)
 function setCV(key, value, source) {
+  if (!canEdit()) return;
   cv[key] = value;
   $$(`[data-cv="${key}"], [data-cvfield="${key}"]`).forEach(el => { if (el !== source) el.value = value; });
   $('#cvSaved').textContent = 'جارٍ الحفظ...';
@@ -1426,7 +1627,7 @@ function syncCV() {
    🌱 النمو المهني
    ===================================================================== */
 const blankGrowthRow = () => ({ id: uid(), title: '', provider: '', date: '', hours: '', mode: 'حضوري', cert: 'نعم' });
-let growth = store.get('growth', null) || [blankGrowthRow(), blankGrowthRow(), blankGrowthRow()];
+let growth = [];
 
 function renderGrowthHead() {
   $('#growthHead').innerHTML = `<tr><th class="w-12 text-center">م</th>${GROWTH_COLS.map(c => `<th class="${c.cls || ''}">${esc(c.label)}</th>`).join('')}<th class="w-14 edit-only"><span class="sr-only">حذف</span></th></tr>`;
@@ -1443,6 +1644,7 @@ function renderGrowth() {
       <td class="text-center edit-only"><button type="button" class="icon-btn danger" data-action="growth-del" aria-label="حذف الصف"><i class="fa-regular fa-trash-can"></i></button></td>
     </tr>`).join('');
   syncGrowth();
+  lockInputs();
 }
 const saveGrowth = debounce(() => store.set('growth', growth), 350);
 
@@ -1520,14 +1722,18 @@ function setCardImage(card, src) {
   if (src) { img.src = src; img.classList.remove('hidden'); ph.classList.add('hidden'); wrap.classList.add('has-img'); }
   else { img.removeAttribute('src'); img.classList.add('hidden'); ph.classList.remove('hidden'); wrap.classList.remove('has-img'); }
 }
+function loadCardImages() {
+  $$('.img-card').forEach(card => setCardImage(card, store.get('img:' + card.dataset.key, null) || card.dataset.src));
+}
 function initImageCards() {
   $$('.img-card').forEach(card => {
-    setCardImage(card, store.get('img:' + card.dataset.key, null) || card.dataset.src);
     $('[data-img-input]', card).addEventListener('change', async (e) => {
       const file = e.target.files[0]; e.target.value = '';
       if (!file) return;
       if (!file.type.startsWith('image/')) return toast('الرجاء اختيار ملف صورة', 'error');
-      const src = await compressImage(file);
+      const src = await withUpload(() => uploadImage(file));
+      if (!src) return;
+      deleteFileOf(store.get('img:' + card.dataset.key, null));
       setCardImage(card, src);
       store.set('img:' + card.dataset.key, src);
       toast(`تم رفع صورة «${cardText(card.dataset.card).title}»`);
@@ -1553,14 +1759,16 @@ function setLogo(src) {
 }
 async function handleAvatarFile(file) {
   if (!file || !file.type.startsWith('image/')) return;
-  const src = await compressImage(file, 600, 0.85);
+  const src = await withUpload(() => uploadImage(file, 600, 0.85));
+  if (!src) return;
+  deleteFileOf(store.get('avatar', null));
   setAvatar(src); store.set('avatar', src); toast('تم تحديث الصورة الشخصية');
 }
 
 /* =====================================================================
    🏅 معرض الشهادات
    ===================================================================== */
-let certs = store.get('certs', []);
+let certs = [];
 let certFilter = 'all';
 const CERT_LABELS = { thanks: 'شكر وتقدير', course: 'دورة تدريبية' };
 const visibleCerts = () => certs.filter(c => certFilter === 'all' || c.cat === certFilter);
@@ -1589,10 +1797,15 @@ async function addCerts(files) {
   const images = [...files].filter(f => f.type.startsWith('image/'));
   if (images.length < files.length) toast('تم تجاهل الملفات غير المدعومة — الصور فقط', 'info');
   if (!images.length) return;
-  for (const file of images) certs.push({ id: uid(), cat, title: stripExt(file.name), src: await compressImage(file), date: Date.now() });
+  let added = 0;
+  for (const file of images) {
+    const src = await withUpload(() => uploadImage(file));
+    if (src) { certs.push({ id: uid(), cat, title: stripExt(file.name), src, date: Date.now() }); added++; }
+  }
+  if (!added) return;
   store.set('certs', certs);
   if (certFilter !== 'all' && certFilter !== cat) setCertFilter('all'); else renderCerts();
-  toast(images.length === 1 ? 'تمت إضافة الشهادة إلى المعرض' : `تمت إضافة ${images.length} شهادات إلى المعرض`);
+  toast(added === 1 ? 'تمت إضافة الشهادة إلى المعرض' : `تمت إضافة ${added} شهادات إلى المعرض`);
 }
 function setCertFilter(f) {
   certFilter = f;
@@ -1621,8 +1834,7 @@ function lbStep(dir) { if (lbItems.length < 2) return; lbIndex = (lbIndex + dir 
 /* =====================================================================
    📁 مجلدات الأداء والمبادرات
    ===================================================================== */
-let folderState = store.get('folders', {});
-const sessionFiles = new Map();   // ملفات Word/PDF تُفتح خلال الجلسة الحالية فقط (محاكاة رفع)
+let folderState = {};
 const allFolders = () => settings.folders || DEFAULT_FOLDERS;
 const visibleFolders = () => allFolders().filter(f => !f.hidden);
 const ensureFolders = () => (settings.folders ||= clone(DEFAULT_FOLDERS));
@@ -1724,6 +1936,7 @@ function renderFolders() {
   foldersRendered = true;
   applyFolderSearch();
   syncFolderStats();
+  lockInputs();
 }
 
 function itemHTML(it) {
@@ -1800,8 +2013,9 @@ async function addFolderFiles(id, files, expected) {
     const type = detectType(file);
     if (!type || (expected && type !== expected)) { toast(`الملف «${file.name}» غير مدعوم هنا`, 'error'); continue; }
     const item = { id: uid(), type, name: type === 'image' ? stripExt(file.name) : file.name, size: file.size, date: Date.now() };
-    if (type === 'image') item.src = await compressImage(file, 1200, 0.8);
-    else sessionFiles.set(item.id, URL.createObjectURL(file));
+    const url = await withUpload(() => type === 'image' ? uploadImage(file, 1200, 0.8) : uploadFile(file));
+    if (!url) continue;
+    if (type === 'image') item.src = url; else item.url = url;
     st.items.push(item);
     added++;
   }
@@ -1830,15 +2044,15 @@ function openFolderItem(id, itemId) {
     const imgs = items.filter(x => x.type === 'image');
     return openLightbox(imgs.map(x => ({ src: x.src, title: x.name })), imgs.indexOf(it));
   }
-  const url = sessionFiles.get(it.id);
-  if (url) window.open(url, '_blank', 'noopener');
-  else toast('هذا الملف محفوظ كسجل فقط (محاكاة رفع). أعد رفعه لفتحه في هذه الجلسة.', 'info');
+  if (it.url && (!it.url.startsWith('blob:') || liveBlobs.has(it.url))) window.open(it.url, '_blank', 'noopener');
+  else toast('هذا الملف غير متاح — في الوضع التجريبي تُحفظ ملفات Word/PDF للجلسة الحالية فقط.', 'info');
 }
 
 /* =====================================================================
    ⚙️ تطبيق الإعدادات على الصفحة
    ===================================================================== */
-const saveSettings = debounce(() => store.set('settings', settings), 300);
+const cacheSettings = () => { try { localStorage.setItem('teacherPortfolio-cache:settings', JSON.stringify(settings)); } catch {} };
+const saveSettings = debounce(() => { store.set('settings', settings); cacheSettings(); }, 300);
 
 function applySettings() {
   applyAppearance(settings);
@@ -1862,8 +2076,7 @@ function refreshSettingsUI() {
   $('#fontScaleVal').textContent = settings.fontScale + '%';
   const dark = document.documentElement.classList.contains('dark');
   $$('[data-action="toggle-dark"] i').forEach(i => i.className = `fa-solid ${dark ? 'fa-sun' : 'fa-moon'}`);
-  $$('#navbar [data-action="toggle-view"]').forEach(b => b.classList.toggle('on', settings.viewMode));
-  const vm = $('#settings [data-set="viewMode"]'); if (vm) vm.checked = settings.viewMode;
+  $$('#navbar [data-action="toggle-view"]').forEach(b => b.classList.toggle('on', previewMode));
 }
 
 // تعبئة حقول لوحة الإعدادات بالقيم الحالية
@@ -1941,6 +2154,7 @@ function renderFolderSettings() {
 const renderFoldersDebounced = debounce(() => renderFolders(), 350);
 
 function onSettingChanged(key) {
+  if (key === 'mode') { try { localStorage.removeItem('teacherPortfolio-pref:mode'); } catch {} }
   saveSettings();
   applySettings();
   if (key === 'gender') renderCV();
@@ -1953,6 +2167,7 @@ function onSettingChanged(key) {
 }
 
 function openSettings(tab) {
+  if (!isAdmin) return;
   fillSettingsForm();
   renderCardSettings();
   renderFolderSettings();
@@ -1976,6 +2191,13 @@ function switchTab(tab) {
 }
 
 function updateStorageMeter() {
+  const local = backend.kind === 'local';
+  $('#storageGroup').classList.toggle('hidden', !local);
+  $('#logoutBtn').classList.toggle('hidden', local);
+  $('#backendInfo').innerHTML = local
+    ? '<i class="fa-solid fa-flask text-amber-500 ms-1"></i> <b>وضع تجريبي:</b> الصفحة مفتوحة بدون خادم PHP، لذلك تُحفظ البيانات في هذا المتصفح فقط ولا يراها الزوار.'
+    : '<i class="fa-solid fa-database text-brand-500 ms-1"></i> أنت مسجّل كمسؤول. البيانات والملفات محفوظة في <b>قاعدة بيانات MySQL</b> ويراها جميع الزوار للقراءة فقط.';
+  if (!local) return;
   let bytes = 0;
   try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k.startsWith(STORAGE_PREFIX)) bytes += (k.length + localStorage.getItem(k).length) * 2; } } catch {}
   $('#storageText').textContent = `${fmtSize(bytes)} من ~5 م.ب`;
@@ -1986,12 +2208,7 @@ function updateStorageMeter() {
    💾 النسخ الاحتياطي
    ===================================================================== */
 function exportData() {
-  const data = {};
-  for (let i = 0; i < localStorage.length; i++) {
-    const k = localStorage.key(i);
-    if (k.startsWith(STORAGE_PREFIX)) data[k.slice(STORAGE_PREFIX.length)] = JSON.parse(localStorage.getItem(k));
-  }
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const blob = new Blob([JSON.stringify(DB, null, 2)], { type: 'application/json' });
   const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `ملف-الإنجاز-${new Date().toISOString().slice(0, 10)}.json` });
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
@@ -2003,9 +2220,10 @@ function importData(file) {
     try {
       const data = JSON.parse(reader.result);
       if (typeof data !== 'object' || !data) throw new Error();
-      Object.entries(data).forEach(([k, v]) => store.set(k, v));
-      toast('تم استيراد البيانات — جارٍ إعادة التحميل...');
-      setTimeout(() => location.reload(), 900);
+      if (!isAdmin) return;
+      backend.saveMany(data)
+        .then(() => { toast('تم استيراد البيانات — جارٍ إعادة التحميل...'); setTimeout(() => location.reload(), 900); })
+        .catch(e => toast(`فشل الاستيراد: ${e.message}`, 'error'));
     } catch { toast('ملف النسخة الاحتياطية غير صالح', 'error'); }
   };
   reader.readAsText(file);
@@ -2025,17 +2243,28 @@ function bindEvents() {
     const actEl = t.closest('[data-action]');
     switch (actEl?.dataset.action) {
       case 'open-settings': openSettings(actEl.dataset.tab); return;
-      case 'toggle-dark':
-        settings.mode = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
-        onSettingChanged('mode');
+      case 'toggle-dark': {
+        // تفضيل شخصي لهذا المتصفح فقط (الوضع الافتراضي للموقع يُضبط من الإعدادات)
+        const next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+        try { localStorage.setItem('teacherPortfolio-pref:mode', next); } catch {}
+        applySettings();
         return;
+      }
       case 'toggle-view':
-        settings.viewMode = !settings.viewMode; onSettingChanged('viewMode'); closeMobileMenu();
-        toast(settings.viewMode ? 'وضع العرض: تم إخفاء أدوات التعديل' : 'تم الرجوع إلى وضع التعديل', 'info');
+        if (!isAdmin) return;
+        previewMode = !previewMode; closeSettings(); closeMobileMenu(); applyAccess();
+        toast(previewMode ? 'معاينة: هكذا يرى الزوار الصفحة' : 'تم الرجوع إلى وضع التعديل', 'info');
+        return;
+      case 'logout':
+        backend.logout().catch(() => {}).finally(() => {
+          isAdmin = false; csrf = null; previewMode = false;
+          closeSettings(); closeMobileMenu(); applyAccess();
+          toast('تم تسجيل الخروج', 'info');
+        });
         return;
       case 'print': closeMobileMenu(); $$('.folder').forEach(f => toggleFolder(f, true)); setTimeout(() => window.print(), 600); return;
       case 'print-modal': document.body.classList.add('print-modal'); window.print(); document.body.classList.remove('print-modal'); return;
-      case 'cv-save': saveCV(); closeModal($('#cvModal')); if (!settings.viewMode) toast('تم حفظ السيرة الذاتية'); return;
+      case 'cv-save': saveCV(); closeModal($('#cvModal')); if (canEdit()) toast('تم حفظ السيرة الذاتية'); return;
       case 'cv-clear':
         if (confirm('هل تريد مسح جميع بيانات السيرة الذاتية؟')) { cv = {}; store.set('cv', cv); renderCV(); syncCV(); fillSettingsForm(); toast('تم مسح البيانات', 'info'); }
         return;
@@ -2047,30 +2276,32 @@ function bindEvents() {
         store.set('growth', growth); renderGrowth(); toast('تم حذف الصف', 'info');
         return;
       }
-      case 'growth-save': store.set('growth', growth); closeModal($('#growthModal')); if (!settings.viewMode) toast('تم حفظ سجل النمو المهني'); return;
+      case 'growth-save': if (canEdit()) { store.set('growth', growth); toast('تم حفظ سجل النمو المهني'); } closeModal($('#growthModal')); return;
       case 'view-img': {
         const card = t.closest('.img-card');
         const img = $('img', card);
         if (img.getAttribute('src')) openLightbox([{ src: img.src, title: cardText(card.dataset.card).title }]);
-        else if (!settings.viewMode) toast('لم تُرفع صورة بعد — استخدم زر «رفع صورة»', 'info');
+        else if (canEdit()) toast('لم تُرفع صورة بعد — استخدم زر «رفع صورة»', 'info');
         return;
       }
       case 'remove-img': {
         const card = t.closest('.img-card');
         if (!store.get('img:' + card.dataset.key, null)) return toast('لا توجد صورة مرفوعة لحذفها', 'info');
+        deleteFileOf(store.get('img:' + card.dataset.key, null));
         store.remove('img:' + card.dataset.key); setCardImage(card, card.dataset.src); toast('تم حذف الصورة', 'info');
         return;
       }
       case 'cert-del': {
         e.stopPropagation();
         const id = t.closest('[data-cert]').dataset.cert;
+        deleteFileOf(certs.find(c => c.id === id)?.src);
         certs = certs.filter(c => c.id !== id); store.set('certs', certs); renderCerts(); toast('تم حذف الشهادة', 'info');
         return;
       }
       case 'expand-all': $$('.folder:not(.hidden)').forEach(f => toggleFolder(f, true)); return;
       case 'collapse-all': $$('.folder').forEach(f => toggleFolder(f, false)); return;
-      case 'remove-logo': store.remove('logo'); setLogo(null); toast('تمت إزالة الشعار', 'info'); return;
-      case 'remove-avatar': store.remove('avatar'); setAvatar(null); toast('تمت إزالة الصورة الشخصية', 'info'); return;
+      case 'remove-logo': deleteFileOf(store.get('logo', null)); store.remove('logo'); setLogo(null); toast('تمت إزالة الشعار', 'info'); return;
+      case 'remove-avatar': deleteFileOf(store.get('avatar', null)); store.remove('avatar'); setAvatar(null); toast('تمت إزالة الصورة الشخصية', 'info'); return;
       case 'folder-add': {
         const list = ensureFolders();
         const f = { id: 'f-' + uid(), title: 'مجلد جديد', icon: 'fa-folder', points: [] };
@@ -2095,9 +2326,9 @@ function bindEvents() {
         }
         return;
       case 'reset':
-        if (confirm('سيتم حذف جميع البيانات والصور والإعدادات نهائياً. هل أنت متأكد؟')) {
-          Object.keys(localStorage).filter(k => k.startsWith(STORAGE_PREFIX)).forEach(k => localStorage.removeItem(k));
-          location.reload();
+        if (confirm('سيتم حذف جميع البيانات والملفات والإعدادات نهائياً. هل أنت متأكد؟')) {
+          backend.reset().then(() => { try { localStorage.removeItem('teacherPortfolio-cache:settings'); } catch {} location.reload(); })
+            .catch(e => toast(`فشل الحذف: ${e.message}`, 'error'));
         }
         return;
     }
@@ -2118,7 +2349,7 @@ function bindEvents() {
   // --- النمو المهني ---
   const onGrowthChange = (e) => {
     const key = e.target.dataset.g;
-    if (!key) return;
+    if (!key || !canEdit()) return;
     const row = growth.find(r => r.id === e.target.closest('tr').dataset.row);
     row[key] = e.target.value;
     saveGrowth(); syncGrowth();
@@ -2132,7 +2363,9 @@ function bindEvents() {
   $('#logoInput').addEventListener('change', async (e) => {
     const file = e.target.files[0]; e.target.value = '';
     if (!file || !file.type.startsWith('image/')) return;
-    const src = await compressImage(file, 320, 0.92, 'image/png');
+    const src = await withUpload(() => uploadImage(file, 320, 0.92, 'image/png'));
+    if (!src) return;
+    deleteFileOf(store.get('logo', null));
     setLogo(src); store.set('logo', src); toast('تم رفع الشعار');
   });
 
@@ -2163,8 +2396,8 @@ function bindEvents() {
     if (act === 'item-open') openFolderItem(id, itemId);
     if (act === 'item-del') {
       const st = getFolder(id);
-      const url = sessionFiles.get(itemId);
-      if (url) { URL.revokeObjectURL(url); sessionFiles.delete(itemId); }
+      const it = st.items.find(x => x.id === itemId);
+      deleteFileOf(it?.src || it?.url);
       st.items = st.items.filter(x => x.id !== itemId);
       saveFolders(); renderItems(id); syncFolderStats(); toast('تم حذف الشاهد', 'info');
     }
@@ -2174,7 +2407,7 @@ function bindEvents() {
     if (!folder) return;
     const id = folder.dataset.folder;
     if (e.target.matches('[data-file]')) { addFolderFiles(id, [...e.target.files], e.target.dataset.file); e.target.value = ''; }
-    if (e.target.matches('[data-check]')) {
+    if (e.target.matches('[data-check]') && canEdit()) {
       const st = getFolder(id), p = e.target.dataset.check;
       st.checks = e.target.checked ? [...new Set([...st.checks, p])] : st.checks.filter(x => x !== p);
       saveFolders();
@@ -2184,7 +2417,7 @@ function bindEvents() {
     }
   });
   fc.addEventListener('input', (e) => {
-    if (!e.target.matches('[data-notes]')) return;
+    if (!e.target.matches('[data-notes]') || !canEdit()) return;
     getFolder(e.target.closest('[data-folder]').dataset.folder).notes = e.target.value;
     saveFoldersDebounced();
   });
@@ -2197,7 +2430,7 @@ function bindEvents() {
   const clearDrag = () => $$('[data-drop].dragover', fc).forEach(d => d.classList.remove('dragover'));
   fc.addEventListener('dragover', (e) => {
     const folder = e.target.closest('[data-folder]');
-    if (!folder || settings.viewMode) return;
+    if (!folder || !canEdit()) return;
     e.preventDefault();
     const dz = $('[data-drop]', folder);
     $$('[data-drop].dragover', fc).forEach(d => d !== dz && d.classList.remove('dragover'));
@@ -2207,7 +2440,7 @@ function bindEvents() {
   fc.addEventListener('drop', (e) => {
     const folder = e.target.closest('[data-folder]');
     clearDrag();
-    if (!folder || settings.viewMode) return;
+    if (!folder || !canEdit()) return;
     e.preventDefault();
     if (!folder.classList.contains('open')) toggleFolder(folder, true);
     if (e.dataTransfer.files.length) addFolderFiles(folder.dataset.folder, [...e.dataTransfer.files]);
@@ -2269,6 +2502,7 @@ function bindEvents() {
     }
     if (fAct === 'edit') { editingFolder = editingFolder === f.id ? null : f.id; renderFolderSettings(); }
     if (fAct === 'delete' && confirm(`حذف مجلد «${f.title}» وجميع شواهده نهائياً؟`)) {
+      (folderState[f.id]?.items || []).forEach(it => deleteFileOf(it.src || it.url));
       list.splice(idx, 1); delete folderState[f.id]; editingFolder = null;
       saveFolders(); saveSettings(); renderFolderSettings(); renderFolders(); toast('تم حذف المجلد', 'info');
     }
@@ -2352,24 +2586,121 @@ function setupDropzone(el, onFiles) {
 /* =====================================================================
    🚀 التشغيل
    ===================================================================== */
-const hidePreloader = () => $('#preloader')?.classList.add('done');
-addEventListener('load', () => setTimeout(hidePreloader, 450));
-setTimeout(hidePreloader, 3000);   // احتياط في حال تأخر تحميل الموارد
+/* =====================================================================
+   🔐 الصلاحيات وتسجيل الدخول
+   ===================================================================== */
+// منع التعديل في حقول الإدخال لغير المسؤول (الحماية الحقيقية في الخادم)
+function lockInputs() {
+  const locked = !canEdit();
+  $$('#cvBody input, #growthBody input, [data-notes]').forEach(el => { el.readOnly = locked; });
+  $$('#growthBody select, [data-check]').forEach(el => { el.disabled = locked; });
+}
 
-document.addEventListener('DOMContentLoaded', () => {
+function applyAccess() {
+  const root = document.documentElement;
+  root.classList.toggle('is-admin', isAdmin);
+  root.classList.toggle('view-mode', !canEdit());
+  refreshSettingsUI();
+  lockInputs();
+}
+
+function showNotice(text) {
+  $('#noticeText').innerHTML = text;
+  $('#notice').classList.remove('hidden');
+}
+
+function bindAuthEvents() {
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('[data-open-login]')) {
+      closeMobileMenu();
+      $('#loginError').classList.add('hidden');
+      openModal('loginModal');
+    }
+    const eye = e.target.closest('[data-toggle-pass]');
+    if (eye) {
+      const input = eye.parentElement.querySelector('input');
+      input.type = input.type === 'password' ? 'text' : 'password';
+      eye.querySelector('i').className = `fa-regular ${input.type === 'password' ? 'fa-eye' : 'fa-eye-slash'}`;
+    }
+    if (e.target.closest('#saveStatus') && $('#saveStatus').dataset.state === 'error') { setSaveStatus('saving'); flushSaves(); }
+  });
+
+  $('#loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target, btn = $('button[type="submit"]', form), err = $('#loginError');
+    btn.disabled = true; err.classList.add('hidden');
+    try {
+      await backend.login(form.username.value.trim(), form.password.value);
+      form.reset();
+      closeModal($('#loginModal'));
+      applyAccess();
+      toast('مرحباً بك — يمكنك الآن تعديل الملف');
+    } catch (ex) {
+      err.textContent = ex.message; err.classList.remove('hidden');
+    } finally { btn.disabled = false; }
+  });
+
+  // تنبيه قبل مغادرة الصفحة إذا كانت هناك تغييرات لم تُحفظ بعد
+  addEventListener('beforeunload', (e) => { if (pendingKeys.size || saving) { flushSaves(); e.preventDefault(); e.returnValue = ''; } });
+}
+
+/* =====================================================================
+   🚀 التشغيل
+   ===================================================================== */
+const hidePreloader = () => $('#preloader')?.classList.add('done');
+setTimeout(hidePreloader, 6000);   // احتياط في حال تأخر الاتصال
+
+// تحميل البيانات: من قاعدة البيانات، أو من المتصفح إذا لم يتوفر خادم PHP
+async function loadData() {
+  try {
+    backend = serverBackend;
+    return await serverBackend.load();
+  } catch (e) {
+    const noServer = e.noServer || e instanceof TypeError;   // الصفحة مفتوحة بدون PHP
+    if (!noServer) {
+      isAdmin = false;
+      showNotice(`<b>تعذر تحميل البيانات:</b> ${esc(e.message)}`);
+      return {};
+    }
+    backend = localBackend;
+    showNotice('<b>وضع تجريبي:</b> الصفحة تعمل بدون خادم PHP، لذلك تُحفظ التعديلات في هذا المتصفح فقط ولا يراها الزوار. ارفع المجلد على استضافة تدعم PHP وMySQL لتفعيل قاعدة البيانات.');
+    return localBackend.load();
+  }
+}
+
+// توزيع البيانات المحمّلة على أجزاء الصفحة
+function loadState(data) {
+  DB = data || {};
+  settings = window.APP.mergeSettings(DB.settings);
+  cacheSettings();
+  cv = DB.cv || {};
+  growth = Array.isArray(DB.growth) && DB.growth.length ? DB.growth : [blankGrowthRow(), blankGrowthRow(), blankGrowthRow()];
+  certs = Array.isArray(DB.certs) ? DB.certs : [];
+  folderState = DB.folders && typeof DB.folders === 'object' ? DB.folders : {};
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
   $('#year').textContent = new Date().getFullYear();
   buildImageCards();
-  renderCV();
-  renderGrowthHead(); renderGrowth();
   initImageCards();
+  renderGrowthHead();
+  renderSwatches(); renderFonts();
+  bindEvents();
+  bindAuthEvents();
+
+  loadState(await loadData());
+
+  renderCV();
+  renderGrowth();
+  loadCardImages();
   setAvatar(store.get('avatar', null));
   setLogo(store.get('logo', null));
-  renderSwatches(); renderFonts();
   applySettings();
   renderCerts();
   renderFolders();
-  bindEvents();
+  applyAccess();
   observeReveals();
+  setTimeout(hidePreloader, 300);
 });
 </script>
 </body>
