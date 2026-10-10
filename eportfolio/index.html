@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#064e3b">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%98%3C/text%3E%3C/svg%3E">
 <title>ملف الإنجاز الإلكتروني</title>
@@ -254,7 +254,7 @@
   .avatar-ring { background: conic-gradient(from 180deg, rgb(var(--c-400)), rgb(var(--c-200)), rgb(var(--c-500)), #fcd34d, rgb(var(--c-400))); animation: spin 14s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .stat-card { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); backdrop-filter: blur(8px); border-radius: calc(1rem * var(--rs)); transition: transform .35s, background-color .35s; }
-  .stat-card:hover { transform: translateY(-4px); background: rgba(255,255,255,.13); }
+  @media (hover: hover) { .stat-card:hover { transform: translateY(-4px); background: rgba(255,255,255,.13); } }
   .hero-word { background: linear-gradient(90deg, #fff, rgb(var(--c-200)), #fde68a, #fff); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shine 8s linear infinite; }
   @keyframes shine { to { background-position: -300% 0; } }
 
@@ -289,7 +289,7 @@
      🃏 البطاقات
      ========================================================= */
   .card { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: calc(1.4rem * var(--rs)); box-shadow: 0 1px 2px rgba(15,23,42,.04); transition: transform .45s cubic-bezier(.2,.65,.3,1), box-shadow .45s, border-color .45s, background-color .4s; }
-  .card:hover { transform: translateY(-6px); box-shadow: 0 24px 48px -18px rgb(var(--c-800) / .3); border-color: var(--brand-line); }
+  @media (hover: hover) { .card:hover { transform: translateY(-6px); box-shadow: 0 24px 48px -18px rgb(var(--c-800) / .3); border-color: var(--brand-line); } }
   /* توهج يتبع مؤشر الفأرة */
   .card::before { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 1; background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%), rgb(var(--c-400) / .13), transparent 45%); opacity: 0; transition: opacity .4s; }
   .card:hover::before { opacity: 1; }
@@ -368,7 +368,7 @@
 
   .up-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .4rem; padding: .9rem .5rem; border-radius: calc(1rem * var(--rs)); border: 1px solid; font-weight: 700; font-size: .875rem; transition: transform .25s, box-shadow .25s; cursor: pointer; }
   .up-btn i { font-size: 1.4rem; transition: transform .3s; }
-  .up-btn:hover { transform: translateY(-3px); }
+  @media (hover: hover) { .up-btn:hover { transform: translateY(-3px); } }
   .up-btn:hover i { transform: scale(1.15); }
   .up-btn:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--ring); }
   .t-link  { color: #0369a1; background: #f0f9ff; border-color: #bae6fd; } .t-link:hover  { box-shadow: 0 10px 20px -12px #0284c7; }
@@ -408,11 +408,11 @@
   .modal { position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center; padding: 1rem; visibility: hidden; opacity: 0; transition: opacity .35s, visibility .35s; }
   .modal.show { visibility: visible; opacity: 1; }
   .modal-backdrop { position: absolute; inset: 0; background: rgb(var(--c-950) / .6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
-  .modal-panel { position: relative; width: 100%; max-height: calc(100vh - 2rem); display: flex; flex-direction: column; background: var(--surface); border-radius: calc(1.5rem * var(--rs)); box-shadow: 0 40px 80px -30px rgba(0,0,0,.6); transform: translateY(24px) scale(.97); transition: transform .45s cubic-bezier(.2,.65,.3,1); overflow: hidden; }
+  .modal-panel { position: relative; width: 100%; max-height: calc(100vh - 2rem); max-height: calc(100dvh - 2rem); display: flex; flex-direction: column; background: var(--surface); border-radius: calc(1.5rem * var(--rs)); box-shadow: 0 40px 80px -30px rgba(0,0,0,.6); transform: translateY(24px) scale(.97); transition: transform .45s cubic-bezier(.2,.65,.3,1); overflow: hidden; }
   .modal.show .modal-panel { transform: none; }
   .modal-head { background: linear-gradient(135deg, rgb(var(--c-900)), rgb(var(--c-600))); color: #fff; }
   #lightbox .modal-backdrop { background: rgba(2,8,12,.9); }
-  #lightboxImg { max-height: calc(100vh - 9rem); max-width: 100%; border-radius: calc(1rem * var(--rs)); box-shadow: 0 30px 80px -20px rgba(0,0,0,.6); transition: opacity .3s, transform .4s; }
+  #lightboxImg { max-height: calc(100vh - 9rem); max-height: calc(100dvh - 9rem); max-width: 100%; border-radius: calc(1rem * var(--rs)); box-shadow: 0 30px 80px -20px rgba(0,0,0,.6); transition: opacity .3s, transform .4s; }
   #lightboxImg.loading { opacity: 0; transform: scale(.97); }
   .lb-nav { width: 3rem; height: 3rem; border-radius: 999px; display: grid; place-items: center; color: #fff; background: rgba(255,255,255,.12); transition: background-color .25s, transform .25s; }
   .lb-nav:hover { background: rgba(255,255,255,.24); transform: scale(1.06); }
@@ -513,13 +513,60 @@
   .sortable-chosen { box-shadow: 0 16px 30px -14px rgb(var(--c-800) / .5); }
   .sortable-fallback { opacity: .95 !important; }
   /* عارض المستندات */
-  #docViewer .modal-panel { height: calc(100vh - 2rem); }
+  #docViewer .modal-panel { height: calc(100vh - 2rem); height: calc(100dvh - 2rem); }
   #docFrame { background: #fff; }
   /* زر دخول المسؤول بارز */
   #navbar .login-btn { background: rgba(255,255,255,.14); box-shadow: inset 0 0 0 1px rgba(255,255,255,.35); }
   #navbar.scrolled .login-btn { background: var(--brand-soft); color: var(--brand-ink); box-shadow: inset 0 0 0 1px var(--brand-line); }
   /* إفساح المجال لشريط المسؤول أسفل الشاشة */
   html.is-admin #toTop { bottom: 5.25rem; }
+
+  /* =========================================================
+     📱 التوافق مع الجوال والآيباد
+     ========================================================= */
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body { -webkit-tap-highlight-color: transparent; }
+  button, a, label, summary, [role="button"] { touch-action: manipulation; }
+  /* منع التكبير التلقائي في iPhone عند الكتابة (يحدث إذا كان الخط أصغر من 16px) */
+  @media (pointer: coarse) {
+    input, select, textarea { font-size: 16px !important; }
+    .seg button { min-height: 2.6rem; }
+    footer li > a, footer li > button { display: inline-block; padding: .35rem 0; }
+  }
+  /* هوامش الشاشات ذات النتوء ومؤشر الرئيسية */
+  #adminBar { bottom: calc(1rem + env(safe-area-inset-bottom)); }
+  #toTop { bottom: calc(1.25rem + env(safe-area-inset-bottom)); }
+  html.is-admin #toTop { bottom: calc(5.25rem + env(safe-area-inset-bottom)); }
+  #toasts { bottom: calc(1.25rem + env(safe-area-inset-bottom)) !important; }
+  html.is-admin #toasts { bottom: calc(5.25rem + env(safe-area-inset-bottom)) !important; }
+  #navbar nav { padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right)); }
+  .drawer-panel { padding-bottom: env(safe-area-inset-bottom); }
+
+  /* الجوال: النوافذ المنبثقة تظهر كلوحة من الأسفل بعرض الشاشة */
+  @media (max-width: 639px) {
+    .modal { padding: 0; align-items: flex-end; }
+    .modal-panel { max-height: calc(100vh - 1.5rem); max-height: calc(100dvh - 1.5rem); border-radius: calc(1.4rem * var(--rs)) calc(1.4rem * var(--rs)) 0 0; transform: translateY(40px); padding-bottom: env(safe-area-inset-bottom); }
+    #docViewer .modal-panel { height: calc(100vh - 1.5rem); height: calc(100dvh - 1.5rem); }
+    #lightbox { padding: .75rem; align-items: center; }
+    /* جدول السيرة الذاتية: العنوان فوق الحقل */
+    .cv-table tr:not(.cv-group) { display: block; padding: .35rem .5rem .5rem; }
+    .cv-table tr:not(.cv-group) > th, .cv-table tr:not(.cv-group) > td { display: block; width: 100%; border: 0; padding: .1rem .25rem; background: transparent; }
+    .cv-table tr:not(.cv-group) { border-bottom: 1px solid var(--line); }
+    .cv-table .cv-label { font-size: .8rem; color: var(--muted); }
+  }
+
+  /* جدول النمو المهني: يتحول إلى بطاقات على الجوال والآيباد العمودي */
+  @media (max-width: 767px) {
+    .growth-table thead { display: none; }
+    .growth-table, .growth-table tbody { display: block; }
+    .growth-table tr { display: grid; grid-template-columns: 1fr 1fr; gap: .25rem .75rem; padding: .85rem .75rem; border-bottom: 1px solid var(--line); position: relative; }
+    .growth-table td { display: block; border: 0 !important; padding: 0 !important; }
+    .growth-table td[data-label]::before { content: attr(data-label); display: block; font-size: .72rem; font-weight: 700; color: var(--muted); margin: .2rem .25rem .1rem; }
+    .growth-table td.g-num { grid-column: 1 / -1; text-align: right !important; font-size: .8rem; }
+    .growth-table td.g-num::before { content: 'البرنامج '; font-weight: 700; color: var(--muted); }
+    .growth-table td.g-wide { grid-column: 1 / -1; }
+    .growth-table td.g-remove { position: absolute; top: .5rem; left: .5rem; }
+  }
   html.is-admin #toasts { bottom: 5.25rem; }
   html.is-admin footer { padding-bottom: 4.5rem; }
   /* مؤشر حالة الحفظ */
@@ -628,7 +675,7 @@
       <button type="button" data-action="share" class="nav-icon grid w-10 h-10 place-items-center rounded-xl" title="مشاركة الملف (رمز QR)" aria-label="مشاركة الملف"><i class="fa-solid fa-qrcode"></i></button>
       <button type="button" data-action="export-pdf" class="nav-icon hidden sm:grid w-10 h-10 place-items-center rounded-xl" title="تصدير الملف PDF" aria-label="تصدير الملف PDF"><i class="fa-solid fa-file-pdf"></i></button>
       <span id="saveStatus" class="admin-only hidden md:inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-white/10 text-white/80 text-xs font-bold" data-state="saved" role="status"><i class="fa-solid fa-cloud"></i><span>محفوظ</span></span>
-      <button type="button" data-action="toggle-dark" class="nav-icon grid w-10 h-10 place-items-center rounded-xl" title="الوضع الداكن / الفاتح" aria-label="تبديل الوضع الداكن"><i class="fa-solid fa-moon"></i></button>
+      <button type="button" data-action="toggle-dark" class="nav-icon hidden sm:grid w-10 h-10 place-items-center rounded-xl" title="الوضع الداكن / الفاتح" aria-label="تبديل الوضع الداكن"><i class="fa-solid fa-moon"></i></button>
       <button type="button" data-open-login class="guest-only nav-icon flex items-center gap-2 h-10 px-3 rounded-xl font-bold text-[15px] login-btn" title="دخول المسؤول" aria-label="دخول المسؤول"><i class="fa-solid fa-lock"></i><span class="sm:hidden">دخول</span><span class="hidden sm:inline">دخول المسؤول</span></button>
       <button type="button" data-action="open-settings" class="admin-only nav-icon flex items-center gap-2 h-10 px-3 rounded-xl font-bold text-[15px]" title="الإعدادات" aria-label="الإعدادات">
         <i class="fa-solid fa-gear"></i><span class="hidden sm:inline">الإعدادات</span>
@@ -645,6 +692,7 @@
         <a href="#basics" class="px-4 py-3 rounded-xl font-bold text-ink-2 hover:bg-brand-soft hover:text-brand-ink" data-s="sections.basicsTitle">الأساسيات</a>
         <a href="#folders" class="px-4 py-3 rounded-xl font-bold text-ink-2 hover:bg-brand-soft hover:text-brand-ink">مجلدات الأداء</a>
         <div class="h-px bg-line my-1"></div>
+        <button type="button" data-action="toggle-dark" class="sm:hidden text-right px-4 py-3 rounded-xl font-bold text-ink-2 hover:bg-brand-soft hover:text-brand-ink"><i class="fa-solid fa-circle-half-stroke ms-1"></i> الوضع الداكن / الفاتح</button>
         <button type="button" data-action="toggle-view" class="admin-only text-right px-4 py-3 rounded-xl font-bold text-ink-2 hover:bg-brand-soft hover:text-brand-ink"><i class="fa-regular fa-eye ms-1"></i> <span class="edit-only">معاينة كما يراها الزوار</span><span class="view-only">الرجوع لوضع التعديل</span></button>
         <button type="button" data-action="logout" class="admin-only text-right px-4 py-3 rounded-xl font-bold text-ink-2 hover:bg-brand-soft hover:text-brand-ink"><i class="fa-solid fa-right-from-bracket ms-1"></i> تسجيل الخروج</button>
         <button type="button" data-action="export-pdf" class="text-right px-4 py-3 rounded-xl font-bold text-ink-2 hover:bg-brand-soft hover:text-brand-ink"><i class="fa-solid fa-file-pdf ms-1"></i> تصدير الملف PDF</button>
@@ -664,10 +712,10 @@
   <div class="blob w-96 h-96 bg-brand-400 bottom-0 right-1/3" style="animation-delay:-4s"></div>
 
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div id="heroGrid" class="grid lg:grid-cols-[auto,1fr] gap-10 lg:gap-14 items-center">
+    <div id="heroGrid" class="grid md:grid-cols-[auto,1fr] gap-8 md:gap-10 lg:gap-14 items-center">
 
       <!-- الصورة الشخصية -->
-      <div id="avatarWrap" class="reveal mx-auto lg:mx-0">
+      <div id="avatarWrap" class="reveal mx-auto md:mx-0">
         <div class="relative w-44 h-44 sm:w-52 sm:h-52">
           <div class="avatar-ring absolute inset-0 rounded-full p-[4px]"><div class="w-full h-full rounded-full bg-brand-950/40"></div></div>
           <label id="avatarLabel" class="group absolute inset-[7px] rounded-full overflow-hidden bg-brand-900/60 border-4 border-brand-950/30 cursor-pointer grid place-items-center" title="اضغط لرفع صورتك الشخصية">
@@ -683,15 +731,15 @@
         </div>
       </div>
 
-      <div id="heroText" class="text-center lg:text-right">
+      <div id="heroText" class="text-center md:text-right">
         <span class="reveal inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-white/90 text-sm font-bold" style="--d:80ms">
           <i class="fa-solid fa-award text-amber-300"></i> <span id="heroBadge">ملف الإنجاز الإلكتروني</span>
         </span>
         <h1 class="reveal mt-5 text-4xl sm:text-5xl lg:text-6xl font-black leading-tight" style="--d:160ms"><span id="heroName" class="hero-word">اسم المعلمة</span></h1>
         <p id="heroTitle" class="reveal mt-3 text-xl sm:text-2xl font-bold text-brand-200" style="--d:240ms">معلمة العلوم العامة</p>
         <p id="heroSchool" class="reveal mt-2 text-white/80 text-base sm:text-lg" style="--d:300ms"></p>
-        <p id="heroQuote" class="reveal mt-5 max-w-2xl mx-auto lg:mx-0 text-white/75 leading-relaxed" style="--d:360ms"></p>
-        <div class="reveal mt-8 flex flex-wrap gap-3 justify-center lg:justify-start no-print" style="--d:440ms">
+        <p id="heroQuote" class="reveal mt-5 max-w-2xl mx-auto md:mx-0 text-white/75 leading-relaxed" style="--d:360ms"></p>
+        <div class="reveal mt-8 flex flex-wrap gap-3 justify-center md:justify-start no-print" style="--d:440ms">
           <button type="button" data-open="cvModal" class="btn btn-light"><i class="fa-solid fa-id-card"></i> <span class="edit-only">تعبئة السيرة الذاتية</span><span class="view-only">عرض السيرة الذاتية</span></button>
           <a href="#folders" class="btn btn-outline-white"><i class="fa-solid fa-folder-open"></i> استعراض المجلدات</a>
         </div>
@@ -1076,7 +1124,7 @@
     </div>
     <div class="overflow-auto p-4 sm:p-6">
       <div class="rounded-2xl border border-line overflow-hidden">
-        <table class="pro-table text-sm sm:text-[15px]"><tbody id="cvBody"></tbody></table>
+        <table class="pro-table cv-table text-sm sm:text-[15px]"><tbody id="cvBody"></tbody></table>
       </div>
     </div>
     <div class="px-4 sm:px-6 py-4 border-t border-line bg-surface-2 flex flex-wrap items-center justify-between gap-3 no-print">
@@ -1108,7 +1156,7 @@
     </div>
     <div class="overflow-auto p-4 sm:p-6">
       <div class="rounded-2xl border border-line overflow-x-auto">
-        <table class="pro-table text-sm min-w-[860px]">
+        <table class="pro-table growth-table text-sm md:min-w-[860px]">
           <thead id="growthHead"></thead>
           <tbody id="growthBody"></tbody>
         </table>
@@ -1803,7 +1851,7 @@ function setCV(key, value, source) {
 function syncCV() {
   const name = cv.name?.trim();
   $('#heroName').textContent = name || g('اسم المعلمة', 'اسم المعلم');
-  $('#preName').textContent = name || 'جارٍ التحميل...';
+  const preName = $('#preName'); if (preName) preName.textContent = name || 'جارٍ التحميل...';
   $('#heroTitle').textContent = [cv.jobTitle?.trim() || g('معلمة العلوم العامة', 'معلم العلوم العامة'), cv.rank?.trim()].filter(Boolean).join(' — ');
   const place = [cv.school, cv.department].map(x => x?.trim()).filter(Boolean).join(' — ');
   $('#heroSchool').innerHTML = `<i class="fa-solid fa-school ms-1"></i> ${esc(place || 'اسم المدرسة — إدارة التعليم')}`;
@@ -1838,13 +1886,13 @@ function renderGrowthHead() {
 function renderGrowth() {
   $('#growthBody').innerHTML = growth.map((row, i) => `
     <tr data-row="${row.id}">
-      <td class="text-center font-black text-brand-ink">${i + 1}</td>
-      ${GROWTH_COLS.map(c => `<td class="p-1.5">${
+      <td class="g-num text-center font-black text-brand-ink">${i + 1}</td>
+      ${GROWTH_COLS.map(c => `<td class="p-1.5 ${['title', 'provider'].includes(c.key) ? 'g-wide' : ''}" data-label="${esc(c.label)}">${
         c.type === 'select'
           ? `<select class="tbl-input" data-g="${c.key}" aria-label="${esc(c.label)}">${c.options.map(o => `<option ${row[c.key] === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select>`
           : `<input class="tbl-input" data-g="${c.key}" type="${c.type || 'text'}" ${c.type === 'number' ? 'min="0"' : ''} aria-label="${esc(c.label)}" placeholder="${esc(c.placeholder || '')}" value="${esc(row[c.key] || '')}">`
       }</td>`).join('')}
-      <td class="text-center edit-only"><button type="button" class="icon-btn danger" data-action="growth-del" aria-label="حذف الصف"><i class="fa-regular fa-trash-can"></i></button></td>
+      <td class="g-remove text-center edit-only"><button type="button" class="icon-btn danger" data-action="growth-del" aria-label="حذف الصف"><i class="fa-regular fa-trash-can"></i></button></td>
     </tr>`).join('');
   syncGrowth();
   lockInputs();
@@ -2089,8 +2137,8 @@ function folderHTML(f, i, isOpen) {
       <div class="inner">
         <div class="inner-content px-4 sm:px-6 pb-6 pt-1">
           <div class="h-px bg-gradient-to-l from-transparent via-brand-300/60 to-transparent mb-5"></div>
-          <div class="grid md:grid-cols-5 gap-6">
-            <div class="md:col-span-2">
+          <div class="grid lg:grid-cols-5 gap-6">
+            <div class="lg:col-span-2 min-w-0">
               <h4 class="font-extrabold text-ink-2 flex items-center gap-2 mb-2"><i class="fa-solid fa-list-ul text-brand-500"></i> عناصر وشواهد المجلد</h4>
               <p class="text-xs text-ink-faint mb-2 edit-only">ضع علامة ✓ على العناصر المكتملة</p>
               <div class="space-y-0.5">
@@ -2108,7 +2156,7 @@ function folderHTML(f, i, isOpen) {
               </label>
             </div>
 
-            <div class="md:col-span-3">
+            <div class="lg:col-span-3 min-w-0">
               <h4 class="font-extrabold text-ink-2 flex items-center gap-2 mb-3"><i class="fa-solid fa-cloud-arrow-up text-brand-500"></i> <span class="edit-only">رفع الشواهد</span><span class="view-only">الشواهد</span></h4>
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 edit-only">
                 ${Object.entries(UPLOAD_TYPES).map(([type, t]) => `
@@ -2156,17 +2204,17 @@ function itemHTML(it) {
     : `<span class="item-icon ${t.cls}"><i class="${t.icon}"></i></span>`;
   const meta = it.type === 'link' ? `<span dir="ltr" class="truncate">${esc(it.url.replace(/^https?:\/\//, ''))}</span>` : `<span>${fmtSize(it.size)}</span>`;
   return `
-    <li class="item-row flex items-center gap-3 p-2.5 rounded-2xl bg-surface border border-line hover:border-brand-line hover:shadow-sm transition" data-item="${it.id}">
+    <li class="item-row flex items-center gap-2 sm:gap-3 p-2 sm:p-2.5 rounded-2xl bg-surface border border-line hover:border-brand-line hover:shadow-sm transition" data-item="${it.id}">
       <span class="drag-handle edit-only -me-1 px-1 py-2" title="اسحب لإعادة الترتيب" aria-label="اسحب لإعادة الترتيب"><i class="fa-solid fa-grip-vertical"></i></span>
       ${thumb}
       <div class="min-w-0 flex-1">
         <b class="block text-sm text-ink-2 truncate">${esc(it.name)}</b>
         ${it.desc ? `<p class="text-xs text-ink-muted leading-relaxed mt-0.5 line-clamp-2">${esc(it.desc)}</p>` : ''}
-        <span class="flex items-center gap-1.5 text-xs text-ink-faint min-w-0">${meta}<span>•</span><span class="shrink-0">${fmtDate(it.date)}</span></span>
+        <span class="flex flex-wrap items-center gap-x-1.5 text-xs text-ink-faint min-w-0 [&>span]:whitespace-nowrap">${meta}<span>•</span><span>${fmtDate(it.date)}</span></span>
       </div>
-      <button type="button" class="icon-btn" data-action="item-open" aria-label="فتح"><i class="fa-solid ${it.type === 'link' ? 'fa-arrow-up-right-from-square' : 'fa-eye'}"></i></button>
-      <button type="button" class="icon-btn edit-only" data-action="item-edit" aria-label="تعديل الاسم والوصف"><i class="fa-solid fa-pen"></i></button>
-      <button type="button" class="icon-btn danger edit-only" data-action="item-del" aria-label="حذف"><i class="fa-regular fa-trash-can"></i></button>
+      <button type="button" class="icon-btn !w-8 !h-8 sm:!w-9 sm:!h-9" data-action="item-open" aria-label="فتح"><i class="fa-solid ${it.type === 'link' ? 'fa-arrow-up-right-from-square' : 'fa-eye'}"></i></button>
+      <button type="button" class="icon-btn !w-8 !h-8 sm:!w-9 sm:!h-9 edit-only" data-action="item-edit" aria-label="تعديل الاسم والوصف"><i class="fa-solid fa-pen"></i></button>
+      <button type="button" class="icon-btn !w-8 !h-8 sm:!w-9 sm:!h-9 danger edit-only" data-action="item-del" aria-label="حذف"><i class="fa-regular fa-trash-can"></i></button>
     </li>`;
 }
 
@@ -2289,9 +2337,9 @@ function applySettings() {
   $('#heroQuote').classList.toggle('hidden', !settings.showQuote || !settings.quote.trim());
   $('#statsRow').classList.toggle('hidden', !settings.showStats);
   $('#avatarWrap').classList.toggle('hidden', !settings.showAvatar);
-  $('#heroGrid').classList.toggle('lg:grid-cols-[auto,1fr]', settings.showAvatar);
+  $('#heroGrid').classList.toggle('md:grid-cols-[auto,1fr]', settings.showAvatar);
   $('#avatarIcon').className = `fa-solid ${g('fa-user-graduate', 'fa-user-tie')} text-5xl`;
-  $('#preTitle').textContent = settings.siteTitle || 'ملف الإنجاز';
+  const preTitle = $('#preTitle'); if (preTitle) preTitle.textContent = settings.siteTitle || 'ملف الإنجاز';
   applyCards();
   syncCV();
   refreshSettingsUI();
@@ -2302,7 +2350,7 @@ function refreshSettingsUI() {
   $$('[data-set-key]').forEach(b => b.classList.toggle('active', String(getPath(settings, b.dataset.setKey)) === b.dataset.setValue));
   $('#fontScaleVal').textContent = settings.fontScale + '%';
   const dark = document.documentElement.classList.contains('dark');
-  $$('[data-action="toggle-dark"] i').forEach(i => i.className = `fa-solid ${dark ? 'fa-sun' : 'fa-moon'}`);
+  $$('#navbar nav [data-action="toggle-dark"] i').forEach(i => i.className = `fa-solid ${dark ? 'fa-sun' : 'fa-moon'}`);
   $$('#navbar [data-action="toggle-view"]').forEach(b => b.classList.toggle('on', previewMode));
 }
 
