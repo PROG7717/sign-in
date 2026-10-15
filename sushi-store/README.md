@@ -16,6 +16,11 @@
 | `check_referrer.php` | التحقق من رقم الصديق المرشِّح |
 | `admin_orders.php` | قائمة الطلبات واعتمادها أو رفضها أو إلغاؤها |
 | `admin_sales_report.php` | تقرير المبيعات |
+| `admin_customers.php` / `admin_customer_edit.php` | عملاء الشهر / تعديل الاسم والعداد وحذف العميل |
+| `admin_cashback.php` | الكاش باك النشط: إضافة وتعديل وحذف مع مزامنة المحفظة |
+| `admin_carts.php` | السلال المتروكة والتذكير بها |
+| `admin_drivers.php` | المناديب |
+| `admin_manual_order.php` | تسجيل طلب يدوي (من واتساب) |
 | `database.sql` | قاعدة البيانات في ملف واحد |
 
 ## ملفات ناقصة
@@ -23,10 +28,9 @@
 الواجهة تستدعي هذه الملفات، ولم تُرفع بعد:
 
 - جداول قاعدة البيانات الأساسية (settings, products, orders, customers…) — ستُدمج في `database.sql`
-- `admin_login.php`, `admin_logout.php`, `admin_account.php`
-- `admin_customers.php`, `admin_customer_edit.php`, `admin_cashback.php`
-- `admin_drivers.php`, `admin_broadcast.php`, `admin_carts.php`, `admin_manual_order.php`
-- `save_cart.php`
+- `admin_login.php`, `admin_logout.php`, `admin_account.php` — دخول الأدمن (بدونها ما تفتح لوحة التحكم)
+- `admin_broadcast.php` — الرسائل الجماعية
+- `save_cart.php` — حفظ السلة المتروكة
 
 ## التركيب (InfinityFree أو أي استضافة PHP + MySQL)
 
