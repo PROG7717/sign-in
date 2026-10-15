@@ -12,7 +12,7 @@ define('DB_NAME', 'DB_NAME');       // مثل if0_XXXXXXXX_teacher
 define('DB_USER', 'DB_USER');       // مثل if0_XXXXXXXX
 define('DB_PASS', 'DB_PASSWORD');
 
-/* رقم جوال المعلمة (حسابها مزروع في database.sql بكلمة المرور Teacher@123) */
+/* رقم جوال المعلمة (حسابها مزروع في database.sql — كلمة المرور لا تُحفظ في المستودع) */
 define('TEACHER_PHONE', '05XXXXXXXX');
 
 /* نقاط التحفيز: كل عمل معتمد = نقطة، وكل هذا العدد من النقاط = وسام بونص */
