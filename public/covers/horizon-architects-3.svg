@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="hsla(25 45% 8% / 1)"/>
+    <stop offset="100%" stop-color="hsla(85 50% 5% / 1)"/>
+  </linearGradient>
+  <filter id="blur"><feGaussianBlur stdDeviation="70"/></filter>
+  <filter id="grain">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+    <feColorMatrix type="saturate" values="0"/>
+    <feComponentTransfer><feFuncA type="linear" slope="0.06"/></feComponentTransfer>
+    <feComposite operator="over" in2="SourceGraphic"/>
+  </filter>
+  <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+    <path d="M 60 0 L 0 0 0 60" fill="none" stroke="white" stroke-opacity="0.05" stroke-width="1"/>
+  </pattern>
+</defs>
+<rect width="1200" height="900" fill="url(#bg)"/>
+<circle cx="616" cy="373" r="372" fill="url(#g0)" filter="url(#blur)"/>
+  <radialGradient id="g0"><stop offset="0%" stop-color="hsla(21.745 90% 62% / 0.85)"/><stop offset="100%" stop-color="hsla(21.745 90% 50% / 0)"/></radialGradient><circle cx="292" cy="525" r="288" fill="url(#g1)" filter="url(#blur)"/>
+  <radialGradient id="g1"><stop offset="0%" stop-color="hsla(349.913 90% 62% / 0.85)"/><stop offset="100%" stop-color="hsla(349.913 90% 50% / 0)"/></radialGradient><circle cx="694" cy="427" r="214" fill="url(#g2)" filter="url(#blur)"/>
+  <radialGradient id="g2"><stop offset="0%" stop-color="hsla(210.12 90% 62% / 0.85)"/><stop offset="100%" stop-color="hsla(210.12 90% 50% / 0)"/></radialGradient><circle cx="467" cy="352" r="184" fill="url(#g3)" filter="url(#blur)"/>
+  <radialGradient id="g3"><stop offset="0%" stop-color="hsla(13.908999999999999 90% 62% / 0.85)"/><stop offset="100%" stop-color="hsla(13.908999999999999 90% 50% / 0)"/></radialGradient><circle cx="340" cy="259" r="271" fill="url(#g4)" filter="url(#blur)"/>
+  <radialGradient id="g4"><stop offset="0%" stop-color="hsla(348.725 90% 62% / 0.85)"/><stop offset="100%" stop-color="hsla(348.725 90% 50% / 0)"/></radialGradient><circle cx="708" cy="573" r="372" fill="none" stroke="hsla(25 85% 70% / 0.35)" stroke-width="1.5"/><circle cx="791" cy="439" r="331" fill="none" stroke="hsla(350 85% 70% / 0.35)" stroke-width="1.5"/><circle cx="432" cy="181" r="290" fill="none" stroke="hsla(350 85% 70% / 0.35)" stroke-width="1.5"/><circle cx="596" cy="558" r="225" fill="none" stroke="hsla(350 85% 70% / 0.35)" stroke-width="1.5"/><circle cx="811" cy="567" r="379" fill="none" stroke="hsla(210 85% 70% / 0.35)" stroke-width="1.5"/><path d="M -50 785.72 Q 600 705.5120000000001 1250 770.9" fill="none" stroke="hsla(25 90% 68% / 0.4)" stroke-width="1.1"/><path d="M -50 443.41999999999996 Q 600 324.39599999999996 1250 495.84" fill="none" stroke="hsla(350 90% 68% / 0.4)" stroke-width="1.9"/><path d="M -50 690.66 Q 600 616.452 1250 730.8399999999999" fill="none" stroke="hsla(210 90% 68% / 0.4)" stroke-width="1.6"/><path d="M -50 400.16 Q 600 224.73600000000002 1250 361.6" fill="none" stroke="hsla(25 90% 68% / 0.4)" stroke-width="2.2"/>
+<rect width="1200" height="900" fill="url(#grid)"/>
+<rect width="1200" height="900" filter="url(#grain)" opacity="0.5" fill="transparent"/>
+<text x="60" y="830" font-family="'Space Grotesk','Segoe UI',sans-serif" font-size="44" letter-spacing="18" fill="white" fill-opacity="0.5" font-weight="600">HORIZON · 03</text>
+</svg>

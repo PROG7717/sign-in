@@ -1,0 +1,16 @@
+# الصفحة الرئيسية: index.php (يضيف بطاقة معاينة الرابط) ثم index.html كاحتياط
+DirectoryIndex index.php index.html
+
+# منع عرض محتويات المجلدات
+Options -Indexes
+
+# منع الوصول المباشر لملفات الإعدادات وقاعدة البيانات والتوثيق
+<FilesMatch "^(config\.php|database\.sql|README\.md)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>

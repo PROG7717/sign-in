@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   Dynamic design tokens.
+   --primary / --secondary / --accent are overridden at runtime by the
+   admin theme settings (server-injected <style> + realtime sync).
+------------------------------------------------------------------- */
+:root {
+  --primary: #8b5cf6;
+  --secondary: #22d3ee;
+  --accent: #fb7185;
+
+  --background: #06070c;
+  --surface: #0d0f18;
+  --surface-2: #131625;
+  --foreground: #f3f4f8;
+  --muted: #9aa1b8;
+  --line: rgba(255, 255, 255, 0.08);
+}
+
+@theme inline {
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+
+  --font-sans: var(--font-latin), var(--font-arabic), ui-sans-serif,
+    system-ui, sans-serif;
+
+  --animate-marquee: marquee 32s linear infinite;
+  --animate-spin-slow: spin 14s linear infinite;
+  --animate-pulse-soft: pulse-soft 3.2s ease-in-out infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes pulse-soft {
+    0%,
+    100% {
+      opacity: 0.55;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-latin), var(--font-arabic), ui-sans-serif, system-ui,
+    sans-serif;
+  overflow-x: hidden;
+}
+
+/* Arabic-first font stack when the page direction is RTL */
+html[lang="ar"] body {
+  font-family: var(--font-arabic), var(--font-latin), ui-sans-serif, system-ui,
+    sans-serif;
+}
+
+/* The marquee scrolls in a fixed direction regardless of writing mode */
+html[dir="rtl"] .marquee-track {
+  animation-direction: reverse;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--primary) 70%, transparent);
+  color: #fff;
+}
+
+/* Slim, theme-aware scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--primary) 45%, var(--surface));
+  border-radius: 999px;
+}
+
+/* ---------- Reusable utilities ---------- */
+@utility glass {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+@utility text-gradient {
+  background: linear-gradient(
+    92deg,
+    var(--primary),
+    var(--secondary) 55%,
+    var(--accent)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility bg-grid {
+  background-image: linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+@utility glow-primary {
+  box-shadow: 0 0 42px -8px color-mix(in oklab, var(--primary) 65%, transparent);
+}
+
+/* Number inputs / color inputs inside the admin keep native chrome minimal */
+input[type="color"] {
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
