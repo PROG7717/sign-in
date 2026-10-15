@@ -1,0 +1,1104 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="منصة المعلمة">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1F3A5F" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16263A" media="(prefers-color-scheme: dark)">
+<meta name="description" content="منصة تعليمية لإدارة الطالبات: التسليمات، الحضور، المشاركة، ولوحة التميز">
+<title>منصة المعلمة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=27">
+<script>
+/* يُطبَّق قبل رسم الصفحة حتى لا تومض بالوضع الخاطئ.
+   إن اختارت المستخدمة وضعاً يدوياً نستخدمه، وإلا نتبع إعداد الجهاز. */
+(function () {
+  var saved = null;
+  try { saved = localStorage.getItem('lms_theme'); } catch (e) { saved = null; }
+  if (saved === 'dark' || saved === 'light') {
+    document.documentElement.setAttribute('data-theme', saved);
+  }
+})();
+</script>
+</head>
+<body>
+
+<!-- ============================================ الشريط العلوي -->
+<header class="topbar">
+  <div class="brand">
+    <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+      <rect x="1" y="1" width="24" height="24" rx="5" fill="#FFFFFF" opacity="0.12"></rect>
+      <path d="M13 7.5 C10.5 5.8 7.5 5.8 5 7.2 V18.2 C7.5 16.8 10.5 16.8 13 18.5 C15.5 16.8 18.5 16.8 21 18.2 V7.2 C18.5 5.8 15.5 5.8 13 7.5 Z"
+            fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-linejoin="round"></path>
+      <line x1="13" y1="7.5" x2="13" y2="18.5" stroke="#FFFFFF" stroke-width="1.5"></line>
+      <line x1="6.5" y1="20.5" x2="19.5" y2="20.5" stroke="#C8B080" stroke-width="1.6" stroke-linecap="round"></line>
+    </svg>
+    <span id="brand-name">منصة المعلمة</span>
+  </div>
+  <div class="spacer"></div>
+  <span id="topbar-user" class="user-name hidden"></span>
+  <button id="btn-login" class="lang-btn hidden" type="button" data-i18n="login">تسجيل الدخول</button>
+  <button id="btn-logout" class="lang-btn hidden" type="button" data-i18n="logout">خروج</button>
+  <button id="theme-toggle" class="lang-btn icon-only" type="button" title="الوضع الليلي" aria-label="الوضع الليلي">
+    <span class="ic" data-icon="moon"></span>
+  </button>
+  <button id="lang-toggle" class="lang-btn" type="button">EN</button>
+</header>
+
+<main id="app">
+
+  <!-- ============================================ الدخول والتسجيل -->
+  <section id="view-auth" class="view hidden">
+    <div class="auth-page">
+      <div class="auth-hero">
+        <svg width="52" height="52" viewBox="0 0 26 26" aria-hidden="true">
+          <rect x="1" y="1" width="24" height="24" rx="5" fill="#1F3A5F"></rect>
+          <path d="M13 7.5 C10.5 5.8 7.5 5.8 5 7.2 V18.2 C7.5 16.8 10.5 16.8 13 18.5 C15.5 16.8 18.5 16.8 21 18.2 V7.2 C18.5 5.8 15.5 5.8 13 7.5 Z"
+                fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-linejoin="round"></path>
+          <line x1="13" y1="7.5" x2="13" y2="18.5" stroke="#FFFFFF" stroke-width="1.5"></line>
+          <line x1="6.5" y1="20.5" x2="19.5" y2="20.5" stroke="#C8B080" stroke-width="1.6" stroke-linecap="round"></line>
+        </svg>
+        <div class="hero-title" id="hero-title">منصة المعلمة</div>
+        <div class="hero-teacher" id="hero-teacher"></div>
+        <div class="hero-line" data-i18n="heroLine">مساحة تعليمية منظمة للتعلم والمتابعة والتقييم</div>
+        <hr class="rule-brass">
+      </div>
+
+      <div class="auth-card card">
+        <div class="card-b">
+          <div class="tabs">
+            <button type="button" class="tab active" id="tab-login" data-i18n="login">تسجيل الدخول</button>
+            <button type="button" class="tab" id="tab-register" data-i18n="register">تسجيل طالبة جديدة</button>
+          </div>
+
+          <form id="form-login" novalidate>
+            <div class="field">
+              <label for="login-phone" data-i18n="phone">رقم الجوال</label>
+              <input type="tel" id="login-phone" class="ltr" autocomplete="tel" inputmode="numeric" placeholder="05XXXXXXXX">
+              <div class="hint" data-i18n="loginHint">الطالبة تدخل برقم الجوال فقط</div>
+            </div>
+            <div class="field hidden" id="login-pass-wrap">
+              <label for="login-password" data-i18n="password">كلمة المرور</label>
+              <input type="password" id="login-password" autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn btn-block" id="login-submit" data-i18n="login">تسجيل الدخول</button>
+          </form>
+
+          <form id="form-register" class="hidden" novalidate>
+            <div class="field">
+              <label for="reg-name" data-i18n="fullName">الاسم الثلاثي</label>
+              <input type="text" id="reg-name" autocomplete="name">
+              <div class="hint" data-i18n="nameHint">ثلاث كلمات على الأقل</div>
+            </div>
+            <div class="field">
+              <label for="reg-phone" data-i18n="phone">رقم الجوال</label>
+              <input type="tel" id="reg-phone" class="ltr" inputmode="numeric" placeholder="05XXXXXXXX">
+              <div class="hint" data-i18n="phoneHint">مثال: 0512345678</div>
+            </div>
+            <div class="field">
+              <label for="reg-class" data-i18n="classLabel">الفصل</label>
+              <select id="reg-class"></select>
+              <div class="hint" data-i18n="classHint">اختاري فصلك من القائمة</div>
+            </div>
+            <div class="field">
+              <label for="reg-mother-phone" data-i18n="motherPhone">رقم جوال الأم</label>
+              <input type="tel" id="reg-mother-phone" class="ltr" inputmode="numeric" placeholder="05XXXXXXXX">
+              <div class="hint" data-i18n="motherPhoneHint">للتواصل مع الأم. إن لم يكن لديك جوال فاكتبي رقم أمك في الحقلين</div>
+            </div>
+            <div class="field">
+              <label for="reg-mother-name" data-i18n="motherNameOpt">اسم الأم (اختياري)</label>
+              <input type="text" id="reg-mother-name" autocomplete="off">
+            </div>
+            <button type="submit" class="btn btn-block" id="reg-submit" data-i18n="createAccount">إنشاء الحساب</button>
+            <div class="hint" style="margin-top:10px" data-i18n="registerNote">سيتم تفعيل حسابك بعد اعتماد المعلمة</div>
+          </form>
+        </div>
+      </div>
+
+      <div class="auth-foot">
+        <a href="#" id="go-guest" data-i18n="browseGuest">تصفح المنصة بدون تسجيل</a>
+        <span class="muted"> | </span>
+        <a href="#" id="go-parent" data-i18n="parentPortal">بوابة ولي الأمر</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ شاشة الانتظار / الرفض -->
+  <section id="view-gate" class="view hidden">
+    <div class="card gate-card">
+      <h2 id="gate-title"></h2>
+      <p class="muted" id="gate-body"></p>
+      <div class="btn-row">
+        <button type="button" class="btn-outline" id="gate-logout" data-i18n="logout">خروج</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ بوابة ولي الأمر -->
+  <section id="view-parent" class="view hidden">
+    <div class="auth-page">
+      <div id="parent-entry" class="auth-card card">
+        <div class="card-b">
+          <h2 style="margin-bottom:14px" data-i18n="parentPortal">بوابة ولي الأمر</h2>
+
+          <!-- خطوة 1: اختيار الطالبة -->
+          <div id="parent-step-pick">
+            <div class="field">
+              <label data-i18n="selectStudent">اختاري الطالبة</label>
+              <input type="text" id="parent-search" class="rtl" autocomplete="off" spellcheck="false"
+                     data-i18n-ph="searchStudent" placeholder="ابحثي بالاسم">
+            </div>
+            <div id="parent-student-list" class="parent-list"></div>
+          </div>
+
+          <!-- خطوة 2: تأكيد رقم جوال الطالبة -->
+          <form id="form-parent-verify" class="hidden" novalidate>
+            <div class="field">
+              <label data-i18n="chosenStudent">الطالبة المختارة</label>
+              <div id="parent-chosen-name" class="chosen-name"></div>
+            </div>
+            <div class="field">
+              <label for="parent-phone" data-i18n="enterStudentPhone">أدخلي رقم جوال الطالبة المسجل</label>
+              <input type="tel" id="parent-phone" class="ltr" inputmode="numeric"
+                     autocomplete="off" spellcheck="false" placeholder="05xxxxxxxx">
+              <div class="hint" data-i18n="parentPhoneHint">نفس الرقم الذي سجّلت به الطالبة حسابها</div>
+            </div>
+            <button type="submit" class="btn btn-block" id="parent-submit" data-i18n="showBtn">عرض التقرير</button>
+            <div class="auth-foot">
+              <a href="#" id="parent-pick-another" data-i18n="chooseAnother">اختيار طالبة أخرى</a>
+            </div>
+          </form>
+
+          <div class="auth-foot">
+            <a href="#" id="parent-back-login" data-i18n="backToLogin">العودة لتسجيل الدخول</a>
+          </div>
+        </div>
+      </div>
+
+      <div id="parent-report" class="hidden" style="width:100%;max-width:760px">
+        <div class="card">
+          <div class="card-b">
+            <div class="sub-head">
+              <div>
+                <h2 id="pr-name"></h2>
+                <span id="pr-exc" class="badge b-brass hidden" data-i18n="onBoard">على لوحة التميز</span>
+              </div>
+              <button type="button" class="btn-outline btn-sm" id="pr-back" data-i18n="back">رجوع</button>
+            </div>
+          </div>
+        </div>
+        <div class="card mt">
+          <div class="card-h" data-i18n="attSummary">ملخص الحضور</div>
+          <div class="card-b">
+            <div id="pr-att" class="chips-row"></div>
+          </div>
+        </div>
+        <div class="card mt">
+          <div class="card-h" data-i18n="grades">الدرجات المعتمدة</div>
+          <div class="card-b tbl-wrap" id="pr-grades"></div>
+        </div>
+        <div class="card mt">
+          <div class="card-h" data-i18n="certificates">الشهادات</div>
+          <div class="card-b" id="pr-certs"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ تطبيق الطالبة -->
+  <section id="view-student" class="view">
+    <div class="shell">
+      <aside class="sidebar" id="student-nav">
+        <button type="button" class="navitem" data-nav="home">
+          <span class="ic" data-icon="home"></span><span data-i18n="home">الرئيسية</span>
+        </button>
+        <button type="button" class="navitem" data-nav="portfolio">
+          <span class="ic" data-icon="folder"></span><span data-i18n="portfolio">ملف الإنجاز</span>
+        </button>
+        <button type="button" class="navitem" data-nav="schedule">
+          <span class="ic" data-icon="clock"></span><span data-i18n="schedule">الجدول الأسبوعي</span>
+        </button>
+        <button type="button" class="navitem" data-nav="excellence">
+          <span class="ic" data-icon="star"></span><span data-i18n="excellence">لوحة التميز</span>
+        </button>
+        <div class="navgroup-label" data-i18n="sections">الأقسام</div>
+        <div id="student-sections-nav"></div>
+      </aside>
+
+      <div class="main">
+        <div class="conn-error hidden" id="conn-error">
+          <span id="conn-error-msg" data-i18n="connError">تعذّر الاتصال مؤقتاً بالخدمة. حاولنا تلقائياً ولم ينجح، جرّبي إعادة المحاولة.</span>
+          <button type="button" class="btn btn-sm" id="conn-retry" data-i18n="retryNow">أعد المحاولة</button>
+        </div>
+        <!-- الرئيسية -->
+        <div class="screen" id="s-home">
+          <h1 class="page-title" id="sh-welcome"></h1>
+          <p class="page-sub" data-i18n="heroLine">مساحة تعليمية منظمة للتعلم والمتابعة والتقييم</p>
+          <div class="grid-stats" id="sh-stats">
+            <div class="stat static"><div class="num" id="sh-att">--</div><div class="lbl" data-i18n="attRate">نسبة الحضور</div></div>
+            <div class="stat static"><div class="num" id="sh-points">--</div><div class="lbl" data-i18n="totalPoints">نقاط المشاركة</div></div>
+            <div class="stat static"><div class="num" id="sh-approved">--</div><div class="lbl" data-i18n="approvedWork">تسليمات معتمدة</div></div>
+            <div class="stat static"><div class="num" id="sh-open">--</div><div class="lbl" data-i18n="openTasks">مهام مفتوحة</div></div>
+          </div>
+          <div class="card hidden" id="sh-progress-card">
+            <div class="card-h" data-i18n="myProgress">تقدّمي</div>
+            <div class="card-b">
+              <div id="sh-bonus"></div>
+              <div id="sh-chart"></div>
+            </div>
+          </div>
+          <div class="card mt">
+            <div class="card-h" data-i18n="sections">الأقسام</div>
+            <div class="card-b">
+              <div class="grid-cards" id="sh-sections"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- عرض قسم -->
+        <div class="screen hidden" id="s-section">
+          <h1 class="page-title" id="ss-title"></h1>
+          <p class="page-sub" id="ss-sub"></p>
+          <div id="ss-items"></div>
+        </div>
+
+        <!-- ملف الإنجاز -->
+        <div class="screen hidden" id="s-portfolio">
+          <div class="card">
+            <div class="card-b">
+              <div class="sub-head">
+                <div>
+                  <h2 id="sp-name"></h2>
+                  <span id="sp-exc" class="badge b-brass hidden" data-i18n="onBoard">على لوحة التميز</span>
+                  <div class="stats-inline">
+                    <span><span data-i18n="attRate">نسبة الحضور</span> <b id="sp-att">--</b></span>
+                    <span><span data-i18n="totalPoints">نقاط المشاركة</span> <b id="sp-points">--</b></span>
+                    <span><span data-i18n="approvedWork">تسليمات معتمدة</span> <b id="sp-approved">--</b></span>
+                  </div>
+                </div>
+                <button type="button" class="btn" id="sp-upload-free">
+                  <span class="ic" data-icon="upload"></span><span data-i18n="uploadFree">رفع عمل جديد</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="tabs mt" id="sp-tabs">
+            <button type="button" class="tab active" data-tab="tasks" data-i18n="tasks">المهام المطلوبة</button>
+            <button type="button" class="tab" data-tab="subs" data-i18n="myWork">تسليماتي</button>
+            <button type="button" class="tab" data-tab="certs" data-i18n="myCerts">شهاداتي</button>
+            <button type="button" class="tab" data-tab="feedback" data-i18n="myFeedback">ملاحظاتي</button>
+          </div>
+
+          <div id="sp-panel-tasks"></div>
+          <div id="sp-panel-subs" class="hidden"></div>
+          <div id="sp-panel-certs" class="hidden"></div>
+          <div id="sp-panel-feedback" class="hidden">
+            <div class="card">
+              <div class="card-h" data-i18n="writeFeedback">اكتبي ملاحظتك أو استفسارك للمعلمة</div>
+              <div class="card-b">
+                <div class="field">
+                  <textarea id="sp-fb-text"></textarea>
+                </div>
+                <button type="button" class="btn" id="sp-fb-send" data-i18n="send">إرسال</button>
+              </div>
+            </div>
+            <div class="mt" id="sp-fb-list"></div>
+          </div>
+        </div>
+
+        <!-- الجدول -->
+        <div class="screen hidden" id="s-schedule">
+          <h1 class="page-title" data-i18n="schedule">الجدول الأسبوعي</h1>
+          <p class="page-sub" id="ssch-sub"></p>
+          <div class="card"><div class="card-b tbl-wrap" id="ssch-grid"></div></div>
+        </div>
+
+        <!-- لوحة التميز -->
+        <div class="screen hidden" id="s-excellence">
+          <h1 class="page-title" data-i18n="excellence">لوحة التميز</h1>
+          <hr class="rule-brass">
+          <div class="grid-cards" id="sexc-grid"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ لوحة المعلمة -->
+  <section id="view-teacher" class="view hidden">
+    <div class="shell">
+      <aside class="sidebar" id="teacher-nav">
+        <div class="navgroup-label" data-i18n="manage">الإدارة</div>
+        <button type="button" class="navitem" data-nav="overview">
+          <span class="ic" data-icon="home"></span><span data-i18n="overview">نظرة عامة</span>
+        </button>
+        <button type="button" class="navitem" data-nav="approvals">
+          <span class="ic" data-icon="inbox"></span><span data-i18n="approvals">طلبات التسجيل</span>
+        </button>
+        <button type="button" class="navitem" data-nav="submissions">
+          <span class="ic" data-icon="doc"></span><span data-i18n="submissions">التسليمات</span>
+        </button>
+        <button type="button" class="navitem" data-nav="attendance">
+          <span class="ic" data-icon="calcheck"></span><span data-i18n="attendance">الحضور</span>
+        </button>
+        <button type="button" class="navitem" data-nav="participation">
+          <span class="ic" data-icon="hand"></span><span data-i18n="participation">المشاركة</span>
+        </button>
+        <button type="button" class="navitem" data-nav="students">
+          <span class="ic" data-icon="users"></span><span data-i18n="students">الطالبات</span>
+        </button>
+        <button type="button" class="navitem" data-nav="backup">
+          <span class="ic" data-icon="download"></span><span data-i18n="backupNav">النسخ الاحتياطي</span>
+        </button>
+        <button type="button" class="navitem" data-nav="mothers">
+          <span class="ic" data-icon="message"></span><span data-i18n="mothersNav">تواصل الأمهات</span>
+        </button>
+        <button type="button" class="navitem" data-nav="schedule">
+          <span class="ic" data-icon="clock"></span><span data-i18n="schedule">الجدول الأسبوعي</span>
+        </button>
+        <div class="navgroup-label" data-i18n="content">المحتوى</div>
+        <button type="button" class="navitem" data-nav="sections">
+          <span class="ic" data-icon="grid"></span><span data-i18n="sections">الأقسام</span>
+        </button>
+        <button type="button" class="navitem" data-nav="excellence">
+          <span class="ic" data-icon="star"></span><span data-i18n="excellence">لوحة التميز</span>
+        </button>
+        <button type="button" class="navitem" data-nav="feedback">
+          <span class="ic" data-icon="message"></span><span data-i18n="feedbackNav">الملاحظات</span>
+        </button>
+      </aside>
+
+      <div class="main">
+        <!-- نظرة عامة -->
+        <div class="screen" id="t-overview">
+          <h1 class="page-title" data-i18n="overview">نظرة عامة</h1>
+          <p class="page-sub" id="to-date"></p>
+          <div class="grid-stats">
+            <div class="stat" data-goto="approvals"><div class="num" id="to-regs">--</div><div class="lbl" data-i18n="pendingRegs">طلبات معلقة</div></div>
+            <div class="stat" data-goto="submissions"><div class="num" id="to-subs">--</div><div class="lbl" data-i18n="pendingSubs">تسليمات معلقة</div></div>
+            <div class="stat" data-goto="attendance"><div class="num" id="to-att">--</div><div class="lbl" data-i18n="attToday">حضور اليوم</div></div>
+            <div class="stat" data-goto="schedule"><div class="num" id="to-classes">--</div><div class="lbl" data-i18n="todayClasses">حصص اليوم</div></div>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-h">
+                <span data-i18n="pendingRegs">طلبات معلقة</span>
+                <button type="button" class="btn-ghost btn-sm" data-goto="approvals" data-i18n="viewAll">عرض الكل</button>
+              </div>
+              <div class="card-b" id="to-approvals"></div>
+            </div>
+            <div class="card">
+              <div class="card-h" data-i18n="todaySchedule">جدول اليوم</div>
+              <div class="card-b" id="to-today"></div>
+            </div>
+          </div>
+          <div class="card mt">
+            <div class="card-h">
+              <span data-i18n="recentSubs">أحدث التسليمات</span>
+              <button type="button" class="btn-ghost btn-sm" data-goto="submissions" data-i18n="viewAll">عرض الكل</button>
+            </div>
+            <div class="card-b" id="to-recent"></div>
+          </div>
+        </div>
+
+        <!-- طلبات التسجيل -->
+        <div class="screen hidden" id="t-approvals">
+          <h1 class="page-title" data-i18n="approvals">طلبات التسجيل</h1>
+          <p class="page-sub" data-i18n="approvalsSub">اعتمدي حسابات الطالبات الجديدة أو ارفضيها</p>
+          <div class="card"><div class="card-b tbl-wrap" id="ta-list"></div></div>
+        </div>
+
+        <!-- التسليمات -->
+        <div class="screen hidden" id="t-submissions">
+          <h1 class="page-title" data-i18n="submissions">التسليمات</h1>
+          <p class="page-sub" data-i18n="submissionsSub">راجعي أعمال الطالبات وقيميها</p>
+          <div class="tabs" id="ts-tabs">
+            <button type="button" class="tab active" data-key="pending" data-i18n="st_pending">قيد المراجعة</button>
+            <button type="button" class="tab" data-key="needs_revision" data-i18n="st_needs_revision">يحتاج تعديلاً</button>
+            <button type="button" class="tab" data-key="approved" data-i18n="st_approved">معتمد</button>
+            <button type="button" class="tab" data-key="rejected" data-i18n="st_rejected">مرفوض</button>
+            <button type="button" class="tab" data-key="all" data-i18n="all">الكل</button>
+          </div>
+          <div class="card"><div class="card-b tbl-wrap" id="ts-list"></div></div>
+        </div>
+
+        <!-- الحضور -->
+        <div class="screen hidden" id="t-attendance">
+          <h1 class="page-title" data-i18n="attendance">الحضور</h1>
+          <div class="page-head-row">
+            <div class="btn-row">
+              <input type="date" id="att-date" style="width:auto">
+              <button type="button" class="btn-outline" id="att-all" data-i18n="markAll">تحديد الكل حاضرات</button>
+            </div>
+            <div class="chips-row" id="att-summary"></div>
+          </div>
+          <div class="card"><div class="card-b tbl-wrap" id="att-list"></div></div>
+        </div>
+
+        <!-- المشاركة -->
+        <div class="screen hidden" id="t-participation">
+          <h1 class="page-title" data-i18n="participation">المشاركة</h1>
+          <div class="card">
+            <div class="card-h" data-i18n="addPoints">تسجيل مشاركة</div>
+            <div class="card-b">
+              <div class="inline-form">
+                <div class="field"><label data-i18n="date">التاريخ</label><input type="date" id="part-date"></div>
+                <div class="field grow"><label data-i18n="student">الطالبة</label><select id="part-student"></select></div>
+                <div class="field"><label data-i18n="points">النقاط</label><input type="number" id="part-points" value="1" min="-5" max="10" style="width:90px"></div>
+                <div class="field grow"><label data-i18n="note">ملاحظة</label><input type="text" id="part-note"></div>
+                <button type="button" class="btn" id="part-add" data-i18n="add">إضافة</button>
+              </div>
+            </div>
+          </div>
+          <div class="card mt sheet-card">
+            <div class="card-b">
+              <div class="sheet-head">
+                <div class="sh-field"><label data-i18n="sheetTeacher">اسم المعلم:</label><span id="sh-teacher"></span></div>
+                <div class="sh-field"><label data-i18n="sheetSubject">المادة:</label>
+                  <input type="text" id="sh-subject" class="sh-in"></div>
+                <div class="sh-field"><label data-i18n="sheetSemester">الفصل الدراسي:</label>
+                  <select id="sh-semester" class="sh-in">
+                    <option value="1" data-i18n="sem1">الأول</option>
+                    <option value="2" data-i18n="sem2">الثاني</option>
+                    <option value="3" data-i18n="sem3">الثالث</option>
+                  </select></div>
+                <div class="sh-field"><label data-i18n="sheetYear">العام الدراسي:</label>
+                  <input type="text" id="sh-year" class="sh-in"></div>
+                <div class="sh-field"><label data-i18n="classLabel">الفصل:</label>
+                  <select id="gb-class" class="sh-in"></select></div>
+                <button type="button" class="btn-outline btn-sm" id="gb-pdf">
+                  <span class="ic" data-icon="doc"></span><span data-i18n="exportPdf">حفظ PDF</span>
+                </button>
+              </div>
+              <p class="muted small scroll-hint" data-i18n="scrollHint">مرّري الجدول جانبياً لعرض بقية البنود</p>
+              <div class="tbl-wrap" id="gb-table"></div>
+              <p class="muted small" id="gb-saved" style="margin-top:8px"></p>
+            </div>
+          </div>
+          <div class="card mt"><div class="card-b tbl-wrap" id="part-list"></div></div>
+          <div class="card mt">
+            <div class="card-h"><span data-i18n="partSummary">ملخص المشاركة</span></div>
+            <div class="card-b">
+              <p class="muted small" data-i18n="partSummaryHint">مجموع نقاط كل طالبة، مع رسالة تحفيز أو تنبيه تُرسل للطالبة نفسها</p>
+              <div class="btn-row" style="margin-bottom:12px">
+                <select id="ps-class" class="inline-select"></select>
+              </div>
+              <div class="tbl-wrap" id="ps-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- الطالبات -->
+        <div class="screen hidden" id="t-students">
+          <h1 class="page-title" data-i18n="students">الطالبات</h1>
+
+          <div class="card">
+            <div class="card-h"><span data-i18n="myClasses">فصولي</span></div>
+            <div class="card-b">
+              <p class="muted small" data-i18n="classesHint">أضيفي الفصول التي تدرسينها، وستظهر للطالبات عند التسجيل</p>
+              <div class="inline-form">
+                <input type="text" id="cls-name" class="grow" data-i18n-ph="classNamePh" placeholder="مثال: ثاني ثانوي / 1">
+                <button type="button" class="btn" id="cls-add">
+                  <span class="ic" data-icon="plus"></span><span data-i18n="add">إضافة</span>
+                </button>
+              </div>
+              <div id="cls-list" style="margin-top:14px"></div>
+            </div>
+          </div>
+
+          <div class="page-head-row mt">
+            <input type="text" id="stu-search" data-i18n-ph="search" placeholder="بحث" style="max-width:280px">
+            <select id="stu-class" class="inline-select"></select>
+          </div>
+          <div class="card"><div class="card-b tbl-wrap" id="stu-list"></div></div>
+        </div>
+
+        <!-- ملف طالبة -->
+        <div class="screen hidden" id="t-student">
+          <div class="page-head-row">
+            <button type="button" class="btn-outline btn-sm" id="tsd-back">
+              <span class="ic" data-icon="back"></span><span data-i18n="backList">عودة</span>
+            </button>
+          </div>
+          <div class="card">
+            <div class="card-b">
+              <div class="sub-head">
+                <div>
+                  <h2 id="tsd-name"></h2>
+                  <div class="muted small ltr" id="tsd-phone"></div>
+                  <div class="detail-chips" id="tsd-chips"></div>
+                  <div class="btn-row" id="tsd-wa-row" style="margin-top:10px"></div>
+                  <div id="tsd-progress" style="margin-top:14px"></div>
+                </div>
+                <div class="btn-row">
+                  <button type="button" class="btn-brass" id="tsd-exc-btn">
+                    <span class="ic" data-icon="star"></span><span data-i18n="addToExc">إضافة إلى لوحة التميز</span>
+                  </button>
+                  <button type="button" class="btn-outline" id="tsd-cert-btn">
+                    <span class="ic" data-icon="award"></span><span data-i18n="issueCert">إصدار شهادة</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tabs mt" id="tsd-tabs">
+            <button type="button" class="tab active" data-tab="subs" data-i18n="submissions">التسليمات</button>
+            <button type="button" class="tab" data-tab="att" data-i18n="attendance">الحضور</button>
+            <button type="button" class="tab" data-tab="certs" data-i18n="certificates">الشهادات</button>
+            <button type="button" class="tab" data-tab="parent" data-i18n="parentCode">رمز ولي الأمر</button>
+          </div>
+          <div id="tsd-panel-subs"></div>
+          <div id="tsd-panel-att" class="hidden"><div class="card"><div class="card-b tbl-wrap" id="tsd-att"></div></div></div>
+          <div id="tsd-panel-certs" class="hidden" ><div id="tsd-certs"></div></div>
+          <div id="tsd-panel-parent" class="hidden">
+            <div class="card"><div class="card-b" id="tsd-parent"></div></div>
+          </div>
+        </div>
+
+        <!-- النسخ الاحتياطي والصيانة -->
+        <div class="screen hidden" id="t-backup">
+          <h1 class="page-title" data-i18n="backupNav">النسخ الاحتياطي</h1>
+          <p class="page-sub" data-i18n="backupSub">احفظي نسخة من بيانات المنصة على جهازك، أو ابدئي فصلاً جديداً</p>
+
+          <div class="card">
+            <div class="card-h"><span data-i18n="saveBackup">حفظ نسخة احتياطية</span></div>
+            <div class="card-b">
+              <p class="muted small" data-i18n="backupHint">ينزّل ملفاً واحداً يحتوي كل بيانات المنصة. احفظيه في الفلاش أو جهازك، ويمكن استعادته من phpMyAdmin عند الحاجة.</p>
+              <div class="btn-row">
+                <button type="button" class="btn" id="bk-db">
+                  <span class="ic" data-icon="download"></span><span data-i18n="downloadData">تنزيل البيانات</span>
+                </button>
+                <button type="button" class="btn-outline" id="bk-files">
+                  <span class="ic" data-icon="folder"></span><span data-i18n="downloadFiles">تنزيل المرفقات</span>
+                </button>
+              </div>
+              <div id="bk-stats" style="margin-top:16px"></div>
+            </div>
+          </div>
+
+          <div class="card mt danger-card">
+            <div class="card-h"><span data-i18n="resetTitle">حذف البيانات</span></div>
+            <div class="card-b">
+              <p class="small" data-i18n="resetWarn">تحذير: هذا الإجراء لا يمكن التراجع عنه. احفظي نسخة احتياطية أولاً.</p>
+              <div class="field">
+                <label data-i18n="resetScope">اختاري ما تريدين حذفه</label>
+                <div id="rs-parts" class="parts-list">
+                  <label class="part-row">
+                    <input type="checkbox" value="students" checked>
+                    <span><b data-i18n="partStudents">حسابات الطالبات وسجلاتهن</b>
+                      <em data-i18n="partStudentsD">التسليمات والحضور والمشاركة والدرجات والشهادات</em></span>
+                  </label>
+                  <label class="part-row">
+                    <input type="checkbox" value="content">
+                    <span><b data-i18n="partContent">محتوى الأقسام</b>
+                      <em data-i18n="partContentD">الدروس والمهام والملفات المرفوعة، مع بقاء الأقسام نفسها</em></span>
+                  </label>
+                  <label class="part-row">
+                    <input type="checkbox" value="sections">
+                    <span><b data-i18n="partSections">الأقسام نفسها</b>
+                      <em data-i18n="partSectionsD">تحذف الأقسام ومحتواها معاً — ستحتاجين استيراد database.sql لإعادتها</em></span>
+                  </label>
+                  <label class="part-row">
+                    <input type="checkbox" value="classes">
+                    <span><b data-i18n="partClasses">الفصول</b>
+                      <em data-i18n="partClassesD">قائمة فصولك التي تختار منها الطالبات</em></span>
+                  </label>
+                  <label class="part-row">
+                    <input type="checkbox" value="schedule">
+                    <span><b data-i18n="partSchedule">الجدول الأسبوعي</b>
+                      <em data-i18n="partScheduleD">حصص الجدول المسجلة</em></span>
+                  </label>
+                  <label class="part-row">
+                    <input type="checkbox" value="templates">
+                    <span><b data-i18n="partTemplates">قوالب الرسائل والإعدادات</b>
+                      <em data-i18n="partTemplatesD">نصوص رسائل الواتساب وبيانات ترويسة ورقة الرصد</em></span>
+                  </label>
+                </div>
+                <button type="button" class="btn-ghost btn-sm" id="rs-all" data-i18n="selectAll">تحديد الكل</button>
+              </div>
+              <div class="field">
+                <label for="rs-confirm" data-i18n="typeToConfirm">اكتبي كلمة «حذف» للتأكيد</label>
+                <input type="text" id="rs-confirm" autocomplete="off">
+              </div>
+              <button type="button" class="btn-danger-fill" id="rs-go" disabled>
+                <span class="ic" data-icon="trash"></span><span data-i18n="resetNow">حذف البيانات نهائياً</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- تواصل الأمهات -->
+        <div class="screen hidden" id="t-mothers">
+          <h1 class="page-title" data-i18n="mothersNav">تواصل الأمهات</h1>
+          <p class="page-sub" data-i18n="mothersSub">قائمة يومية بالحالات التي تحتاج تواصلاً، مع رسائل جاهزة عبر واتساب</p>
+          <div class="tabs" id="mo-tabs">
+            <button type="button" class="tab active" data-tab="followup" data-i18n="followUp">المتابعة</button>
+            <button type="button" class="tab" data-tab="all" data-i18n="allMothers">كل الأمهات</button>
+            <button type="button" class="tab" data-tab="tpl" data-i18n="msgTemplates">الرسائل</button>
+          </div>
+          <div id="mo-panel-followup"></div>
+          <div id="mo-panel-all" class="hidden">
+            <div class="card"><div class="card-b tbl-wrap" id="mo-all-list"></div></div>
+          </div>
+          <div id="mo-panel-tpl" class="hidden">
+            <div class="card">
+              <div class="card-b">
+                <p class="muted small" data-i18n="tplHint">يمكنك تعديل نص أي رسالة. المتغيرات تُستبدل تلقائياً عند الإرسال.</p>
+                <div class="chips-row" id="mo-tpl-vars"></div>
+              </div>
+            </div>
+            <div id="mo-tpl-list"></div>
+          </div>
+        </div>
+
+        <!-- الجدول الأسبوعي -->
+        <div class="screen hidden" id="t-schedule">
+          <h1 class="page-title" data-i18n="schedule">الجدول الأسبوعي</h1>
+          <p class="page-sub" data-i18n="scheduleSub">انقري أي خانة لإضافة حصة أو تعديلها</p>
+          <div class="card"><div class="card-b tbl-wrap" id="tsch-grid"></div></div>
+        </div>
+
+        <!-- الأقسام -->
+        <div class="screen hidden" id="t-sections">
+          <div class="page-head-row">
+            <h1 class="page-title" data-i18n="sections">الأقسام</h1>
+            <button type="button" class="btn" id="sec-new">
+              <span class="ic" data-icon="plus"></span><span data-i18n="newSection">قسم جديد</span>
+            </button>
+          </div>
+          <div class="grid-cards" id="sec-grid"></div>
+        </div>
+
+        <!-- محتوى قسم -->
+        <div class="screen hidden" id="t-section-items">
+          <div class="page-head-row">
+            <button type="button" class="btn-outline btn-sm" id="si-back">
+              <span class="ic" data-icon="back"></span><span data-i18n="backList">عودة</span>
+            </button>
+            <div class="btn-row">
+              <button type="button" class="btn-outline" id="si-edit">
+                <span class="ic" data-icon="edit"></span><span data-i18n="editSection">تعديل القسم</span>
+              </button>
+              <button type="button" class="btn" id="si-add">
+                <span class="ic" data-icon="plus"></span><span data-i18n="addItem">إضافة عنصر</span>
+              </button>
+            </div>
+          </div>
+          <h1 class="page-title" id="si-title"></h1>
+          <div class="chips-row" id="si-badges" style="margin-bottom:16px"></div>
+          <div id="si-list"></div>
+        </div>
+
+        <!-- لوحة التميز -->
+        <div class="screen hidden" id="t-excellence">
+          <div class="page-head-row">
+            <h1 class="page-title" data-i18n="excellence">لوحة التميز</h1>
+            <button type="button" class="btn-brass" id="exc-add">
+              <span class="ic" data-icon="star"></span><span data-i18n="addToExc">إضافة إلى لوحة التميز</span>
+            </button>
+          </div>
+          <hr class="rule-brass">
+          <div class="grid-cards" id="exc-grid"></div>
+        </div>
+
+        <!-- الملاحظات -->
+        <div class="screen hidden" id="t-feedback">
+          <h1 class="page-title" data-i18n="feedbackNav">الملاحظات</h1>
+          <p class="page-sub" data-i18n="feedbackSub">رسائل الطالبات وملاحظاتهن</p>
+          <div id="fb-list"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============================================ النوافذ المنبثقة -->
+
+<!-- رفع تسليم (الطالبة) -->
+<div class="modal-overlay hidden" id="modal-upload">
+  <div class="modal">
+    <div class="modal-h">
+      <span id="up-modal-title"></span>
+      <button type="button" class="x-btn" data-close><span class="ic" data-icon="x"></span></button>
+    </div>
+    <div class="modal-b">
+      <div class="review-meta hidden" id="up-item-info"></div>
+      <div class="field">
+        <label for="up-title" data-i18n="title_">العنوان</label>
+        <input type="text" id="up-title">
+      </div>
+      <div class="field">
+        <label for="up-note" data-i18n="note">ملاحظة</label>
+        <textarea id="up-note"></textarea>
+      </div>
+      <div class="field">
+        <label data-i18n="file">الملف</label>
+        <div class="dropzone" id="up-dz">
+          <div id="up-dz-label"></div>
+          <div class="dz-hint" id="up-dz-hint"></div>
+        </div>
+        <input type="file" id="up-file" class="hidden">
+      </div>
+      <div class="field">
+        <label for="up-url" data-i18n="orLink">أو رابط خارجي</label>
+        <input type="url" id="up-url" class="ltr" placeholder="https://">
+      </div>
+    </div>
+    <div class="modal-f">
+      <button type="button" class="btn-outline" data-close data-i18n="cancel">إلغاء</button>
+      <button type="button" class="btn" id="up-save" data-i18n="save">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- مراجعة تسليم (المعلمة) -->
+<div class="modal-overlay hidden" id="modal-review">
+  <div class="modal wide">
+    <div class="modal-h">
+      <span data-i18n="evaluate">تقييم</span>
+      <button type="button" class="x-btn" data-close><span class="ic" data-icon="x"></span></button>
+    </div>
+    <div class="modal-b">
+      <div class="grid-2">
+        <div id="rv-preview"></div>
+        <div>
+          <div class="review-meta" id="rv-meta"></div>
+          <div class="field-row">
+            <div class="field">
+              <label for="rv-grade" data-i18n="grade">الدرجة</label>
+              <input type="number" id="rv-grade" min="0" step="0.5">
+            </div>
+            <div class="field">
+              <label for="rv-max" data-i18n="maxGrade">الدرجة الكاملة</label>
+              <input type="number" id="rv-max" min="1" step="0.5">
+            </div>
+          </div>
+          <div class="field">
+            <label for="rv-fb" data-i18n="teacherFeedback">ملاحظة المعلمة</label>
+            <textarea id="rv-fb"></textarea>
+          </div>
+          <div class="brass-row hidden" id="rv-brass">
+            <label class="check-row" style="margin:0">
+              <input type="checkbox" id="rv-exc">
+              <span data-i18n="addToExc">إضافة إلى لوحة التميز</span>
+            </label>
+            <input type="text" id="rv-reason" data-i18n-ph="excReason" placeholder="سبب التكريم">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-f">
+      <button type="button" class="btn-danger" id="rv-reject" data-i18n="reject">رفض</button>
+      <button type="button" class="btn-outline" id="rv-revision" data-i18n="returnRevision">إعادة للتعديل</button>
+      <button type="button" class="btn" id="rv-approve" data-i18n="approve">اعتماد</button>
+    </div>
+  </div>
+</div>
+
+<!-- منشئ الأقسام (ثلاث خطوات) -->
+<div class="modal-overlay hidden" id="modal-wizard">
+  <div class="modal">
+    <div class="modal-h">
+      <span data-i18n="newSection">قسم جديد</span>
+      <button type="button" class="x-btn" data-close><span class="ic" data-icon="x"></span></button>
+    </div>
+    <div class="modal-b">
+      <div class="wizard-steps" id="wz-steps"><span></span><span></span><span></span></div>
+      <div id="wz-body"></div>
+    </div>
+    <div class="modal-f">
+      <button type="button" class="btn-outline" id="wz-back" data-i18n="back">رجوع</button>
+      <button type="button" class="btn" id="wz-next" data-i18n="next">التالي</button>
+    </div>
+  </div>
+</div>
+
+<!-- تعديل قسم -->
+<div class="modal-overlay hidden" id="modal-secedit">
+  <div class="modal">
+    <div class="modal-h">
+      <span data-i18n="editSection">تعديل القسم</span>
+      <button type="button" class="x-btn" data-close><span class="ic" data-icon="x"></span></button>
+    </div>
+    <div class="modal-b">
+      <div class="field-row">
+        <div class="field"><label for="se-title-ar" data-i18n="nameAr">الاسم بالعربية</label><input type="text" id="se-title-ar"></div>
+        <div class="field"><label for="se-title-en" data-i18n="nameEn">الاسم بالإنجليزية</label><input type="text" id="se-title-en" class="ltr"></div>
+      </div>
+      <label class="check-row"><input type="checkbox" id="se-vis-stu"><span data-i18n="visStudents">ظاهر للطالبات</span></label>
+      <label class="check-row"><input type="checkbox" id="se-vis-par"><span data-i18n="visParents">ظاهر للأهالي</span></label>
+      <div class="field"><label for="se-order" data-i18n="order_">الترتيب</label><input type="number" id="se-order" style="width:110px"></div>
+    </div>
+    <div class="modal-f">
+      <button type="button" class="btn-danger" id="se-delete" data-i18n="del">حذف</button>
+      <button type="button" class="btn-outline" data-close data-i18n="cancel">إلغاء</button>
+      <button type="button" class="btn" id="se-save" data-i18n="save">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- إضافة / تعديل عنصر -->
+<div class="modal-overlay hidden" id="modal-item">
+  <div class="modal">
+    <div class="modal-h">
+      <span id="item-modal-title"></span>
+      <button type="button" class="x-btn" data-close><span class="ic" data-icon="x"></span></button>
+    </div>
+    <div class="modal-b">
+      <div class="field-row">
+        <div class="field"><label for="it-title-ar" data-i18n="titleAr">العنوان بالعربية</label><input type="text" id="it-title-ar"></div>
+        <div class="field"><label for="it-title-en" data-i18n="titleEn">العنوان بالإنجليزية</label><input type="text" id="it-title-en" class="ltr"></div>
+      </div>
+      <div class="field">
+        <label for="it-type" data-i18n="itemType">نوع العنصر</label>
+        <select id="it-type"></select>
+      </div>
+      <div class="field"><label for="it-body-ar" data-i18n="bodyAr">المحتوى بالعربية</label><textarea id="it-body-ar"></textarea></div>
+      <div class="field"><label for="it-body-en" data-i18n="bodyEn">المحتوى بالإنجليزية</label><textarea id="it-body-en" class="ltr"></textarea></div>
+      <div class="field">
+        <label for="it-url" data-i18n="extUrl">رابط خارجي</label>
+        <input type="url" id="it-url" class="ltr" placeholder="https://">
+      </div>
+      <div class="field">
+        <label data-i18n="file">الملف</label>
+        <div class="dropzone" id="it-dz">
+          <div id="it-dz-label"></div>
+          <div class="dz-hint" id="it-dz-hint"></div>
+        </div>
+        <input type="file" id="it-file" class="hidden">
+        <div class="hint hidden" id="it-file-note" data-i18n="currentFile">يوجد ملف مرفوع مسبقاً، اختيار ملف جديد سيستبدله</div>
+      </div>
+      <label class="check-row"><input type="checkbox" id="it-accepts"><span data-i18n="acceptsSub">يقبل تسليمات الطالبات</span></label>
+      <div class="field hidden" id="it-due-wrap">
+        <label for="it-due" data-i18n="dueDate">موعد التسليم</label>
+        <input type="datetime-local" id="it-due" class="ltr">
+      </div>
+      <div class="field">
+        <label for="it-aud" data-i18n="audience">الجمهور</label>
+        <select id="it-aud">
+          <option value="all" data-i18n="audAll">جميع الطالبات</option>
+          <option value="class" data-i18n="audClass">فصل محدد</option>
+          <option value="named" data-i18n="audNamed">طالبات محددات</option>
+        </select>
+        <div class="aud-list hidden" id="it-aud-classes"></div>
+        <div class="aud-list hidden" id="it-aud-students"></div>
+        <div class="hint hidden" id="it-aud-hint" data-i18n="audClassHint">المحتوى يظهر لطالبات هذا الفصل فقط</div>
+      </div>
+      <div class="field">
+        <label class="check-row"><input type="checkbox" id="it-portfolio"><span data-i18n="inPortfolio">يظهر في ملف الإنجاز</span></label>
+        <div class="aud-list hidden" id="it-standards"></div>
+        <div class="hint hidden" id="it-std-hint" data-i18n="standardsHint">اختاري المعيار الذي يُدرج تحته هذا الشاهد</div>
+      </div>
+      <label class="check-row"><input type="checkbox" id="it-published" checked><span data-i18n="published">منشور</span></label>
+    </div>
+    <div class="modal-f">
+      <button type="button" class="btn-outline" data-close data-i18n="cancel">إلغاء</button>
+      <button type="button" class="btn" id="it-save" data-i18n="save">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- خانة الجدول -->
+<div class="modal-overlay hidden" id="modal-sched">
+  <div class="modal">
+    <div class="modal-h">
+      <span id="sc-title-label"></span>
+      <button type="button" class="x-btn" data-close><span class="ic" data-icon="x"></span></button>
+    </div>
+    <div class="modal-b">
+      <div class="field-row">
+        <div class="field"><label for="sc-name-ar" data-i18n="nameAr">الاسم بالعربية</label><input type="text" id="sc-name-ar"></div>
+        <div class="field"><label for="sc-name-en" data-i18n="nameEn">الاسم بالإنجليزية</label><input type="text" id="sc-name-en" class="ltr"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label for="sc-start" data-i18n="fromT">من</label><input type="time" id="sc-start" class="ltr"></div>
+        <div class="field"><label for="sc-end" data-i18n="toT">إلى</label><input type="time" id="sc-end" class="ltr"></div>
+      </div>
+      <div class="field"><label for="sc-room" data-i18n="room">القاعة</label><input type="text" id="sc-room"></div>
+    </div>
+    <div class="modal-f">
+      <button type="button" class="btn-danger hidden" id="sc-delete" data-i18n="del">حذف</button>
+      <button type="button" class="btn-outline" data-close data-i18n="cancel">إلغاء</button>
+      <button type="button" class="btn" id="sc-save" data-i18n="save">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- إصدار شهادة -->
+<div class="modal-overlay hidden" id="modal-cert">
+  <div class="modal">
+    <div class="modal-h">
+      <span data-i18n="issueCert">إصدار شهادة</span>
+      <button type="button" class="x-btn" data-close><span class="ic" data-icon="x"></span></button>
+    </div>
+    <div class="modal-b">
+      <div class="field"><label for="ct-title-ar" data-i18n="titleAr">العنوان بالعربية</label><input type="text" id="ct-title-ar"></div>
+      <div class="field"><label for="ct-title-en" data-i18n="titleEn">العنوان بالإنجليزية</label><input type="text" id="ct-title-en" class="ltr"></div>
+      <div class="field">
+        <label data-i18n="file">الملف</label>
+        <div class="dropzone" id="ct-dz">
+          <div id="ct-dz-label"></div>
+          <div class="dz-hint" id="ct-dz-hint"></div>
+        </div>
+        <input type="file" id="ct-file" class="hidden">
+      </div>
+    </div>
+    <div class="modal-f">
+      <button type="button" class="btn-outline" data-close data-i18n="cancel">إلغاء</button>
+      <button type="button" class="btn" id="ct-save" data-i18n="save">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- إضافة إلى لوحة التميز -->
+<div class="modal-overlay hidden" id="modal-exc">
+  <div class="modal">
+    <div class="modal-h">
+      <span data-i18n="addToExc">إضافة إلى لوحة التميز</span>
+      <button type="button" class="x-btn" data-close><span class="ic" data-icon="x"></span></button>
+    </div>
+    <div class="modal-b">
+      <div class="field">
+        <label for="ex-student" data-i18n="student">الطالبة</label>
+        <select id="ex-student"></select>
+      </div>
+      <div class="field">
+        <label for="ex-reason" data-i18n="excReason">سبب التكريم</label>
+        <input type="text" id="ex-reason">
+      </div>
+    </div>
+    <div class="modal-f">
+      <button type="button" class="btn-outline" data-close data-i18n="cancel">إلغاء</button>
+      <button type="button" class="btn-brass" id="ex-save" data-i18n="add">إضافة</button>
+    </div>
+  </div>
+</div>
+
+<!-- تأكيد عام -->
+<div class="modal-overlay hidden" id="modal-confirm">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-h">
+      <span data-i18n="confirmTitle">تأكيد</span>
+      <button type="button" class="x-btn" data-close><span class="ic" data-icon="x"></span></button>
+    </div>
+    <div class="modal-b"><p id="confirm-msg" style="margin:0"></p></div>
+    <div class="modal-f">
+      <button type="button" class="btn-outline" data-close data-i18n="cancel">إلغاء</button>
+      <button type="button" class="btn-danger-fill" id="confirm-yes" data-i18n="yes">نعم</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modal-mother">
+  <div class="modal">
+    <div class="modal-h">
+      <span data-i18n="editStudent">تعديل بيانات الطالبة</span>
+      <button type="button" class="x-btn" data-close><span class="ic" data-icon="x"></span></button>
+    </div>
+    <div class="modal-b">
+      <div class="field">
+        <label for="mm-student-name" data-i18n="studentName">اسم الطالبة الثلاثي</label>
+        <input type="text" id="mm-student-name" autocomplete="off">
+        <div class="hint" data-i18n="nameHint">ثلاث كلمات على الأقل</div>
+      </div>
+      <div class="field">
+        <label for="mm-class" data-i18n="classLabel">الفصل</label>
+        <select id="mm-class"></select>
+      </div>
+      <div class="field">
+        <label for="mm-student-phone" data-i18n="studentPhone">رقم جوال الطالبة</label>
+        <input type="tel" id="mm-student-phone" class="ltr" inputmode="numeric" placeholder="05XXXXXXXX">
+        <div class="hint" data-i18n="studentPhoneHint">تدخل به الطالبة، فتأكدي منه قبل الحفظ</div>
+      </div>
+      <div class="field">
+        <label for="mm-phone" data-i18n="motherPhone">رقم جوال الأم</label>
+        <input type="tel" id="mm-phone" class="ltr" inputmode="numeric" placeholder="05XXXXXXXX">
+        <div class="hint" data-i18n="motherPhoneHint">للتواصل مع الأم. إن لم يكن لديك جوال فاكتبي رقم أمك في الحقلين</div>
+      </div>
+      <div class="field">
+        <label for="mm-name" data-i18n="motherNameOpt">اسم الأم (اختياري)</label>
+        <input type="text" id="mm-name">
+      </div>
+    </div>
+    <div class="modal-f mm-foot">
+      <button type="button" class="btn-danger" id="mm-delete">
+        <span class="ic" data-icon="trash"></span><span data-i18n="deleteAccount">حذف الحساب</span>
+      </button>
+      <span class="foot-spacer"></span>
+      <button type="button" class="btn-outline" data-close data-i18n="cancel">إلغاء</button>
+      <button type="button" class="btn" id="mm-save" data-i18n="save">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modal-card">
+  <div class="modal">
+    <div class="modal-h">
+      <span id="card-title" data-i18n="excCard">بطاقة تميز</span>
+      <button type="button" class="x-btn" data-close><span class="ic" data-icon="x"></span></button>
+    </div>
+    <div class="modal-b" style="text-align:center">
+      <canvas id="card-canvas" class="card-preview"></canvas>
+    </div>
+    <div class="modal-f">
+      <button type="button" class="btn-outline" id="card-download">
+        <span class="ic" data-icon="download"></span><span data-i18n="downloadCard">تنزيل الصورة</span>
+      </button>
+      <button type="button" class="btn btn-wa" id="card-share">
+        <span class="ic" data-icon="message"></span><span data-i18n="shareCard">مشاركة</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modal-wa">
+  <div class="modal">
+    <div class="modal-h">
+      <span id="wa-title" data-i18n="sendToMother">إرسال إلى الأم</span>
+      <button type="button" class="x-btn" data-close><span class="ic" data-icon="x"></span></button>
+    </div>
+    <div class="modal-b">
+      <div class="field">
+        <label data-i18n="recipient">المستلمة</label>
+        <div id="wa-to" class="chosen-name"></div>
+      </div>
+      <div class="field">
+        <label for="wa-text" data-i18n="msgText">نص الرسالة</label>
+        <textarea id="wa-text" rows="10"></textarea>
+        <div class="hint" data-i18n="waHint">يمكنك تعديل النص قبل الإرسال. سيفتح واتساب بالرسالة جاهزة.</div>
+      </div>
+    </div>
+    <div class="modal-f">
+      <button type="button" class="btn-outline" id="wa-copy" data-i18n="copyMsg">نسخ النص</button>
+      <button type="button" class="btn btn-wa" id="wa-send" data-i18n="openWhatsapp">فتح واتساب</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<div class="install-card hidden" id="install-card" role="dialog" aria-live="polite">
+  <div class="install-icon"><img src="icon-192.png" alt=""></div>
+  <div class="install-body">
+    <div class="install-title" id="install-title">ثبّت منصة المعلمة على جوالك</div>
+    <div class="install-text" id="install-text"></div>
+    <button type="button" class="btn btn-sm hidden" id="install-action">تثبيت</button>
+  </div>
+  <button type="button" class="install-x" id="install-close" aria-label="إغلاق">&times;</button>
+</div>
+
+<footer class="site-credit">
+  <span data-i18n="credit">تم برمجة هذا الموقع بواسطة محمد العيسى</span>
+</footer>
+
+<script src="script.js?v=27"></script>
+</body>
+</html>
