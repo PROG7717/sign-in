@@ -32,7 +32,7 @@ Browser ──► Next.js (proxy: next-intl routing + Supabase session refresh)
 ### Folder structure
 
 ```
-nova-studio/  (this project's folder inside the web-projects repository)
+nova-studio/  (this project's folder inside the my-web-projects repository)
 ├── supabase/migrations/        # Schema + RLS + storage policies (already applied)
 ├── public/covers/              # Generative SVG artwork for the seeded projects
 └── src/
