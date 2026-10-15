@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#171008">
+<title>حاسبة البلوت</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- شاشة الخصم (مقلوبة) - وضع الطاولة -->
+    <div id="split-scoreboard" class="split-wrap">
+        <div class="paper-board flipped">
+            <div class="paper-col us">
+                <span class="paper-team" id="lbl-top-us">لنا</span>
+                <strong class="paper-num" id="score-top-right">0</strong>
+            </div>
+            <div class="paper-rule"></div>
+            <div class="paper-col them">
+                <span class="paper-team" id="lbl-top-them">لهم</span>
+                <strong class="paper-num" id="score-top-left">0</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="control-screen">
+
+        <header class="app-header">
+            <button type="button" id="open-settings-btn" class="icon-btn" aria-label="الإعدادات">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </button>
+            <h1 class="app-title">حاسبة البلوت</h1>
+            <span class="timer-display" id="main-timer">00:00</span>
+        </header>
+
+        <div class="sadu-band" aria-hidden="true"></div>
+
+        <!-- ورقة الحسبة -->
+        <div id="normal-scoreboard" class="paper-board main-board">
+            <div class="paper-col us">
+                <span class="paper-team" id="lbl-score-us">لنا</span>
+                <strong class="paper-num" id="score-right">0</strong>
+            </div>
+            <div class="paper-rule"></div>
+            <div class="paper-col them">
+                <span class="paper-team" id="lbl-score-them">لهم</span>
+                <strong class="paper-num" id="score-left">0</strong>
+            </div>
+        </div>
+
+        <!-- لوحة السفلية في وضع الطاولة -->
+        <div class="bottom-split paper-board" id="bottom-split-board">
+            <div class="paper-col us">
+                <span class="paper-team" id="lbl-bot-us">لنا</span>
+                <strong class="paper-num" id="score-bot-right">0</strong>
+            </div>
+            <div class="paper-rule"></div>
+            <div class="paper-col them">
+                <span class="paper-team" id="lbl-bot-them">لهم</span>
+                <strong class="paper-num" id="score-bot-left">0</strong>
+            </div>
+        </div>
+
+        <!-- إعدادات الجولة -->
+        <section class="card round-card">
+            <div class="field-row">
+                <div class="field">
+                    <label class="field-label" for="game-type">النوع</label>
+                    <select id="game-type">
+                        <option value="sun">صن</option>
+                        <option value="hakam">حكم</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label class="field-label" for="multiplier-select">التدبيل</label>
+                    <select id="multiplier-select"></select>
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label class="field-label" for="calc-mode">الحساب</label>
+                    <select id="calc-mode">
+                        <option value="smart">بالورق</option>
+                        <option value="normal">لعب كلاسيكي</option>
+                    </select>
+                </div>
+                <div class="field" id="buyer-container">
+                    <label class="field-label" for="buyer-team">المشتري</label>
+                    <select id="buyer-team">
+                        <option value="" disabled selected>اختر</option>
+                        <option value="us">لنا</option>
+                        <option value="them">لهم</option>
+                    </select>
+                </div>
+                <div class="field doubler" id="doubler-container">
+                    <label class="field-label" for="doubler-team">المدبّل</label>
+                    <select id="doubler-team">
+                        <option value="them">لهم</option>
+                        <option value="us">لنا</option>
+                    </select>
+                </div>
+            </div>
+            <div class="field-row kaboot-row">
+                <button type="button" id="btn-kaboot-right" class="btn kaboot-btn">كبوت لنا</button>
+                <button type="button" id="btn-kaboot-left" class="btn kaboot-btn">كبوت لهم</button>
+            </div>
+        </section>
+
+        <!-- بطاقتا الفريقين -->
+        <div class="teams-row">
+            <section class="card team-card us" id="card-right">
+                <h3 class="team-name" id="lbl-card-us">لنا</h3>
+                <input type="text" inputmode="numeric" id="input-right" class="score-input" placeholder="الرقم" autocomplete="off">
+                <div id="right-project-buttons" class="project-buttons"></div>
+                <div id="right-projects-list" class="projects-list-display">بدون</div>
+            </section>
+            <section class="card team-card them" id="card-left">
+                <h3 class="team-name" id="lbl-card-them">لهم</h3>
+                <input type="text" inputmode="numeric" id="input-left" class="score-input" placeholder="الرقم" autocomplete="off">
+                <div id="left-project-buttons" class="project-buttons"></div>
+                <div id="left-projects-list" class="projects-list-display">بدون</div>
+            </section>
+        </div>
+
+        <!-- معاينة النشرة قبل التسجيل -->
+        <div id="round-preview" class="round-preview" aria-live="polite"></div>
+
+        <div class="actions-row">
+            <button type="button" class="btn btn-submit" id="submit-btn">سجّل الحسبة</button>
+            <button type="button" class="btn btn-undo" id="undo-btn">تراجع</button>
+        </div>
+
+        <!-- سجل الحسبات -->
+        <section class="card history-card">
+            <h3 class="section-title">سجل الحسبات</h3>
+            <div id="history-list"></div>
+        </section>
+
+        <div class="developer-credit">برمجة المهندس محمد العيسى</div>
+    </div>
+
+    <!-- التنبيه -->
+    <div id="toast" class="toast"></div>
+
+    <!-- نافذة الإعدادات -->
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>الإعدادات</h3>
+                <button type="button" id="close-settings-btn" class="close-icon-btn" aria-label="إغلاق">&times;</button>
+            </div>
+            <div class="settings-card">
+                <h4 class="card-title">أسماء الفرق</h4>
+                <div class="names-inputs-row">
+                    <input type="text" id="team-us-name" class="modern-input input-us" placeholder="لنا" maxlength="12">
+                    <input type="text" id="team-them-name" class="modern-input input-them" placeholder="لهم" maxlength="12">
+                </div>
+                <button type="button" id="save-names-btn" class="modern-btn btn-save">حفظ الأسماء</button>
+            </div>
+            <div class="settings-card">
+                <div class="setting-item">
+                    <span class="setting-label">تدبيل أبناط المشاريع</span>
+                    <label class="switch">
+                        <input type="checkbox" id="doubleProjectsToggle">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="setting-item setting-gap">
+                    <span class="setting-label">إبقاء الشاشة شغالة أثناء اللعب</span>
+                    <label class="switch">
+                        <input type="checkbox" id="wakeLockToggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="settings-card actions-card">
+                <button type="button" id="settings-split-btn" class="modern-btn btn-secondary">وضع الطاولة (شاشتين)</button>
+                <button type="button" id="settings-restart-btn" class="modern-btn btn-danger">صكّة جديدة</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تعديل نشرة -->
+    <div id="edit-modal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>إضافة مشروع للنشرة</h3>
+                <button type="button" id="cancel-edit-btn" class="close-icon-btn" aria-label="إغلاق">&times;</button>
+            </div>
+            <div class="settings-card">
+                <label class="field-label" id="lbl-edit-us">مشروع لنا</label>
+                <select id="edit-right-project" class="edit-select"></select>
+                <label class="field-label lbl-them" id="lbl-edit-them">مشروع لهم</label>
+                <select id="edit-left-project" class="edit-select"></select>
+            </div>
+            <button type="button" id="save-edit-btn" class="modern-btn btn-save">حفظ التعديل</button>
+        </div>
+    </div>
+
+    <!-- شاشة الفوز -->
+    <div id="win-modal" class="win-modal">
+        <div class="win-paper">
+            <div class="sadu-band" aria-hidden="true"></div>
+            <h1 id="win-title">مبروك الفوز</h1>
+            <div id="game-stats" class="game-stats"></div>
+            <div class="win-actions">
+                <button type="button" id="restart-win-btn" class="modern-btn btn-save">صكّة جديدة</button>
+                <button type="button" id="preview-win-btn" class="modern-btn btn-secondary">استعراض الورقة</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- إشعار التثبيت (آيفون) -->
+    <div id="iosInstallPrompt" class="ios-prompt hidden">
+        <button id="closePromptBtn" class="close-btn" aria-label="إغلاق">&times;</button>
+        <div class="prompt-content">
+            <div class="prompt-icon">ح</div>
+            <div class="prompt-text">
+                <h3>ثبّت حاسبة البلوت على جوالك</h3>
+                <p>
+                    اضغط على زر المشاركة
+                    <svg class="share-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+                    في Safari<br>ثم اختر «أضف إلى الشاشة الرئيسية»
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
